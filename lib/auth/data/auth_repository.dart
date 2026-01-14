@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/auth/data/models/auth_response.dart';
 import 'package:frontend/auth/data/models/login_request.dart';
-import 'package:frontend/auth/data/models/refresh_token_request.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
 import 'package:frontend/core/core.dart';
 
@@ -69,47 +68,6 @@ class AuthRepository {
         (json) => User.fromJson(json! as Map<String, dynamic>),
       );
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        await _secureStorage.deleteTokens();
-      }
-      return ApiResponse.error(message: extractDioErrorMessage(e));
-    }
-  }
-
-  Future<ApiResponse<User>> refreshToken() async {
-    try {
-      final currentRefreshToken = await _secureStorage.getRefreshToken();
-      if (currentRefreshToken == null) {
-        return const ApiResponse.error(message: 'No refresh token available');
-      }
-
-      final request = RefreshTokenRequest(refreshToken: currentRefreshToken);
-
-      final response = await _apiClient.post<Map<String, dynamic>>(
-        ApiConstants.refresh,
-        data: request.toJson(),
-      );
-
-      final apiResponse = ApiResponse.fromJson(
-        response.data!,
-        (json) => AuthResponse.fromJson(json! as Map<String, dynamic>),
-      );
-
-      return apiResponse.when(
-        success: (authResponse, message) async {
-          await _secureStorage.saveTokens(
-            accessToken: authResponse.accessToken,
-            refreshToken: authResponse.refreshToken,
-          );
-          return ApiResponse.success(data: authResponse.user, message: message);
-        },
-        error: (message, errors) async {
-          await _secureStorage.deleteTokens();
-          return ApiResponse.error(message: message, errors: errors);
-        },
-      );
-    } on DioException catch (e) {
-      await _secureStorage.deleteTokens();
       return ApiResponse.error(message: extractDioErrorMessage(e));
     }
   }

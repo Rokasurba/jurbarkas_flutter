@@ -23,7 +23,10 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     _secureStorage = SecureStorage();
-    _apiClient = ApiClient(secureStorage: _secureStorage);
+    _apiClient = ApiClient(
+      secureStorage: _secureStorage,
+      onAuthenticationFailed: _onAuthenticationFailed,
+    );
     _authRepository = AuthRepository(
       apiClient: _apiClient,
       secureStorage: _secureStorage,
@@ -31,8 +34,12 @@ class _AppState extends State<App> {
     _authCubit = AuthCubit(authRepository: _authRepository);
     _appRouter = AppRouter(authCubit: _authCubit);
 
-    // Check auth status on app start
     _authCubit.checkAuthStatus();
+  }
+
+  void _onAuthenticationFailed() {
+    // Called by ApiClient when token refresh fails
+    _authCubit.onSessionExpired();
   }
 
   @override
