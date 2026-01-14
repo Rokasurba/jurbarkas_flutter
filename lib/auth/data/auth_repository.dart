@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/auth/data/models/auth_response.dart';
 import 'package:frontend/auth/data/models/login_request.dart';
+import 'package:frontend/auth/data/models/refresh_token_request.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
 import 'package:frontend/core/api/api_client.dart';
 import 'package:frontend/core/constants/api_constants.dart';
+import 'package:frontend/core/data/api_response.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
 
 class AuthRepository {
@@ -28,24 +30,23 @@ class AuthRepository {
         data: request.toJson(),
       );
 
-      final data = response.data!;
-      if (data['success'] != true) {
-        throw AuthException(data['message'] as String? ?? 'Login failed');
-      }
-
-      final authResponse = AuthResponse.fromJson(
-        data['data'] as Map<String, dynamic>,
+      final apiResponse = ApiResponse.fromJson(
+        response.data!,
+        (json) => AuthResponse.fromJson(json! as Map<String, dynamic>),
       );
 
-      await _secureStorage.saveTokens(
-        accessToken: authResponse.accessToken,
-        refreshToken: authResponse.refreshToken,
+      return apiResponse.when(
+        success: (authResponse, _) async {
+          await _secureStorage.saveTokens(
+            accessToken: authResponse.accessToken,
+            refreshToken: authResponse.refreshToken,
+          );
+          return authResponse.user;
+        },
+        error: (message, _) => throw AuthException(message),
       );
-
-      return authResponse.user;
     } on DioException catch (e) {
-      final message = e.response?.data?['message'] as String?;
-      throw AuthException(message ?? 'Network error');
+      throw _handleDioError(e);
     }
   }
 
@@ -63,20 +64,21 @@ class AuthRepository {
         ApiConstants.user,
       );
 
-      final data = response.data!;
-      if (data['success'] != true) {
-        throw AuthException('Failed to get user');
-      }
+      final apiResponse = ApiResponse.fromJson(
+        response.data!,
+        (json) => User.fromJson(json! as Map<String, dynamic>),
+      );
 
-      return User.fromJson(data['data'] as Map<String, dynamic>);
+      return apiResponse.when(
+        success: (user, _) => user,
+        error: (message, _) => throw AuthException(message),
+      );
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         await _secureStorage.deleteTokens();
         throw AuthException('Session expired');
       }
-      throw AuthException(
-        e.response?.data?['message'] as String? ?? 'Network error',
-      );
+      throw _handleDioError(e);
     }
   }
 
@@ -87,36 +89,53 @@ class AuthRepository {
         throw AuthException('No refresh token available');
       }
 
+      final request = RefreshTokenRequest(refreshToken: currentRefreshToken);
+
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiConstants.refresh,
-        data: {'refresh_token': currentRefreshToken},
+        data: request.toJson(),
       );
 
-      final data = response.data!;
-      if (data['success'] != true) {
-        throw AuthException('Failed to refresh token');
-      }
-
-      final authResponse = AuthResponse.fromJson(
-        data['data'] as Map<String, dynamic>,
+      final apiResponse = ApiResponse.fromJson(
+        response.data!,
+        (json) => AuthResponse.fromJson(json! as Map<String, dynamic>),
       );
 
-      await _secureStorage.saveTokens(
-        accessToken: authResponse.accessToken,
-        refreshToken: authResponse.refreshToken,
+      return apiResponse.when(
+        success: (authResponse, _) async {
+          await _secureStorage.saveTokens(
+            accessToken: authResponse.accessToken,
+            refreshToken: authResponse.refreshToken,
+          );
+          return authResponse.user;
+        },
+        error: (message, _) {
+          _secureStorage.deleteTokens();
+          throw AuthException(message);
+        },
       );
-
-      return authResponse.user;
     } on DioException catch (e) {
       await _secureStorage.deleteTokens();
-      throw AuthException(
-        e.response?.data?['message'] as String? ?? 'Session expired',
-      );
+      throw _handleDioError(e, fallbackMessage: 'Session expired');
     }
   }
 
   Future<bool> hasToken() async {
     return _secureStorage.hasToken();
+  }
+
+  AuthException _handleDioError(
+    DioException e, {
+    String fallbackMessage = 'Network error',
+  }) {
+    final data = e.response?.data;
+    if (data is Map<String, dynamic>) {
+      final message = data['message'] as String?;
+      if (message != null) {
+        return AuthException(message);
+      }
+    }
+    return AuthException(fallbackMessage);
   }
 }
 

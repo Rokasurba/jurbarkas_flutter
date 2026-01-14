@@ -24,9 +24,9 @@ class HomeView extends StatelessWidget {
             builder: (context, state) {
               return PopupMenuButton<String>(
                 icon: const Icon(Icons.account_circle),
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 'logout') {
-                    context.read<AuthCubit>().logout();
+                    await context.read<AuthCubit>().logout();
                   }
                 },
                 itemBuilder: (context) => [
