@@ -22,12 +22,11 @@ class AuthCubit extends Cubit<AuthState> {
       return;
     }
 
-    try {
-      final user = await _authRepository.getCurrentUser();
-      emit(AuthState.authenticated(user));
-    } on AuthException {
-      emit(const AuthState.unauthenticated());
-    }
+    final response = await _authRepository.getCurrentUser();
+    response.when(
+      success: (user, _) => emit(AuthState.authenticated(user)),
+      error: (_, __) => emit(const AuthState.unauthenticated()),
+    );
   }
 
   Future<void> login({
@@ -36,34 +35,29 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(const AuthState.loading());
 
-    try {
-      final user = await _authRepository.login(
-        email: email,
-        password: password,
-      );
-      emit(AuthState.authenticated(user));
-    } on AuthException catch (e) {
-      emit(AuthState.error(e.message));
-    }
+    final response = await _authRepository.login(
+      email: email,
+      password: password,
+    );
+
+    response.when(
+      success: (user, _) => emit(AuthState.authenticated(user)),
+      error: (message, _) => emit(AuthState.error(message)),
+    );
   }
 
   Future<void> logout() async {
     emit(const AuthState.loading());
-
-    try {
-      await _authRepository.logout();
-    } finally {
-      emit(const AuthState.unauthenticated());
-    }
+    await _authRepository.logout();
+    emit(const AuthState.unauthenticated());
   }
 
   Future<void> refreshToken() async {
-    try {
-      final user = await _authRepository.refreshToken();
-      emit(AuthState.authenticated(user));
-    } on AuthException {
-      emit(const AuthState.unauthenticated());
-    }
+    final response = await _authRepository.refreshToken();
+    response.when(
+      success: (user, _) => emit(AuthState.authenticated(user)),
+      error: (_, __) => emit(const AuthState.unauthenticated()),
+    );
   }
 
   void clearError() {

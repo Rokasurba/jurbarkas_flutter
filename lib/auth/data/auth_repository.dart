@@ -18,7 +18,7 @@ class AuthRepository {
   final ApiClient _apiClient;
   final SecureStorage _secureStorage;
 
-  Future<User> login({
+  Future<ApiResponse<User>> login({
     required String email,
     required String password,
   }) async {
@@ -36,17 +36,20 @@ class AuthRepository {
       );
 
       return apiResponse.when(
-        success: (authResponse, _) async {
+        success: (authResponse, message) async {
           await _secureStorage.saveTokens(
             accessToken: authResponse.accessToken,
             refreshToken: authResponse.refreshToken,
           );
-          return authResponse.user;
+          return ApiResponse.success(data: authResponse.user, message: message);
         },
-        error: (message, _) => throw AuthException(message),
+        error: (message, errors) => ApiResponse.error(
+          message: message,
+          errors: errors,
+        ),
       );
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      return ApiResponse.error(message: _extractErrorMessage(e));
     }
   }
 
@@ -58,35 +61,29 @@ class AuthRepository {
     }
   }
 
-  Future<User> getCurrentUser() async {
+  Future<ApiResponse<User>> getCurrentUser() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
         ApiConstants.user,
       );
 
-      final apiResponse = ApiResponse.fromJson(
+      return ApiResponse.fromJson(
         response.data!,
         (json) => User.fromJson(json! as Map<String, dynamic>),
-      );
-
-      return apiResponse.when(
-        success: (user, _) => user,
-        error: (message, _) => throw AuthException(message),
       );
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         await _secureStorage.deleteTokens();
-        throw AuthException('Session expired');
       }
-      throw _handleDioError(e);
+      return ApiResponse.error(message: _extractErrorMessage(e));
     }
   }
 
-  Future<User> refreshToken() async {
+  Future<ApiResponse<User>> refreshToken() async {
     try {
       final currentRefreshToken = await _secureStorage.getRefreshToken();
       if (currentRefreshToken == null) {
-        throw AuthException('No refresh token available');
+        return const ApiResponse.error(message: 'No refresh token available');
       }
 
       final request = RefreshTokenRequest(refreshToken: currentRefreshToken);
@@ -102,21 +99,21 @@ class AuthRepository {
       );
 
       return apiResponse.when(
-        success: (authResponse, _) async {
+        success: (authResponse, message) async {
           await _secureStorage.saveTokens(
             accessToken: authResponse.accessToken,
             refreshToken: authResponse.refreshToken,
           );
-          return authResponse.user;
+          return ApiResponse.success(data: authResponse.user, message: message);
         },
-        error: (message, _) {
-          _secureStorage.deleteTokens();
-          throw AuthException(message);
+        error: (message, errors) async {
+          await _secureStorage.deleteTokens();
+          return ApiResponse.error(message: message, errors: errors);
         },
       );
     } on DioException catch (e) {
       await _secureStorage.deleteTokens();
-      throw _handleDioError(e, fallbackMessage: 'Session expired');
+      return ApiResponse.error(message: _extractErrorMessage(e));
     }
   }
 
@@ -124,26 +121,11 @@ class AuthRepository {
     return _secureStorage.hasToken();
   }
 
-  AuthException _handleDioError(
-    DioException e, {
-    String fallbackMessage = 'Network error',
-  }) {
+  String _extractErrorMessage(DioException e) {
     final data = e.response?.data;
     if (data is Map<String, dynamic>) {
-      final message = data['message'] as String?;
-      if (message != null) {
-        return AuthException(message);
-      }
+      return data['message'] as String? ?? 'Network error';
     }
-    return AuthException(fallbackMessage);
+    return 'Network error';
   }
-}
-
-class AuthException implements Exception {
-  AuthException(this.message);
-
-  final String message;
-
-  @override
-  String toString() => message;
 }
