@@ -1,0 +1,99 @@
+{
+    "@@locale": "en",
+    "counterAppBarTitle": "Counter",
+    "@counterAppBarTitle": {
+        "description": "Text shown in the AppBar of the Counter Page"
+    },
+    "appTitle": "Jurbarkas",
+    "@appTitle": {
+        "description": "The application title"
+    },
+    "loginTitle": "Login",
+    "@loginTitle": {
+        "description": "Login page title"
+    },
+    "emailLabel": "Email",
+    "@emailLabel": {
+        "description": "Email field label"
+    },
+    "passwordLabel": "Password",
+    "@passwordLabel": {
+        "description": "Password field label"
+    },
+    "loginButton": "Login",
+    "@loginButton": {
+        "description": "Login button text"
+    },
+    "forgotPassword": "Forgot password",
+    "@forgotPassword": {
+        "description": "Forgot password link text"
+    },
+    "registerLink": "Don't have an account? Register",
+    "@registerLink": {
+        "description": "Register link text"
+    },
+    "emailRequired": "Please enter your email",
+    "@emailRequired": {
+        "description": "Email required error message"
+    },
+    "emailInvalid": "Please enter a valid email",
+    "@emailInvalid": {
+        "description": "Email invalid error message"
+    },
+    "passwordRequired": "Please enter your password",
+    "@passwordRequired": {
+        "description": "Password required error message"
+    },
+    "logoutButton": "Logout",
+    "@logoutButton": {
+        "description": "Logout button text"
+    },
+    "welcomeMessage": "Welcome, {name}!",
+    "@welcomeMessage": {
+        "description": "Welcome message with user name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "John"
+            }
+        }
+    },
+    "roleLabel": "Role: {role}",
+    "@roleLabel": {
+        "description": "Role label with role name",
+        "placeholders": {
+            "role": {
+                "type": "String",
+                "example": "patient"
+            }
+        }
+    },
+    "rolePatient": "Patient",
+    "@rolePatient": {
+        "description": "Patient role name"
+    },
+    "roleDoctor": "Doctor",
+    "@roleDoctor": {
+        "description": "Doctor role name"
+    },
+    "roleAdmin": "Administrator",
+    "@roleAdmin": {
+        "description": "Admin role name"
+    },
+    "healthAppSubtitle": "Health monitoring app",
+    "@healthAppSubtitle": {
+        "description": "Health monitoring app subtitle"
+    },
+    "dashboardComingSoon": "Dashboard coming soon...",
+    "@dashboardComingSoon": {
+        "description": "Dashboard coming soon placeholder text"
+    },
+    "registerTitle": "Register",
+    "@registerTitle": {
+        "description": "Register page title"
+    },
+    "registerComingSoon": "Registration form coming soon...",
+    "@registerComingSoon": {
+        "description": "Register coming soon placeholder text"
+    }
+}

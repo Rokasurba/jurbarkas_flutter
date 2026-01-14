@@ -1,0 +1,99 @@
+{
+    "@@locale": "lt",
+    "counterAppBarTitle": "Skaitiklis",
+    "@counterAppBarTitle": {
+        "description": "Text shown in the AppBar of the Counter Page"
+    },
+    "appTitle": "Jurbarkas",
+    "@appTitle": {
+        "description": "The application title"
+    },
+    "loginTitle": "Prisijungimas",
+    "@loginTitle": {
+        "description": "Login page title"
+    },
+    "emailLabel": "El. paštas",
+    "@emailLabel": {
+        "description": "Email field label"
+    },
+    "passwordLabel": "Slaptažodis",
+    "@passwordLabel": {
+        "description": "Password field label"
+    },
+    "loginButton": "Prisijungti",
+    "@loginButton": {
+        "description": "Login button text"
+    },
+    "forgotPassword": "Pamiršau slaptažodį",
+    "@forgotPassword": {
+        "description": "Forgot password link text"
+    },
+    "registerLink": "Neturite paskyros? Registruotis",
+    "@registerLink": {
+        "description": "Register link text"
+    },
+    "emailRequired": "Įveskite el. paštą",
+    "@emailRequired": {
+        "description": "Email required error message"
+    },
+    "emailInvalid": "Įveskite teisingą el. paštą",
+    "@emailInvalid": {
+        "description": "Email invalid error message"
+    },
+    "passwordRequired": "Įveskite slaptažodį",
+    "@passwordRequired": {
+        "description": "Password required error message"
+    },
+    "logoutButton": "Atsijungti",
+    "@logoutButton": {
+        "description": "Logout button text"
+    },
+    "welcomeMessage": "Sveiki, {name}!",
+    "@welcomeMessage": {
+        "description": "Welcome message with user name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Jonas"
+            }
+        }
+    },
+    "roleLabel": "Rolė: {role}",
+    "@roleLabel": {
+        "description": "Role label with role name",
+        "placeholders": {
+            "role": {
+                "type": "String",
+                "example": "pacientas"
+            }
+        }
+    },
+    "rolePatient": "Pacientas",
+    "@rolePatient": {
+        "description": "Patient role name"
+    },
+    "roleDoctor": "Gydytojas",
+    "@roleDoctor": {
+        "description": "Doctor role name"
+    },
+    "roleAdmin": "Administratorius",
+    "@roleAdmin": {
+        "description": "Admin role name"
+    },
+    "healthAppSubtitle": "Sveikatos stebėjimo programa",
+    "@healthAppSubtitle": {
+        "description": "Health monitoring app subtitle"
+    },
+    "dashboardComingSoon": "Skydelis ruošiamas...",
+    "@dashboardComingSoon": {
+        "description": "Dashboard coming soon placeholder text"
+    },
+    "registerTitle": "Registracija",
+    "@registerTitle": {
+        "description": "Register page title"
+    },
+    "registerComingSoon": "Registracijos forma ruošiama...",
+    "@registerComingSoon": {
+        "description": "Register coming soon placeholder text"
+    }
+}
