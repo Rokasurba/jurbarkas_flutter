@@ -4,6 +4,7 @@ import 'package:frontend/auth/data/models/user_model.dart';
 part 'auth_response.freezed.dart';
 part 'auth_response.g.dart';
 
+/// Response model for authentication endpoints (login, register, refresh).
 @freezed
 class AuthResponse with _$AuthResponse {
   const factory AuthResponse({
@@ -16,20 +17,4 @@ class AuthResponse with _$AuthResponse {
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseFromJson(json);
-}
-
-@freezed
-class ApiResponse<T> with _$ApiResponse<T> {
-  const factory ApiResponse({
-    required bool success,
-    T? data,
-    String? message,
-    @Default([]) List<String> errors,
-  }) = _ApiResponse<T>;
-
-  factory ApiResponse.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
-  ) =>
-      _$ApiResponseFromJson(json, fromJsonT);
 }

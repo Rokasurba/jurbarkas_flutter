@@ -67,7 +67,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void clearError() {
-    if (state.status == AuthStatus.error) {
+    if (state is AuthError) {
       emit(const AuthState.unauthenticated());
     }
   }
