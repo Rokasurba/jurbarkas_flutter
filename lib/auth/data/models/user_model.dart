@@ -10,9 +10,9 @@ class User with _$User {
   const factory User({
     required int id,
     required String name,
-    @Default('') String surname,
     required String email,
     required String role,
+    @Default('') String surname,
     String? phone,
     @JsonKey(name: 'date_of_birth') String? dateOfBirth,
     @JsonKey(name: 'patient_code') String? patientCode,

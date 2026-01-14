@@ -35,7 +35,7 @@ class PatientDashboardView extends StatelessWidget {
                   if (value == 'logout') {
                     await context.read<AuthCubit>().logout();
                     if (context.mounted) {
-                      context.router.replaceAll([const LoginRoute()]);
+                      await context.router.replaceAll([const LoginRoute()]);
                     }
                   }
                 },
@@ -93,8 +93,8 @@ class PatientDashboardView extends StatelessWidget {
                 Text(
                   l10n.rolePatient,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey,
-                      ),
+                    color: Colors.grey,
+                  ),
                 ),
                 const SizedBox(height: 32),
                 Text(

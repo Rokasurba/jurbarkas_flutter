@@ -39,9 +39,9 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
       await context.read<AuthCubit>().login(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          );
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
     }
   }
 
@@ -51,13 +51,13 @@ class _LoginViewState extends State<LoginView> {
 
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          state.when(
+        listener: (context, state) async {
+          await state.when(
             initial: () {},
             loading: () {},
-            authenticated: (user) {
+            authenticated: (user) async {
               final homeRoute = context.read<AuthCubit>().getHomeRouteForRole();
-              context.router.replaceAll([homeRoute]);
+              await context.router.replaceAll([homeRoute]);
             },
             unauthenticated: () {},
             error: (message) {
@@ -100,8 +100,8 @@ class _LoginViewState extends State<LoginView> {
                       Text(
                         l10n.healthAppSubtitle,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey,
-                            ),
+                          color: Colors.grey,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 48),
@@ -192,8 +192,8 @@ class _LoginViewState extends State<LoginView> {
 
                       // Register link
                       TextButton(
-                        onPressed: () {
-                          context.router.push(const RegisterRoute());
+                        onPressed: () async {
+                          await context.router.push(const RegisterRoute());
                         },
                         child: Text(l10n.registerLink),
                       ),
