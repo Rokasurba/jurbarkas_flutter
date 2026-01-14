@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/core/constants/api_constants.dart';
+import 'package:frontend/core/data/api_response.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
 
 /// Callback when authentication fails and user needs to be logged out.
@@ -131,23 +132,28 @@ class _AuthInterceptor extends QueuedInterceptor {
         data: {'refresh_token': refreshToken},
       );
 
-      final data = response.data;
-      if (data == null || data['success'] != true) return false;
+      if (response.data == null) return false;
 
-      final responseData = data['data'] as Map<String, dynamic>?;
-      if (responseData == null) return false;
-
-      final newAccessToken = responseData['access_token'] as String?;
-      final newRefreshToken = responseData['refresh_token'] as String?;
-
-      if (newAccessToken == null || newRefreshToken == null) return false;
-
-      await secureStorage.saveTokens(
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
+      final apiResponse = ApiResponse.fromJson(
+        response.data!,
+        (json) => json! as Map<String, dynamic>,
       );
 
-      return true;
+      return apiResponse.when(
+        success: (data, _) async {
+          final newAccessToken = data['access_token'] as String?;
+          final newRefreshToken = data['refresh_token'] as String?;
+
+          if (newAccessToken == null || newRefreshToken == null) return false;
+
+          await secureStorage.saveTokens(
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+          );
+          return true;
+        },
+        error: (_, __) => false,
+      );
     } catch (_) {
       return false;
     } finally {
