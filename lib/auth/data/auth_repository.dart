@@ -3,10 +3,7 @@ import 'package:frontend/auth/data/models/auth_response.dart';
 import 'package:frontend/auth/data/models/login_request.dart';
 import 'package:frontend/auth/data/models/refresh_token_request.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
-import 'package:frontend/core/api/api_client.dart';
-import 'package:frontend/core/constants/api_constants.dart';
-import 'package:frontend/core/data/api_response.dart';
-import 'package:frontend/core/storage/secure_storage.dart';
+import 'package:frontend/core/core.dart';
 
 class AuthRepository {
   AuthRepository({
@@ -49,7 +46,7 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      return ApiResponse.error(message: _extractErrorMessage(e));
+      return ApiResponse.error(message: extractDioErrorMessage(e));
     }
   }
 
@@ -75,7 +72,7 @@ class AuthRepository {
       if (e.response?.statusCode == 401) {
         await _secureStorage.deleteTokens();
       }
-      return ApiResponse.error(message: _extractErrorMessage(e));
+      return ApiResponse.error(message: extractDioErrorMessage(e));
     }
   }
 
@@ -113,19 +110,11 @@ class AuthRepository {
       );
     } on DioException catch (e) {
       await _secureStorage.deleteTokens();
-      return ApiResponse.error(message: _extractErrorMessage(e));
+      return ApiResponse.error(message: extractDioErrorMessage(e));
     }
   }
 
   Future<bool> hasToken() async {
     return _secureStorage.hasToken();
-  }
-
-  String _extractErrorMessage(DioException e) {
-    final data = e.response?.data;
-    if (data is Map<String, dynamic>) {
-      return data['message'] as String? ?? 'Network error';
-    }
-    return 'Network error';
   }
 }

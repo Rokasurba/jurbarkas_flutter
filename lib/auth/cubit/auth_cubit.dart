@@ -25,7 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
     final response = await _authRepository.getCurrentUser();
     response.when(
       success: (user, _) => emit(AuthState.authenticated(user)),
-      error: (_, __) => emit(const AuthState.unauthenticated()),
+      error: (_, _) => emit(const AuthState.unauthenticated()),
     );
   }
 
@@ -56,7 +56,7 @@ class AuthCubit extends Cubit<AuthState> {
     final response = await _authRepository.refreshToken();
     response.when(
       success: (user, _) => emit(AuthState.authenticated(user)),
-      error: (_, __) => emit(const AuthState.unauthenticated()),
+      error: (_, _) => emit(const AuthState.unauthenticated()),
     );
   }
 
