@@ -95,5 +95,83 @@
     "registerComingSoon": "Registracijos forma ruošiama...",
     "@registerComingSoon": {
         "description": "Register coming soon placeholder text"
+    },
+    "forgotPasswordTitle": "Slaptažodžio atstatymas",
+    "@forgotPasswordTitle": {
+        "description": "Forgot password page title"
+    },
+    "forgotPasswordSubtitle": "Įveskite savo el. paštą ir atsiųsime patvirtinimo kodą",
+    "@forgotPasswordSubtitle": {
+        "description": "Forgot password page subtitle"
+    },
+    "sendCodeButton": "Siųsti kodą",
+    "@sendCodeButton": {
+        "description": "Send verification code button text"
+    },
+    "backToLoginLink": "Grįžti į prisijungimą",
+    "@backToLoginLink": {
+        "description": "Back to login link text"
+    },
+    "otpSentMessage": "Patvirtinimo kodas išsiųstas į jūsų el. paštą",
+    "@otpSentMessage": {
+        "description": "OTP sent success message"
+    },
+    "verifyCodeTitle": "Patvirtinkite kodą",
+    "@verifyCodeTitle": {
+        "description": "Verify OTP page title"
+    },
+    "verifyCodeSubtitle": "Įveskite 6 skaitmenų kodą, išsiųstą į {email}",
+    "@verifyCodeSubtitle": {
+        "description": "Verify OTP page subtitle with email",
+        "placeholders": {
+            "email": {
+                "type": "String",
+                "example": "jonas@example.com"
+            }
+        }
+    },
+    "verifyButton": "Patvirtinti",
+    "@verifyButton": {
+        "description": "Verify button text"
+    },
+    "cancelButton": "Atšaukti",
+    "@cancelButton": {
+        "description": "Cancel button text"
+    },
+    "otpExpiryHint": "Kodas galioja 15 minučių",
+    "@otpExpiryHint": {
+        "description": "OTP expiry hint text"
+    },
+    "newPasswordTitle": "Naujas slaptažodis",
+    "@newPasswordTitle": {
+        "description": "New password page title"
+    },
+    "newPasswordSubtitle": "Sukurkite naują slaptažodį savo paskyrai",
+    "@newPasswordSubtitle": {
+        "description": "New password page subtitle"
+    },
+    "newPasswordLabel": "Naujas slaptažodis",
+    "@newPasswordLabel": {
+        "description": "New password field label"
+    },
+    "confirmPasswordLabel": "Pakartokite slaptažodį",
+    "@confirmPasswordLabel": {
+        "description": "Confirm password field label"
+    },
+    "passwordMinLength": "Slaptažodis turi būti bent 8 simbolių",
+    "@passwordMinLength": {
+        "description": "Password minimum length error message"
+    },
+    "confirmPasswordRequired": "Pakartokite slaptažodį",
+    "@confirmPasswordRequired": {
+        "description": "Confirm password required error message"
+    },
+    "passwordsDoNotMatch": "Slaptažodžiai nesutampa",
+    "@passwordsDoNotMatch": {
+        "description": "Passwords do not match error message"
+    },
+    "savePasswordButton": "Išsaugoti",
+    "@savePasswordButton": {
+        "description": "Save password button text"
     }
 }

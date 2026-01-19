@@ -95,5 +95,83 @@
     "registerComingSoon": "Registration form coming soon...",
     "@registerComingSoon": {
         "description": "Register coming soon placeholder text"
+    },
+    "forgotPasswordTitle": "Reset Password",
+    "@forgotPasswordTitle": {
+        "description": "Forgot password page title"
+    },
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a verification code",
+    "@forgotPasswordSubtitle": {
+        "description": "Forgot password page subtitle"
+    },
+    "sendCodeButton": "Send Code",
+    "@sendCodeButton": {
+        "description": "Send verification code button text"
+    },
+    "backToLoginLink": "Back to login",
+    "@backToLoginLink": {
+        "description": "Back to login link text"
+    },
+    "otpSentMessage": "Verification code sent to your email",
+    "@otpSentMessage": {
+        "description": "OTP sent success message"
+    },
+    "verifyCodeTitle": "Verify Code",
+    "@verifyCodeTitle": {
+        "description": "Verify OTP page title"
+    },
+    "verifyCodeSubtitle": "Enter the 6-digit code sent to {email}",
+    "@verifyCodeSubtitle": {
+        "description": "Verify OTP page subtitle with email",
+        "placeholders": {
+            "email": {
+                "type": "String",
+                "example": "john@example.com"
+            }
+        }
+    },
+    "verifyButton": "Verify",
+    "@verifyButton": {
+        "description": "Verify button text"
+    },
+    "cancelButton": "Cancel",
+    "@cancelButton": {
+        "description": "Cancel button text"
+    },
+    "otpExpiryHint": "Code is valid for 15 minutes",
+    "@otpExpiryHint": {
+        "description": "OTP expiry hint text"
+    },
+    "newPasswordTitle": "New Password",
+    "@newPasswordTitle": {
+        "description": "New password page title"
+    },
+    "newPasswordSubtitle": "Create a new password for your account",
+    "@newPasswordSubtitle": {
+        "description": "New password page subtitle"
+    },
+    "newPasswordLabel": "New Password",
+    "@newPasswordLabel": {
+        "description": "New password field label"
+    },
+    "confirmPasswordLabel": "Confirm Password",
+    "@confirmPasswordLabel": {
+        "description": "Confirm password field label"
+    },
+    "passwordMinLength": "Password must be at least 8 characters",
+    "@passwordMinLength": {
+        "description": "Password minimum length error message"
+    },
+    "confirmPasswordRequired": "Please confirm your password",
+    "@confirmPasswordRequired": {
+        "description": "Confirm password required error message"
+    },
+    "passwordsDoNotMatch": "Passwords do not match",
+    "@passwordsDoNotMatch": {
+        "description": "Passwords do not match error message"
+    },
+    "savePasswordButton": "Save",
+    "@savePasswordButton": {
+        "description": "Save password button text"
     }
 }

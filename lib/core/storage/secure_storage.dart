@@ -8,6 +8,8 @@ class SecureStorage {
 
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
+  static const _resetEmailKey = 'reset_email';
+  static const _resetTokenKey = 'reset_token';
 
   Future<void> saveTokens({
     required String accessToken,
@@ -41,5 +43,31 @@ class SecureStorage {
 
   Future<void> clearAll() async {
     await _storage.deleteAll();
+  }
+
+  // Password Reset Methods
+  Future<void> savePasswordResetData({
+    required String email,
+    String? resetToken,
+  }) async {
+    await _storage.write(key: _resetEmailKey, value: email);
+    if (resetToken != null) {
+      await _storage.write(key: _resetTokenKey, value: resetToken);
+    }
+  }
+
+  Future<String?> getResetEmail() async {
+    return _storage.read(key: _resetEmailKey);
+  }
+
+  Future<String?> getResetToken() async {
+    return _storage.read(key: _resetTokenKey);
+  }
+
+  Future<void> clearPasswordResetData() async {
+    await Future.wait([
+      _storage.delete(key: _resetEmailKey),
+      _storage.delete(key: _resetTokenKey),
+    ]);
   }
 }

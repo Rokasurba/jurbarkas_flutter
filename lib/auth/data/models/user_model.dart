@@ -5,7 +5,6 @@ part 'user_model.g.dart';
 
 @freezed
 class User with _$User {
-  const User._();
 
   const factory User({
     required int id,
@@ -18,6 +17,7 @@ class User with _$User {
     @JsonKey(name: 'patient_code') String? patientCode,
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
   }) = _User;
+  const User._();
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

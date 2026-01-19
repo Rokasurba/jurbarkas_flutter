@@ -3,12 +3,11 @@ import 'package:frontend/core/api/auth_interceptor.dart';
 import 'package:frontend/core/constants/api_constants.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
 
-export 'auth_interceptor.dart' show OnAuthenticationFailed;
+export 'auth_event_controller.dart';
 
 class ApiClient {
   ApiClient({
     required SecureStorage secureStorage,
-    OnAuthenticationFailed? onAuthenticationFailed,
     Dio? dio,
   })  : _secureStorage = secureStorage,
         _dio = dio ?? Dio() {
@@ -21,7 +20,6 @@ class ApiClient {
     _dio.interceptors.add(AuthInterceptor(
       secureStorage: _secureStorage,
       dio: _dio,
-      onAuthenticationFailed: onAuthenticationFailed,
     ));
   }
 

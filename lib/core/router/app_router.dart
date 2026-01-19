@@ -1,9 +1,14 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/admin/view/admin_dashboard_page.dart';
 import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/auth/view/login_page.dart';
 import 'package:frontend/auth/view/register_page.dart';
 import 'package:frontend/doctor/view/doctor_dashboard_page.dart';
+import 'package:frontend/password_reset/cubit/password_reset_cubit.dart';
+import 'package:frontend/password_reset/view/forgot_password_page.dart';
+import 'package:frontend/password_reset/view/new_password_page.dart';
+import 'package:frontend/password_reset/view/otp_verification_page.dart';
 import 'package:frontend/patient/view/patient_dashboard_page.dart';
 
 part 'app_router.gr.dart';
@@ -23,6 +28,18 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: '/register',
           page: RegisterRoute.page,
+        ),
+        AutoRoute(
+          path: '/forgot-password',
+          page: ForgotPasswordRoute.page,
+        ),
+        AutoRoute(
+          path: '/verify-otp',
+          page: OtpVerificationRoute.page,
+        ),
+        AutoRoute(
+          path: '/new-password',
+          page: NewPasswordRoute.page,
         ),
         AutoRoute(
           path: '/patient',
@@ -57,7 +74,7 @@ class AuthGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (authCubit.state.isAuthenticated) {
-      resolver.next(true);
+      resolver.next();
     } else {
       resolver.redirect(const LoginRoute());
     }

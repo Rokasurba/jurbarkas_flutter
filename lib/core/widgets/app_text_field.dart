@@ -1,0 +1,202 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:frontend/core/utils/validators.dart';
+import 'package:frontend/l10n/l10n.dart';
+
+/// Reusable email text field with built-in validation.
+class AppEmailField extends StatelessWidget {
+  const AppEmailField({
+    required this.controller,
+    this.focusNode,
+    this.onFieldSubmitted,
+    this.textInputAction = TextInputAction.next,
+    this.enabled = true,
+    this.autofocus = false,
+    super.key,
+  });
+
+  final TextEditingController controller;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextInputAction textInputAction;
+  final bool enabled;
+  final bool autofocus;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: textInputAction,
+      autofocus: autofocus,
+      enabled: enabled,
+      autocorrect: false,
+      onFieldSubmitted: onFieldSubmitted,
+      decoration: InputDecoration(
+        labelText: l10n.emailLabel,
+        prefixIcon: const Icon(Icons.email_outlined),
+        border: const OutlineInputBorder(),
+      ),
+      validator: AppValidators.email(context),
+    );
+  }
+}
+
+/// Reusable password text field with visibility toggle.
+class AppPasswordField extends StatefulWidget {
+  const AppPasswordField({
+    required this.controller,
+    this.focusNode,
+    this.labelText,
+    this.onFieldSubmitted,
+    this.textInputAction = TextInputAction.done,
+    this.validator,
+    this.enabled = true,
+    this.autofocus = false,
+    super.key,
+  });
+
+  final TextEditingController controller;
+  final FocusNode? focusNode;
+  final String? labelText;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextInputAction textInputAction;
+  final FormFieldValidator<String>? validator;
+  final bool enabled;
+  final bool autofocus;
+
+  @override
+  State<AppPasswordField> createState() => _AppPasswordFieldState();
+}
+
+class _AppPasswordFieldState extends State<AppPasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      obscureText: _obscureText,
+      textInputAction: widget.textInputAction,
+      autofocus: widget.autofocus,
+      enabled: widget.enabled,
+      onFieldSubmitted: widget.onFieldSubmitted,
+      decoration: InputDecoration(
+        labelText: widget.labelText ?? l10n.passwordLabel,
+        prefixIcon: const Icon(Icons.lock_outlined),
+        border: const OutlineInputBorder(),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
+          ),
+          onPressed: () => setState(() => _obscureText = !_obscureText),
+        ),
+      ),
+      validator: widget.validator ?? AppValidators.password(context),
+    );
+  }
+}
+
+/// Reusable confirm password field that validates against
+/// another password controller.
+class AppConfirmPasswordField extends StatefulWidget {
+  const AppConfirmPasswordField({
+    required this.controller,
+    required this.passwordController,
+    this.focusNode,
+    this.onFieldSubmitted,
+    this.textInputAction = TextInputAction.done,
+    this.enabled = true,
+    super.key,
+  });
+
+  final TextEditingController controller;
+  final TextEditingController passwordController;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextInputAction textInputAction;
+  final bool enabled;
+
+  @override
+  State<AppConfirmPasswordField> createState() =>
+      _AppConfirmPasswordFieldState();
+}
+
+class _AppConfirmPasswordFieldState extends State<AppConfirmPasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      obscureText: _obscureText,
+      textInputAction: widget.textInputAction,
+      enabled: widget.enabled,
+      onFieldSubmitted: widget.onFieldSubmitted,
+      decoration: InputDecoration(
+        labelText: l10n.confirmPasswordLabel,
+        prefixIcon: const Icon(Icons.lock_outlined),
+        border: const OutlineInputBorder(),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
+          ),
+          onPressed: () => setState(() => _obscureText = !_obscureText),
+        ),
+      ),
+      validator: AppValidators.confirmPassword(
+        context,
+        widget.passwordController,
+      ),
+    );
+  }
+}
+
+/// Reusable OTP input field for single digit.
+class AppOtpDigitField extends StatelessWidget {
+  const AppOtpDigitField({
+    required this.controller,
+    required this.focusNode,
+    required this.onChanged,
+    this.enabled = true,
+    super.key,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final ValueChanged<String> onChanged;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      child: TextFormField(
+        controller: controller,
+        focusNode: focusNode,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+        enabled: enabled,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: const InputDecoration(
+          counterText: '',
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(vertical: 16),
+        ),
+        style: Theme.of(context).textTheme.headlineSmall,
+        onChanged: onChanged,
+      ),
+    );
+  }
+}

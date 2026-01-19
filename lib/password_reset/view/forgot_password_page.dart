@@ -1,45 +1,48 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:frontend/password_reset/cubit/password_reset_cubit.dart';
+import 'package:frontend/password_reset/data/password_reset_repository.dart';
 
 @RoutePage()
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const LoginView();
+    return BlocProvider(
+      create: (context) => PasswordResetCubit(
+        passwordResetRepository: context.read<PasswordResetRepository>(),
+      ),
+      child: const ForgotPasswordView(),
+    );
   }
 }
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class ForgotPasswordView extends StatefulWidget {
+  const ForgotPasswordView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleSendCode() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await context.read<AuthCubit>().login(
+      await context.read<PasswordResetCubit>().sendOtp(
             email: _emailController.text.trim(),
-            password: _passwordController.text,
           );
     }
   }
@@ -49,19 +52,33 @@ class _LoginViewState extends State<LoginView> {
     final l10n = context.l10n;
 
     return Scaffold(
-      body: BlocConsumer<AuthCubit, AuthState>(
+      appBar: AppBar(
+        title: Text(l10n.forgotPasswordTitle),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.router.maybePop(),
+        ),
+      ),
+      body: BlocConsumer<PasswordResetCubit, PasswordResetState>(
         listener: (context, state) async {
           await state.when(
             initial: () {},
             loading: () {},
-            authenticated: (user) async {
-              final homeRoute = context.read<AuthCubit>().getHomeRouteForRole();
-              await context.router.replaceAll([homeRoute]);
+            otpSent: (message) async {
+              context.showSuccessSnackbar(
+                message.isNotEmpty ? message : l10n.otpSentMessage,
+              );
+              await context.router.push(
+                OtpVerificationRoute(
+                  cubit: context.read<PasswordResetCubit>(),
+                ),
+              );
             },
-            unauthenticated: () {},
-            error: (message) {
+            otpVerified: () {},
+            success: (_) {},
+            error: (message) async {
               context.showErrorSnackbar(message);
-              context.read<AuthCubit>().clearError();
+              await context.read<PasswordResetCubit>().clearError();
             },
           );
         },
@@ -79,54 +96,35 @@ class _LoginViewState extends State<LoginView> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Icon(
-                        Icons.local_hospital,
+                        Icons.lock_reset,
                         size: 80,
                         color: context.primaryColor,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       Text(
-                        l10n.appTitle,
+                        l10n.forgotPasswordTitle,
                         style: context.headlineMedium,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        l10n.healthAppSubtitle,
+                        l10n.forgotPasswordSubtitle,
                         style: context.bodyMedium?.copyWith(
                           color: Colors.grey,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 32),
                       AppEmailField(
                         controller: _emailController,
-                        enabled: !state.isLoading,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _handleSendCode(),
                       ),
-                      const SizedBox(height: 16),
-                      AppPasswordField(
-                        controller: _passwordController,
-                        onFieldSubmitted: (_) => _handleLogin(),
-                        enabled: !state.isLoading,
-                        validator: AppValidators.required(
-                          l10n.passwordRequired,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () async {
-                            await context.router
-                                .push(const ForgotPasswordRoute());
-                          },
-                          child: Text(l10n.forgotPassword),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       SizedBox(
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: state.isLoading ? null : _handleLogin,
+                          onPressed: state.isLoading ? null : _handleSendCode,
                           child: state.isLoading
                               ? const SizedBox(
                                   height: 20,
@@ -135,15 +133,13 @@ class _LoginViewState extends State<LoginView> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : Text(l10n.loginButton),
+                              : Text(l10n.sendCodeButton),
                         ),
                       ),
                       const SizedBox(height: 16),
                       TextButton(
-                        onPressed: () async {
-                          await context.router.push(const RegisterRoute());
-                        },
-                        child: Text(l10n.registerLink),
+                        onPressed: () => context.router.maybePop(),
+                        child: Text(l10n.backToLoginLink),
                       ),
                     ],
                   ),

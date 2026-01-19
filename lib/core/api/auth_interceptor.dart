@@ -1,27 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:frontend/core/api/auth_event_controller.dart';
 import 'package:frontend/core/constants/api_constants.dart';
 import 'package:frontend/core/data/api_response.dart';
 import 'package:frontend/core/data/models/token_response.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
 
-/// Callback when authentication fails and user needs to be logged out.
-typedef OnAuthenticationFailed = void Function();
-
 /// Interceptor that handles authentication token management.
 /// - Adds Bearer token to requests
 /// - Automatically refreshes token on 401 errors
 /// - Retries failed requests with new token
-/// - Notifies app when authentication fails completely
+/// - Emits event via AuthEventController when authentication fails completely
 class AuthInterceptor extends QueuedInterceptor {
   AuthInterceptor({
     required this.secureStorage,
     required this.dio,
-    this.onAuthenticationFailed,
   });
 
   final SecureStorage secureStorage;
   final Dio dio;
-  final OnAuthenticationFailed? onAuthenticationFailed;
 
   bool _isRefreshing = false;
 
@@ -119,6 +115,6 @@ class AuthInterceptor extends QueuedInterceptor {
 
   Future<void> _handleAuthenticationFailure() async {
     await secureStorage.deleteTokens();
-    onAuthenticationFailed?.call();
+    AuthEventController.instance.emitAuthenticationFailed();
   }
 }
