@@ -11,6 +11,7 @@ dependencies:
   auto_route: ^9.2.2
   bloc: ^9.0.1
   dio: ^5.9.0
+  envied: ^1.1.1
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -25,6 +26,7 @@ dev_dependencies:
   auto_route_generator: ^9.0.0
   bloc_test: ^10.0.0
   build_runner: ^2.4.13
+  envied_generator: ^1.1.1
   flutter_test:
     sdk: flutter
   freezed: ^2.5.7

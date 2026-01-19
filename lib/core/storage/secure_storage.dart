@@ -22,11 +22,20 @@ class SecureStorage {
   }
 
   Future<String?> getAccessToken() async {
-    return _storage.read(key: _accessTokenKey);
+    try {
+      return await _storage.read(key: _accessTokenKey);
+    } on Exception {
+      // flutter_secure_storage can throw on web when storage is not available
+      return null;
+    }
   }
 
   Future<String?> getRefreshToken() async {
-    return _storage.read(key: _refreshTokenKey);
+    try {
+      return await _storage.read(key: _refreshTokenKey);
+    } on Exception {
+      return null;
+    }
   }
 
   Future<void> deleteTokens() async {

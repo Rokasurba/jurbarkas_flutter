@@ -122,3 +122,8 @@ lib/l10n/gen/
 *.freezed.dart
 *.g.dart
 lib/core/router/app_router.gr.dart
+
+# Environment files (keep .env.example as template)
+.env
+.env.*
+!.env.example

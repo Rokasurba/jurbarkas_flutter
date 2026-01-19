@@ -1,34 +1,75 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch development",
+      "name": "Development (Web)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_development.dart",
-      "args": [
-        "--flavor",
-        "development",
-        "--target",
-        "lib/main_development.dart"
-      ]
+      "args": ["-d", "chrome"]
     },
     {
-      "name": "Launch staging",
+      "name": "Development (iOS)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_development.dart",
+      "args": ["-d", "ios"]
+    },
+    {
+      "name": "Development (Android)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_development.dart",
+      "args": ["-d", "android"]
+    },
+    {
+      "name": "Development (macOS)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_development.dart",
+      "args": ["-d", "macos"]
+    },
+    {
+      "name": "Staging (Web)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_staging.dart",
-      "args": ["--flavor", "staging", "--target", "lib/main_staging.dart"]
+      "args": ["-d", "chrome"]
     },
     {
-      "name": "Launch production",
+      "name": "Staging (iOS)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart",
+      "args": ["-d", "ios"]
+    },
+    {
+      "name": "Staging (Android)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart",
+      "args": ["-d", "android"]
+    },
+    {
+      "name": "Production (Web)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_production.dart",
-      "args": ["--flavor", "production", "--target", "lib/main_production.dart"]
+      "args": ["-d", "chrome"]
+    },
+    {
+      "name": "Production (iOS)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_production.dart",
+      "args": ["-d", "ios"]
+    },
+    {
+      "name": "Production (Android)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_production.dart",
+      "args": ["-d", "android"]
     }
   ]
 }

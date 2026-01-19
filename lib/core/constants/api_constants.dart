@@ -1,5 +1,8 @@
+import 'package:frontend/core/config/config.dart';
+
 abstract class ApiConstants {
-  static const String baseUrl = 'http://localhost:8000/api';
+  /// Base URL loaded from environment configuration
+  static String get baseUrl => AppConfig.apiBaseUrl;
 
   // Auth endpoints
   static const String login = '/auth/login';
