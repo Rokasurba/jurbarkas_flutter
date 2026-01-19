@@ -24,11 +24,15 @@
     "@loginButton": {
         "description": "Login button text"
     },
-    "forgotPassword": "Pamiršau slaptažodį",
+    "forgotPassword": "Pamiršote slaptažodį?",
     "@forgotPassword": {
         "description": "Forgot password link text"
     },
-    "registerLink": "Neturite paskyros? Registruotis",
+    "noAccountQuestion": "Neturite paskyros? ",
+    "@noAccountQuestion": {
+        "description": "No account question text"
+    },
+    "registerLink": "Registruotis",
     "@registerLink": {
         "description": "Register link text"
     },
@@ -92,9 +96,45 @@
     "@registerTitle": {
         "description": "Register page title"
     },
-    "registerComingSoon": "Registracijos forma ruošiama...",
-    "@registerComingSoon": {
-        "description": "Register coming soon placeholder text"
+    "registerSubtitle": "Sukurkite paskyrą, kad galėtumėte stebėti savo sveikatą",
+    "@registerSubtitle": {
+        "description": "Register page subtitle"
+    },
+    "nameLabel": "Vardas",
+    "@nameLabel": {
+        "description": "Name field label"
+    },
+    "surnameLabel": "Pavardė",
+    "@surnameLabel": {
+        "description": "Surname field label"
+    },
+    "phoneLabel": "Telefonas (neprivaloma)",
+    "@phoneLabel": {
+        "description": "Phone field label"
+    },
+    "dateOfBirthLabel": "Gimimo data (neprivaloma)",
+    "@dateOfBirthLabel": {
+        "description": "Date of birth field label"
+    },
+    "registerButton": "Registruotis",
+    "@registerButton": {
+        "description": "Register button text"
+    },
+    "nameRequired": "Įveskite vardą",
+    "@nameRequired": {
+        "description": "Name required error message"
+    },
+    "surnameRequired": "Įveskite pavardę",
+    "@surnameRequired": {
+        "description": "Surname required error message"
+    },
+    "alreadyHaveAccount": "Jau turite paskyrą? Prisijungti",
+    "@alreadyHaveAccount": {
+        "description": "Already have account link text"
+    },
+    "registrationSuccess": "Registracija sėkminga!",
+    "@registrationSuccess": {
+        "description": "Registration success message"
     },
     "forgotPasswordTitle": "Slaptažodžio atstatymas",
     "@forgotPasswordTitle": {
@@ -173,5 +213,77 @@
     "savePasswordButton": "Išsaugoti",
     "@savePasswordButton": {
         "description": "Save password button text"
+    },
+    "privacyPolicyConsent": "Sutinku su privatumo politika",
+    "@privacyPolicyConsent": {
+        "description": "Privacy policy consent checkbox label"
+    },
+    "privacyPolicyRequired": "Privalote sutikti su privatumo politika",
+    "@privacyPolicyRequired": {
+        "description": "Privacy policy consent required error message"
+    },
+    "bloodPressureTitle": "Kraujo spaudimas",
+    "@bloodPressureTitle": {
+        "description": "Blood pressure page title"
+    },
+    "bloodPressureHistorySection": "Senesni duomenys",
+    "@bloodPressureHistorySection": {
+        "description": "Blood pressure history section header"
+    },
+    "bloodPressureNewSection": "Nauja informacija",
+    "@bloodPressureNewSection": {
+        "description": "Blood pressure new entry section header"
+    },
+    "bloodPressureNewHint": "Pildykite dabar.",
+    "@bloodPressureNewHint": {
+        "description": "Blood pressure new entry hint"
+    },
+    "systolicLabel": "Sistolinis",
+    "@systolicLabel": {
+        "description": "Systolic blood pressure label"
+    },
+    "diastolicLabel": "Diastolinis",
+    "@diastolicLabel": {
+        "description": "Diastolic blood pressure label"
+    },
+    "mmHgUnit": "mmHg",
+    "@mmHgUnit": {
+        "description": "Blood pressure unit"
+    },
+    "saveButton": "Išsaugoti",
+    "@saveButton": {
+        "description": "Save button text"
+    },
+    "dataSaved": "Duomenys išsaugoti",
+    "@dataSaved": {
+        "description": "Data saved success message"
+    },
+    "checkValues": "Patikrinkite reikšmes",
+    "@checkValues": {
+        "description": "Invalid values error message"
+    },
+    "noDataYet": "Nėra duomenų",
+    "@noDataYet": {
+        "description": "No data placeholder text"
+    },
+    "addFirstReading": "Pridėkite pirmą įrašą",
+    "@addFirstReading": {
+        "description": "Add first reading prompt"
+    },
+    "systolicRequired": "Įveskite sistolinį spaudimą",
+    "@systolicRequired": {
+        "description": "Systolic required error"
+    },
+    "diastolicRequired": "Įveskite diastolinį spaudimą",
+    "@diastolicRequired": {
+        "description": "Diastolic required error"
+    },
+    "systolicRange": "Sistolinis: 60-250",
+    "@systolicRange": {
+        "description": "Systolic range hint"
+    },
+    "diastolicRange": "Diastolinis: 40-150",
+    "@diastolicRange": {
+        "description": "Diastolic range hint"
     }
 }

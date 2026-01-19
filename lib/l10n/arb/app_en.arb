@@ -24,11 +24,15 @@
     "@loginButton": {
         "description": "Login button text"
     },
-    "forgotPassword": "Forgot password",
+    "forgotPassword": "Forgot password?",
     "@forgotPassword": {
         "description": "Forgot password link text"
     },
-    "registerLink": "Don't have an account? Register",
+    "noAccountQuestion": "Don't have an account? ",
+    "@noAccountQuestion": {
+        "description": "No account question text"
+    },
+    "registerLink": "Register",
     "@registerLink": {
         "description": "Register link text"
     },
@@ -92,9 +96,45 @@
     "@registerTitle": {
         "description": "Register page title"
     },
-    "registerComingSoon": "Registration form coming soon...",
-    "@registerComingSoon": {
-        "description": "Register coming soon placeholder text"
+    "registerSubtitle": "Create an account to track your health",
+    "@registerSubtitle": {
+        "description": "Register page subtitle"
+    },
+    "nameLabel": "First Name",
+    "@nameLabel": {
+        "description": "Name field label"
+    },
+    "surnameLabel": "Last Name",
+    "@surnameLabel": {
+        "description": "Surname field label"
+    },
+    "phoneLabel": "Phone (optional)",
+    "@phoneLabel": {
+        "description": "Phone field label"
+    },
+    "dateOfBirthLabel": "Date of Birth (optional)",
+    "@dateOfBirthLabel": {
+        "description": "Date of birth field label"
+    },
+    "registerButton": "Register",
+    "@registerButton": {
+        "description": "Register button text"
+    },
+    "nameRequired": "Please enter your first name",
+    "@nameRequired": {
+        "description": "Name required error message"
+    },
+    "surnameRequired": "Please enter your last name",
+    "@surnameRequired": {
+        "description": "Surname required error message"
+    },
+    "alreadyHaveAccount": "Already have an account? Login",
+    "@alreadyHaveAccount": {
+        "description": "Already have account link text"
+    },
+    "registrationSuccess": "Registration successful!",
+    "@registrationSuccess": {
+        "description": "Registration success message"
     },
     "forgotPasswordTitle": "Reset Password",
     "@forgotPasswordTitle": {
@@ -173,5 +213,77 @@
     "savePasswordButton": "Save",
     "@savePasswordButton": {
         "description": "Save password button text"
+    },
+    "privacyPolicyConsent": "I agree to the Privacy Policy",
+    "@privacyPolicyConsent": {
+        "description": "Privacy policy consent checkbox label"
+    },
+    "privacyPolicyRequired": "You must agree to the Privacy Policy",
+    "@privacyPolicyRequired": {
+        "description": "Privacy policy consent required error message"
+    },
+    "bloodPressureTitle": "Blood Pressure",
+    "@bloodPressureTitle": {
+        "description": "Blood pressure page title"
+    },
+    "bloodPressureHistorySection": "Previous data",
+    "@bloodPressureHistorySection": {
+        "description": "Blood pressure history section header"
+    },
+    "bloodPressureNewSection": "New reading",
+    "@bloodPressureNewSection": {
+        "description": "Blood pressure new entry section header"
+    },
+    "bloodPressureNewHint": "Enter now.",
+    "@bloodPressureNewHint": {
+        "description": "Blood pressure new entry hint"
+    },
+    "systolicLabel": "Systolic",
+    "@systolicLabel": {
+        "description": "Systolic blood pressure label"
+    },
+    "diastolicLabel": "Diastolic",
+    "@diastolicLabel": {
+        "description": "Diastolic blood pressure label"
+    },
+    "mmHgUnit": "mmHg",
+    "@mmHgUnit": {
+        "description": "Blood pressure unit"
+    },
+    "saveButton": "Save",
+    "@saveButton": {
+        "description": "Save button text"
+    },
+    "dataSaved": "Data saved",
+    "@dataSaved": {
+        "description": "Data saved success message"
+    },
+    "checkValues": "Check values",
+    "@checkValues": {
+        "description": "Invalid values error message"
+    },
+    "noDataYet": "No data yet",
+    "@noDataYet": {
+        "description": "No data placeholder text"
+    },
+    "addFirstReading": "Add your first reading",
+    "@addFirstReading": {
+        "description": "Add first reading prompt"
+    },
+    "systolicRequired": "Enter systolic pressure",
+    "@systolicRequired": {
+        "description": "Systolic required error"
+    },
+    "diastolicRequired": "Enter diastolic pressure",
+    "@diastolicRequired": {
+        "description": "Diastolic required error"
+    },
+    "systolicRange": "Systolic: 60-250",
+    "@systolicRange": {
+        "description": "Systolic range hint"
+    },
+    "diastolicRange": "Diastolic: 40-150",
+    "@diastolicRange": {
+        "description": "Diastolic range hint"
     }
 }

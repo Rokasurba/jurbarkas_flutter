@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/auth/data/models/auth_response.dart';
 import 'package:frontend/auth/data/models/login_request.dart';
+import 'package:frontend/auth/data/models/register_request.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
 import 'package:frontend/core/core.dart';
 
@@ -23,6 +24,56 @@ class AuthRepository {
 
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiConstants.login,
+        data: request.toJson(),
+      );
+
+      final apiResponse = ApiResponse.fromJson(
+        response.data!,
+        (json) => AuthResponse.fromJson(json! as Map<String, dynamic>),
+      );
+
+      return apiResponse.when(
+        success: (authResponse, message) async {
+          await _secureStorage.saveTokens(
+            accessToken: authResponse.accessToken,
+            refreshToken: authResponse.refreshToken,
+          );
+          return ApiResponse.success(data: authResponse.user, message: message);
+        },
+        error: (message, errors) => ApiResponse.error(
+          message: message,
+          errors: errors,
+        ),
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
+  Future<ApiResponse<User>> register({
+    required String name,
+    required String surname,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+    required bool consent,
+    String? phone,
+    String? dateOfBirth,
+  }) async {
+    try {
+      final request = RegisterRequest(
+        name: name,
+        surname: surname,
+        email: email,
+        password: password,
+        passwordConfirmation: passwordConfirmation,
+        consent: consent,
+        phone: phone,
+        dateOfBirth: dateOfBirth,
+      );
+
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        ApiConstants.register,
         data: request.toJson(),
       );
 

@@ -2,74 +2,46 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Development (Web)",
+      "name": "Development",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_development.dart",
+      "args": ["--flavor", "development"]
+    },
+    {
+      "name": "Staging",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart",
+      "args": ["--flavor", "staging"]
+    },
+    {
+      "name": "Production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_production.dart",
+      "args": ["--flavor", "production"]
+    },
+    {
+      "name": "Development (Chrome)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_development.dart",
       "args": ["-d", "chrome"]
     },
     {
-      "name": "Development (iOS)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_development.dart",
-      "args": ["-d", "ios"]
-    },
-    {
-      "name": "Development (Android)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_development.dart",
-      "args": ["-d", "android"]
-    },
-    {
-      "name": "Development (macOS)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_development.dart",
-      "args": ["-d", "macos"]
-    },
-    {
-      "name": "Staging (Web)",
+      "name": "Staging (Chrome)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_staging.dart",
       "args": ["-d", "chrome"]
     },
     {
-      "name": "Staging (iOS)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_staging.dart",
-      "args": ["-d", "ios"]
-    },
-    {
-      "name": "Staging (Android)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_staging.dart",
-      "args": ["-d", "android"]
-    },
-    {
-      "name": "Production (Web)",
+      "name": "Production (Chrome)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_production.dart",
       "args": ["-d", "chrome"]
-    },
-    {
-      "name": "Production (iOS)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_production.dart",
-      "args": ["-d", "ios"]
-    },
-    {
-      "name": "Production (Android)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_production.dart",
-      "args": ["-d", "android"]
     }
   ]
 }

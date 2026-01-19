@@ -15,4 +15,7 @@ abstract class ApiConstants {
   static const String forgotPassword = '/auth/forgot-password';
   static const String verifyOtp = '/auth/verify-otp';
   static const String resetPassword = '/auth/reset-password';
+
+  // Health data endpoints
+  static const String bloodPressure = '/blood-pressure';
 }

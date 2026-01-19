@@ -3,6 +3,62 @@ import 'package:flutter/services.dart';
 import 'package:frontend/core/utils/validators.dart';
 import 'package:frontend/l10n/l10n.dart';
 
+/// Generic reusable text field with customizable properties.
+class AppTextField extends StatelessWidget {
+  const AppTextField({
+    required this.controller,
+    required this.labelText,
+    this.prefixIcon,
+    this.focusNode,
+    this.onFieldSubmitted,
+    this.validator,
+    this.keyboardType,
+    this.textInputAction = TextInputAction.next,
+    this.textCapitalization = TextCapitalization.none,
+    this.enabled = true,
+    this.autofocus = false,
+    this.autocorrect = true,
+    this.inputFormatters,
+    super.key,
+  });
+
+  final TextEditingController controller;
+  final String labelText;
+  final IconData? prefixIcon;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
+  final FormFieldValidator<String>? validator;
+  final TextInputType? keyboardType;
+  final TextInputAction textInputAction;
+  final TextCapitalization textCapitalization;
+  final bool enabled;
+  final bool autofocus;
+  final bool autocorrect;
+  final List<TextInputFormatter>? inputFormatters;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      textCapitalization: textCapitalization,
+      autofocus: autofocus,
+      enabled: enabled,
+      autocorrect: autocorrect,
+      onFieldSubmitted: onFieldSubmitted,
+      inputFormatters: inputFormatters,
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        border: const OutlineInputBorder(),
+      ),
+      validator: validator,
+    );
+  }
+}
+
 /// Reusable email text field with built-in validation.
 class AppEmailField extends StatelessWidget {
   const AppEmailField({
@@ -36,7 +92,6 @@ class AppEmailField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
         labelText: l10n.emailLabel,
-        prefixIcon: const Icon(Icons.email_outlined),
         border: const OutlineInputBorder(),
       ),
       validator: AppValidators.email(context),
@@ -87,7 +142,6 @@ class _AppPasswordFieldState extends State<AppPasswordField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
         labelText: widget.labelText ?? l10n.passwordLabel,
-        prefixIcon: const Icon(Icons.lock_outlined),
         border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
@@ -143,7 +197,6 @@ class _AppConfirmPasswordFieldState extends State<AppConfirmPasswordField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
         labelText: l10n.confirmPasswordLabel,
-        prefixIcon: const Icon(Icons.lock_outlined),
         border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
