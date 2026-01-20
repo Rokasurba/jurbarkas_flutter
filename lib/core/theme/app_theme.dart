@@ -50,6 +50,8 @@ class AppTheme {
         fillColor: AppColors.inputFill,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        suffixStyle: const TextStyle(color: AppColors.secondary),
+        suffixIconColor: AppColors.secondary,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -137,4 +139,18 @@ extension AppTextStyles on BuildContext {
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
   Color get primaryColor => colorScheme.primary;
   Color get errorColor => colorScheme.error;
+
+  /// Custom app styles
+  /// Section header style - size 20, semibold, primary color
+  TextStyle get sectionHeader => const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: AppColors.primary,
+      );
+
+  /// App bar title style - size 20, bold
+  TextStyle get appBarTitle => const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      );
 }

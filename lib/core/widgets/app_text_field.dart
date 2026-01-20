@@ -50,7 +50,7 @@ class AppTextField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
-        labelText: labelText,
+        hintText: labelText,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
       ),
       validator: validator,
@@ -90,7 +90,7 @@ class AppEmailField extends StatelessWidget {
       autocorrect: false,
       onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
-        labelText: l10n.emailLabel,
+        hintText: l10n.emailLabel,
       ),
       validator: AppValidators.email(context),
     );
@@ -139,7 +139,7 @@ class _AppPasswordFieldState extends State<AppPasswordField> {
       enabled: widget.enabled,
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
-        labelText: widget.labelText ?? l10n.passwordLabel,
+        hintText: widget.labelText ?? l10n.passwordLabel,
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText
@@ -193,7 +193,7 @@ class _AppConfirmPasswordFieldState extends State<AppConfirmPasswordField> {
       enabled: widget.enabled,
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
-        labelText: l10n.confirmPasswordLabel,
+        hintText: l10n.confirmPasswordLabel,
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText

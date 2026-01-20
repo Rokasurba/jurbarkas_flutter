@@ -459,5 +459,13 @@
     "retryButton": "Bandyti dar kartą",
     "@retryButton": {
         "description": "Retry button text for error states"
+    },
+    "dateLabel": "Data",
+    "@dateLabel": {
+        "description": "Date picker label"
+    },
+    "timeLabel": "Laikas",
+    "@timeLabel": {
+        "description": "Time picker label"
     }
 }

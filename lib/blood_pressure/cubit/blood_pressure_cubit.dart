@@ -54,6 +54,7 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
   Future<void> saveReading({
     required int systolic,
     required int diastolic,
+    required DateTime measuredAt,
   }) async {
     final currentReadings = state.readings;
     final currentHasMore = state.hasMore;
@@ -63,49 +64,15 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     final response = await _bloodPressureRepository.createReading(
       systolic: systolic,
       diastolic: diastolic,
+      measuredAt: measuredAt,
     );
 
     response.when(
       success: (reading, _) {
         final updatedReadings = [reading, ...currentReadings];
-        // Emit saved first for the listener to show snackbar and clear form
+        // Emit saved - listeners will show snackbar and clear form
+        // Then call clearSavedState() to transition to loaded
         emit(BloodPressureState.saved(reading, updatedReadings));
-        // Then immediately emit loaded to preserve the state
-        emit(BloodPressureState.loaded(updatedReadings, hasMore: currentHasMore));
-      },
-      error: (message, _) {
-        // On error, show failure then restore to loaded state with original data
-        emit(BloodPressureState.failure(message));
-        emit(BloodPressureState.loaded(currentReadings, hasMore: currentHasMore));
-      },
-    );
-  }
-
-  Future<void> updateReading({
-    required int id,
-    required int systolic,
-    required int diastolic,
-  }) async {
-    final currentReadings = state.readings;
-    final currentHasMore = state.hasMore;
-
-    emit(BloodPressureState.updating(currentReadings));
-
-    final response = await _bloodPressureRepository.updateReading(
-      id: id,
-      systolic: systolic,
-      diastolic: diastolic,
-    );
-
-    response.when(
-      success: (updatedReading, _) {
-        final updatedReadings = currentReadings.map((reading) {
-          return reading.id == id ? updatedReading : reading;
-        }).toList();
-        // Emit updated first for the listener to close sheet and show snackbar
-        emit(BloodPressureState.updated(updatedReading, updatedReadings));
-        // Then immediately emit loaded to preserve the state
-        emit(BloodPressureState.loaded(updatedReadings, hasMore: currentHasMore));
       },
       error: (message, _) {
         // On error, show failure then restore to loaded state with original data
@@ -124,7 +91,7 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     final response = await _bloodPressureRepository.deleteReading(id: id);
 
     response.when(
-      success: (_, __) {
+      success: (_, _) {
         final updatedReadings =
             currentReadings.where((reading) => reading.id != id).toList();
         // First emit deleted for the listener to show snackbar
@@ -144,18 +111,6 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     state.maybeWhen(
       saved: (_, readings) {
         // Preserve hasMore based on whether we had a full page of readings
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
-        emit(BloodPressureState.loaded(readings, hasMore: hasMore));
-      },
-      orElse: () {
-        emit(const BloodPressureState.initial());
-      },
-    );
-  }
-
-  void clearUpdatedState() {
-    state.maybeWhen(
-      updated: (_, readings) {
         final hasMore = readings.length >= PaginationParams.defaultPageSize;
         emit(BloodPressureState.loaded(readings, hasMore: hasMore));
       },

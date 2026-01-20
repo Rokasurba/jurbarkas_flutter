@@ -9,7 +9,6 @@ class BloodPressureHistory extends StatelessWidget {
     required this.readings,
     required this.isLoading,
     this.isLoadingMore = false,
-    this.onEdit,
     this.onDelete,
     super.key,
   });
@@ -17,7 +16,6 @@ class BloodPressureHistory extends StatelessWidget {
   final List<BloodPressureReading> readings;
   final bool isLoading;
   final bool isLoadingMore;
-  final void Function(BloodPressureReading reading)? onEdit;
   final void Function(BloodPressureReading reading)? onDelete;
 
   @override
@@ -29,9 +27,7 @@ class BloodPressureHistory extends StatelessWidget {
       children: [
         Text(
           l10n.bloodPressureHistorySection,
-          style: context.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: context.sectionHeader,
         ),
         const SizedBox(height: 16),
         if (isLoading)
@@ -54,7 +50,6 @@ class BloodPressureHistory extends StatelessWidget {
               return _ReadingCard(
                 reading: reading,
                 l10n: l10n,
-                onEdit: onEdit,
                 onDelete: onDelete,
               );
             },
@@ -119,16 +114,14 @@ class _ReadingCard extends StatelessWidget {
   const _ReadingCard({
     required this.reading,
     required this.l10n,
-    this.onEdit,
     this.onDelete,
   });
 
   final BloodPressureReading reading;
   final AppLocalizations l10n;
-  final void Function(BloodPressureReading reading)? onEdit;
   final void Function(BloodPressureReading reading)? onDelete;
 
-  bool get _canModify {
+  bool get _canDelete {
     final now = DateTime.now();
     final difference = now.difference(reading.measuredAt);
     return difference.inDays < 7;
@@ -138,7 +131,6 @@ class _ReadingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('yyyy-MM-dd');
     final timeFormat = DateFormat('HH:mm');
-    final showActions = _canModify && (onEdit != null || onDelete != null);
 
     return Card(
       color: Colors.white,
@@ -182,14 +174,7 @@ class _ReadingCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (showActions) ...[
-              IconButton(
-                onPressed: () => onEdit?.call(reading),
-                icon: const Icon(Icons.edit_outlined),
-                tooltip: l10n.editButton,
-                iconSize: 20,
-                visualDensity: VisualDensity.compact,
-              ),
+            if (_canDelete && onDelete != null)
               IconButton(
                 onPressed: () => onDelete?.call(reading),
                 icon: const Icon(Icons.delete_outline),
@@ -198,7 +183,6 @@ class _ReadingCard extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
                 color: AppColors.error,
               ),
-            ],
           ],
         ),
       ),

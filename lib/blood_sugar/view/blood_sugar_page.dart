@@ -7,8 +7,8 @@ import 'package:frontend/blood_sugar/cubit/blood_sugar_cubit.dart';
 import 'package:frontend/blood_sugar/data/models/blood_sugar_reading.dart';
 import 'package:frontend/blood_sugar/data/repositories/blood_sugar_repository.dart';
 import 'package:frontend/blood_sugar/widgets/blood_sugar_form.dart';
+import 'package:frontend/blood_sugar/widgets/blood_sugar_graph.dart';
 import 'package:frontend/blood_sugar/widgets/blood_sugar_history.dart';
-import 'package:frontend/blood_sugar/widgets/edit_blood_sugar_sheet.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 
@@ -40,18 +40,21 @@ class _BloodSugarView extends StatefulWidget {
   State<_BloodSugarView> createState() => _BloodSugarViewState();
 }
 
-class _BloodSugarViewState extends State<_BloodSugarView> {
+class _BloodSugarViewState extends State<_BloodSugarView>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
   final _scrollController = ScrollController();
-  final _formKey = GlobalKey<BloodSugarFormState>();
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -71,26 +74,11 @@ class _BloodSugarViewState extends State<_BloodSugarView> {
     return currentScroll >= (maxScroll * 0.9);
   }
 
-  void _onEdit(BloodSugarReading reading) {
-    EditBloodSugarSheet.show(
-      context,
-      reading: reading,
-      onUpdate: (glucoseLevel) {
-        unawaited(
-          context.read<BloodSugarCubit>().updateReading(
-                id: reading.id,
-                glucoseLevel: glucoseLevel,
-              ),
-        );
-      },
-      isLoading: false,
-    );
-  }
-
   void _onDelete(BloodSugarReading reading) {
     DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
+        Navigator.of(context).pop();
         unawaited(
           context.read<BloodSugarCubit>().deleteReading(id: reading.id),
         );
@@ -102,87 +90,138 @@ class _BloodSugarViewState extends State<_BloodSugarView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return BlocConsumer<BloodSugarCubit, BloodSugarState>(
+    return BlocListener<BloodSugarCubit, BloodSugarState>(
       listener: (context, state) {
         state.maybeWhen(
-          saved: (_, __) {
-            _formKey.currentState?.clearForm();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.dataSaved),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            context.read<BloodSugarCubit>().clearSavedState();
+          saved: (reading, readings) {
+            context.showSuccessSnackbar(l10n.dataSaved);
+            // Transition to loaded state after form has cleared
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<BloodSugarCubit>().clearSavedState();
+            });
           },
-          updated: (_, __) {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.dataUpdated),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            context.read<BloodSugarCubit>().clearUpdatedState();
-          },
-          deleted: (_) {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.dataDeleted),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            context.read<BloodSugarCubit>().clearDeletedState();
+          deleted: (readings) {
+            context.showSuccessSnackbar(l10n.dataDeleted);
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: context.errorColor,
-              ),
-            );
+            context.showErrorSnackbar(message);
           },
           orElse: () {},
         );
       },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: AppColors.secondary,
-            foregroundColor: Colors.white,
-            title: Text(l10n.bloodSugarTitle),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.secondary,
+          foregroundColor: Colors.white,
+          title: Text(
+            l10n.bloodSugarTitle,
+            style: context.appBarTitle,
           ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BloodSugarHistory(
-                    readings: state.readings,
-                    isLoading: state.isLoading,
-                    isLoadingMore: state.isLoadingMore,
-                    onEdit: _onEdit,
-                    onDelete: _onDelete,
-                  ),
-                  const SizedBox(height: 24),
-                  BloodSugarForm(
-                    key: _formKey,
-                    onSubmit: (glucoseLevel) {
-                      unawaited(
-                        context.read<BloodSugarCubit>().saveReading(
-                              glucoseLevel: glucoseLevel,
-                            ),
-                      );
-                    },
-                    isLoading: state.isSaving,
-                  ),
-                ],
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.white,
+            tabs: [
+              Tab(text: l10n.tabRecords),
+              Tab(text: l10n.tabGraph),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _RecordsTab(
+                scrollController: _scrollController,
+                onDelete: _onDelete,
               ),
+              const _GraphTab(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RecordsTab extends StatelessWidget {
+  const _RecordsTab({
+    required this.scrollController,
+    required this.onDelete,
+  });
+
+  final ScrollController scrollController;
+  final void Function(BloodSugarReading reading) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // History list with its own BlocBuilder
+        Expanded(
+          child: BlocBuilder<BloodSugarCubit, BloodSugarState>(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                child: BloodSugarHistory(
+                  readings: state.readings,
+                  isLoading: state.isLoading,
+                  isLoadingMore: state.isLoadingMore,
+                  onDelete: onDelete,
+                ),
+              );
+            },
+          ),
+        ),
+        // Form container
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: BlocSelector<BloodSugarCubit, BloodSugarState, bool>(
+              selector: (state) => state.isSaving,
+              builder: (context, isSaving) {
+                return BloodSugarForm(
+                  onSubmit: (glucoseLevel, measuredAt) {
+                    unawaited(
+                      context.read<BloodSugarCubit>().saveReading(
+                            glucoseLevel: glucoseLevel,
+                            measuredAt: measuredAt,
+                          ),
+                    );
+                  },
+                  isLoading: isSaving,
+                );
+              },
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _GraphTab extends StatelessWidget {
+  const _GraphTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BloodSugarCubit, BloodSugarState>(
+      builder: (context, state) {
+        return BloodSugarGraph(
+          readings: state.readings,
+          isLoading: state.isLoading,
         );
       },
     );

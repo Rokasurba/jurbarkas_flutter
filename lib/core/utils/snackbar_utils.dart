@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/app_colors.dart';
 
 /// Utility class for showing consistent snackbars across the app.
 class AppSnackbar {
   AppSnackbar._();
 
-  /// Shows a success snackbar with green background.
+  // Track last shown message to prevent duplicates
+  static String? _lastMessage;
+  static DateTime? _lastShownTime;
+
+  /// Shows a success snackbar with soft green background.
   static void showSuccess(BuildContext context, String message) {
     _show(
       context,
       message: message,
-      backgroundColor: Colors.green,
+      backgroundColor: AppColors.success,
       icon: Icons.check_circle_outline,
     );
   }
@@ -19,7 +24,7 @@ class AppSnackbar {
     _show(
       context,
       message: message,
-      backgroundColor: Colors.red,
+      backgroundColor: AppColors.error,
       icon: Icons.error_outline,
     );
   }
@@ -29,7 +34,7 @@ class AppSnackbar {
     _show(
       context,
       message: message,
-      backgroundColor: Colors.blue,
+      backgroundColor: AppColors.secondary,
       icon: Icons.info_outline,
     );
   }
@@ -51,6 +56,17 @@ class AppSnackbar {
     required IconData icon,
     Duration duration = const Duration(seconds: 3),
   }) {
+    // Prevent showing duplicate snackbars within 500ms
+    final now = DateTime.now();
+    if (_lastMessage == message &&
+        _lastShownTime != null &&
+        now.difference(_lastShownTime!).inMilliseconds < 500) {
+      return;
+    }
+
+    _lastMessage = message;
+    _lastShownTime = now;
+
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -72,7 +88,7 @@ class AppSnackbar {
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       );

@@ -53,13 +53,16 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
 
   Future<void> saveReading({
     required double glucoseLevel,
+    required DateTime measuredAt,
   }) async {
     final currentReadings = state.readings;
+    final currentHasMore = state.hasMore;
 
     emit(BloodSugarState.saving(currentReadings));
 
     final response = await _bloodSugarRepository.createReading(
       glucoseLevel: glucoseLevel,
+      measuredAt: measuredAt,
     );
 
     response.when(
@@ -67,36 +70,16 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
         final updatedReadings = [reading, ...currentReadings];
         emit(BloodSugarState.saved(reading, updatedReadings));
       },
-      error: (message, _) => emit(BloodSugarState.failure(message)),
-    );
-  }
-
-  Future<void> updateReading({
-    required int id,
-    required double glucoseLevel,
-  }) async {
-    final currentReadings = state.readings;
-
-    emit(BloodSugarState.updating(currentReadings));
-
-    final response = await _bloodSugarRepository.updateReading(
-      id: id,
-      glucoseLevel: glucoseLevel,
-    );
-
-    response.when(
-      success: (updatedReading, _) {
-        final updatedReadings = currentReadings.map((reading) {
-          return reading.id == id ? updatedReading : reading;
-        }).toList();
-        emit(BloodSugarState.updated(updatedReading, updatedReadings));
+      error: (message, _) {
+        emit(BloodSugarState.failure(message));
+        emit(BloodSugarState.loaded(currentReadings, hasMore: currentHasMore));
       },
-      error: (message, _) => emit(BloodSugarState.failure(message)),
     );
   }
 
   Future<void> deleteReading({required int id}) async {
     final currentReadings = state.readings;
+    final currentHasMore = state.hasMore;
 
     emit(BloodSugarState.deleting(currentReadings));
 
@@ -106,9 +89,15 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
       success: (_, __) {
         final updatedReadings =
             currentReadings.where((reading) => reading.id != id).toList();
+        // First emit deleted for the listener to show snackbar
         emit(BloodSugarState.deleted(updatedReadings));
+        // Then immediately emit loaded to preserve the state
+        emit(BloodSugarState.loaded(updatedReadings, hasMore: currentHasMore));
       },
-      error: (message, _) => emit(BloodSugarState.failure(message)),
+      error: (message, _) {
+        emit(BloodSugarState.failure(message));
+        emit(BloodSugarState.loaded(currentReadings, hasMore: currentHasMore));
+      },
     );
   }
 
@@ -125,27 +114,10 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
     );
   }
 
-  void clearUpdatedState() {
-    state.maybeWhen(
-      updated: (_, readings) {
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
-        emit(BloodSugarState.loaded(readings, hasMore: hasMore));
-      },
-      orElse: () {
-        emit(const BloodSugarState.initial());
-      },
-    );
-  }
-
   void clearDeletedState() {
-    state.maybeWhen(
-      deleted: (readings) {
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
-        emit(BloodSugarState.loaded(readings, hasMore: hasMore));
-      },
-      orElse: () {
-        emit(const BloodSugarState.initial());
-      },
-    );
+    // Always preserve current readings when clearing deleted state
+    final currentReadings = state.readings;
+    final hasMore = currentReadings.length >= PaginationParams.defaultPageSize;
+    emit(BloodSugarState.loaded(currentReadings, hasMore: hasMore));
   }
 }

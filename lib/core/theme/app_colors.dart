@@ -32,4 +32,7 @@ abstract class AppColors {
 
   /// Error color - used for destructive actions and errors.
   static const Color error = Color(0xFFDC3545);
+
+  /// Success color - soft green, easy on the eyes.
+  static const Color success = Color(0xFF4CAF50);
 }

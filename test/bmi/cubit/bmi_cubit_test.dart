@@ -14,14 +14,15 @@ class FakePaginationParams extends Fake implements PaginationParams {}
 void main() {
   setUpAll(() {
     registerFallbackValue(FakePaginationParams());
+    registerFallbackValue(DateTime(2026));
   });
   late MockBmiRepository mockRepository;
 
   final mockMeasurement = BmiMeasurement(
     id: 1,
     heightCm: 175,
-    weightKg: '70.00',
-    bmiValue: '22.86',
+    weightKg: 70.0,
+    bmiValue: 22.86,
     measuredAt: DateTime(2026, 1, 19, 14, 30),
   );
 
@@ -30,8 +31,8 @@ void main() {
     BmiMeasurement(
       id: 2,
       heightCm: 175,
-      weightKg: '72.00',
-      bmiValue: '23.51',
+      weightKg: 72.0,
+      bmiValue: 23.51,
       measuredAt: DateTime(2026, 1, 18, 10),
     ),
   ];
@@ -93,7 +94,11 @@ void main() {
         );
         return BmiCubit(bmiRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveMeasurement(heightCm: 175, weightKg: 70),
+      act: (cubit) => cubit.saveMeasurement(
+        heightCm: 175,
+        weightKg: 70,
+        measuredAt: DateTime(2026, 1, 19, 14, 30),
+      ),
       expect: () => [
         const BmiState.saving([]),
         BmiState.saved(mockMeasurement, [mockMeasurement]),
@@ -101,7 +106,7 @@ void main() {
     );
 
     blocTest<BmiCubit, BmiState>(
-      'emits [saving, failure] when saveMeasurement fails',
+      'emits [saving, failure, loaded] when saveMeasurement fails',
       build: () {
         when(
           () => mockRepository.createMeasurement(
@@ -114,10 +119,16 @@ void main() {
         );
         return BmiCubit(bmiRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveMeasurement(heightCm: 30, weightKg: 10),
+      act: (cubit) => cubit.saveMeasurement(
+        heightCm: 30,
+        weightKg: 10,
+        measuredAt: DateTime(2026, 1, 19),
+      ),
       expect: () => [
         const BmiState.saving([]),
         const BmiState.failure('Validation error'),
+        // Cubit restores to loaded state after failure
+        const BmiState.loaded([], hasMore: false),
       ],
     );
 
@@ -146,8 +157,8 @@ void main() {
             data: BmiMeasurement(
               id: 3,
               heightCm: 175,
-              weightKg: '71.00',
-              bmiValue: '23.18',
+              weightKg: 71.0,
+              bmiValue: 23.18,
               measuredAt: DateTime(2026, 1, 19, 15),
             ),
           ),
@@ -155,7 +166,11 @@ void main() {
         return BmiCubit(bmiRepository: mockRepository);
       },
       seed: () => BmiState.loaded(mockMeasurements),
-      act: (cubit) => cubit.saveMeasurement(heightCm: 175, weightKg: 71),
+      act: (cubit) => cubit.saveMeasurement(
+        heightCm: 175,
+        weightKg: 71,
+        measuredAt: DateTime(2026, 1, 19, 15),
+      ),
       expect: () => [
         BmiState.saving(mockMeasurements),
         isA<BmiSaved>()
@@ -173,8 +188,8 @@ void main() {
               BmiMeasurement(
                 id: 3,
                 heightCm: 175,
-                weightKg: '68.00',
-                bmiValue: '22.20',
+                weightKg: 68.0,
+                bmiValue: 22.20,
                 measuredAt: DateTime(2026, 1, 17, 10),
               ),
             ],

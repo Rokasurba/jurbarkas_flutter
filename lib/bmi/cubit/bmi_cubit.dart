@@ -55,6 +55,7 @@ class BmiCubit extends Cubit<BmiState> {
   Future<void> saveMeasurement({
     required int heightCm,
     required double weightKg,
+    required DateTime measuredAt,
   }) async {
     final currentMeasurements = state.measurements;
 
@@ -63,6 +64,7 @@ class BmiCubit extends Cubit<BmiState> {
     final response = await _bmiRepository.createMeasurement(
       heightCm: heightCm,
       weightKg: weightKg,
+      measuredAt: measuredAt,
     );
 
     response.when(
@@ -70,33 +72,13 @@ class BmiCubit extends Cubit<BmiState> {
         final updatedMeasurements = [measurement, ...currentMeasurements];
         emit(BmiState.saved(measurement, updatedMeasurements));
       },
-      error: (message, _) => emit(BmiState.failure(message)),
-    );
-  }
-
-  Future<void> updateMeasurement({
-    required int id,
-    required int heightCm,
-    required double weightKg,
-  }) async {
-    final currentMeasurements = state.measurements;
-
-    emit(BmiState.updating(currentMeasurements));
-
-    final response = await _bmiRepository.updateMeasurement(
-      id: id,
-      heightCm: heightCm,
-      weightKg: weightKg,
-    );
-
-    response.when(
-      success: (updatedMeasurement, _) {
-        final updatedMeasurements = currentMeasurements.map((measurement) {
-          return measurement.id == id ? updatedMeasurement : measurement;
-        }).toList();
-        emit(BmiState.updated(updatedMeasurement, updatedMeasurements));
+      error: (message, _) {
+        emit(BmiState.failure(message));
+        // Restore loaded state after failure
+        final hasMore =
+            currentMeasurements.length >= PaginationParams.defaultPageSize;
+        emit(BmiState.loaded(currentMeasurements, hasMore: hasMore));
       },
-      error: (message, _) => emit(BmiState.failure(message)),
     );
   }
 
@@ -122,18 +104,6 @@ class BmiCubit extends Cubit<BmiState> {
     state.maybeWhen(
       saved: (_, measurements) {
         // Preserve hasMore based on whether we had a full page of measurements
-        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
-        emit(BmiState.loaded(measurements, hasMore: hasMore));
-      },
-      orElse: () {
-        emit(const BmiState.initial());
-      },
-    );
-  }
-
-  void clearUpdatedState() {
-    state.maybeWhen(
-      updated: (_, measurements) {
         final hasMore = measurements.length >= PaginationParams.defaultPageSize;
         emit(BmiState.loaded(measurements, hasMore: hasMore));
       },

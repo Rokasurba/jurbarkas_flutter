@@ -459,5 +459,13 @@
     "retryButton": "Retry",
     "@retryButton": {
         "description": "Retry button text for error states"
+    },
+    "dateLabel": "Date",
+    "@dateLabel": {
+        "description": "Date picker label"
+    },
+    "timeLabel": "Time",
+    "@timeLabel": {
+        "description": "Time picker label"
     }
 }

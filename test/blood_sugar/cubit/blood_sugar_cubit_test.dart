@@ -14,12 +14,13 @@ class FakePaginationParams extends Fake implements PaginationParams {}
 void main() {
   setUpAll(() {
     registerFallbackValue(FakePaginationParams());
+    registerFallbackValue(DateTime(2026));
   });
   late MockBloodSugarRepository mockRepository;
 
   final mockReading = BloodSugarReading(
     id: 1,
-    glucoseLevel: '5.50',
+    glucoseLevel: 5.50,
     measuredAt: DateTime(2026, 1, 20, 14, 30),
   );
 
@@ -27,7 +28,7 @@ void main() {
     mockReading,
     BloodSugarReading(
       id: 2,
-      glucoseLevel: '6.20',
+      glucoseLevel: 6.20,
       measuredAt: DateTime(2026, 1, 19, 10),
     ),
   ];
@@ -46,8 +47,9 @@ void main() {
     blocTest<BloodSugarCubit, BloodSugarState>(
       'emits [loading, loaded] when loadHistory succeeds',
       build: () {
-        when(() => mockRepository.getHistory(params: any(named: 'params')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(params: any(named: 'params')),
+        ).thenAnswer(
           (_) async => ApiResponse.success(data: mockReadings),
         );
         return BloodSugarCubit(bloodSugarRepository: mockRepository);
@@ -62,8 +64,9 @@ void main() {
     blocTest<BloodSugarCubit, BloodSugarState>(
       'emits [loading, failure] when loadHistory fails',
       build: () {
-        when(() => mockRepository.getHistory(params: any(named: 'params')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(params: any(named: 'params')),
+        ).thenAnswer(
           (_) async => const ApiResponse.error(message: 'Network error'),
         );
         return BloodSugarCubit(bloodSugarRepository: mockRepository);
@@ -88,7 +91,10 @@ void main() {
         );
         return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveReading(glucoseLevel: 5.5),
+      act: (cubit) => cubit.saveReading(
+        glucoseLevel: 5.5,
+        measuredAt: DateTime(2026, 1, 20, 14, 30),
+      ),
       expect: () => [
         const BloodSugarState.saving([]),
         BloodSugarState.saved(mockReading, [mockReading]),
@@ -96,7 +102,7 @@ void main() {
     );
 
     blocTest<BloodSugarCubit, BloodSugarState>(
-      'emits [saving, failure] when saveReading fails',
+      'emits [saving, failure, loaded] when saveReading fails',
       build: () {
         when(
           () => mockRepository.createReading(
@@ -108,10 +114,15 @@ void main() {
         );
         return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveReading(glucoseLevel: 0.5),
+      act: (cubit) => cubit.saveReading(
+        glucoseLevel: 0.5,
+        measuredAt: DateTime(2026, 1, 20),
+      ),
       expect: () => [
         const BloodSugarState.saving([]),
         const BloodSugarState.failure('Validation error'),
+        // Cubit restores to loaded state after failure
+        const BloodSugarState.loaded([], hasMore: false),
       ],
     );
 
@@ -138,7 +149,7 @@ void main() {
           (_) async => ApiResponse.success(
             data: BloodSugarReading(
               id: 3,
-              glucoseLevel: '7.10',
+              glucoseLevel: 7.10,
               measuredAt: DateTime(2026, 1, 20, 15),
             ),
           ),
@@ -146,24 +157,31 @@ void main() {
         return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
       seed: () => BloodSugarState.loaded(mockReadings),
-      act: (cubit) => cubit.saveReading(glucoseLevel: 7.1),
+      act: (cubit) => cubit.saveReading(
+        glucoseLevel: 7.1,
+        measuredAt: DateTime(2026, 1, 20, 15),
+      ),
       expect: () => [
         BloodSugarState.saving(mockReadings),
-        isA<BloodSugarSaved>()
-            .having((s) => s.readings.length, 'readings length', 3),
+        isA<BloodSugarSaved>().having(
+          (s) => s.readings.length,
+          'readings length',
+          3,
+        ),
       ],
     );
 
     blocTest<BloodSugarCubit, BloodSugarState>(
       'loadMore appends new readings',
       build: () {
-        when(() => mockRepository.getHistory(params: any(named: 'params')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(params: any(named: 'params')),
+        ).thenAnswer(
           (_) async => ApiResponse.success(
             data: [
               BloodSugarReading(
                 id: 3,
-                glucoseLevel: '5.80',
+                glucoseLevel: 5.80,
                 measuredAt: DateTime(2026, 1, 18, 10),
               ),
             ],
@@ -186,7 +204,7 @@ void main() {
       build: () => BloodSugarCubit(bloodSugarRepository: mockRepository),
       seed: () => BloodSugarState.loaded(mockReadings, hasMore: false),
       act: (cubit) => cubit.loadMore(),
-      expect: () => [],
+      expect: () => <BloodSugarState>[],
     );
   });
 

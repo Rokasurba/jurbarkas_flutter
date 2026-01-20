@@ -5,6 +5,7 @@ import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -180,6 +181,8 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 16),
+                          const _AppVersionText(),
                         ],
                       ),
                     ),
@@ -192,14 +195,28 @@ class _LoginViewState extends State<LoginView> {
                 return Center(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(vertical: 32),
-                    child: Card(
-                      elevation: 8,
-                      shadowColor: AppColors.primary.withValues(alpha: 0.15),
-                      shape: RoundedRectangleBorder(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.08),
+                            blurRadius: 40,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 8),
+                          ),
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.12),
+                            blurRadius: 16,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 420),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
                         child: _buildWebContent(context, l10n, state),
                       ),
                     ),
@@ -321,6 +338,8 @@ extension _LoginViewHelpers on _LoginViewState {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                const _AppVersionText(),
               ],
             ),
           ),
@@ -339,6 +358,28 @@ class _LoginHeader extends StatelessWidget {
       Assets.logoBanner,
       fit: BoxFit.cover,
       width: double.infinity,
+    );
+  }
+}
+
+class _AppVersionText extends StatelessWidget {
+  const _AppVersionText();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<PackageInfo>(
+      future: PackageInfo.fromPlatform(),
+      builder: (context, snapshot) {
+        final version = snapshot.data?.version ?? '';
+        if (version.isEmpty) return const SizedBox.shrink();
+        return Text(
+          'v$version',
+          style: context.bodySmall?.copyWith(
+            color: AppColors.secondaryText.withValues(alpha: 0.6),
+          ),
+          textAlign: TextAlign.center,
+        );
+      },
     );
   }
 }

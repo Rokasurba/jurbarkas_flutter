@@ -35,14 +35,14 @@ void main() {
   final mockBmi = BmiMeasurement(
     id: 1,
     heightCm: 180,
-    weightKg: '75',
-    bmiValue: '23.15',
+    weightKg: 75.0,
+    bmiValue: 23.15,
     measuredAt: DateTime(2026, 1, 19, 14),
   );
 
   final mockBloodSugar = BloodSugarReading(
     id: 1,
-    glucoseLevel: '5.6',
+    glucoseLevel: 5.6,
     measuredAt: DateTime(2026, 1, 18, 8),
   );
 
@@ -53,7 +53,7 @@ void main() {
     latestBloodSugar: mockBloodSugar,
   );
 
-  final mockDashboardResponseNoReadings = DashboardResponse(
+  const mockDashboardResponseNoReadings = DashboardResponse(
     user: mockUserProfile,
   );
 
@@ -87,7 +87,8 @@ void main() {
       'emits [loading, loaded] when loadDashboard succeeds with no readings',
       build: () {
         when(() => mockRepository.getDashboard()).thenAnswer(
-          (_) async => ApiResponse.success(data: mockDashboardResponseNoReadings),
+          (_) async =>
+              ApiResponse.success(data: mockDashboardResponseNoReadings),
         );
         return DashboardCubit(dashboardRepository: mockRepository);
       },

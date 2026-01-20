@@ -7,7 +7,7 @@ part 'blood_sugar_reading.g.dart';
 class BloodSugarReading with _$BloodSugarReading {
   const factory BloodSugarReading({
     required int id,
-    @JsonKey(name: 'glucose_level') required String glucoseLevel,
+    @JsonKey(name: 'glucose_level') required double glucoseLevel,
     @JsonKey(name: 'measured_at') required DateTime measuredAt,
   }) = _BloodSugarReading;
 

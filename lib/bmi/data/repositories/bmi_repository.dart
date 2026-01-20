@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/bmi/data/models/bmi_measurement.dart';
 import 'package:frontend/bmi/data/models/create_bmi_request.dart';
-import 'package:frontend/bmi/data/models/update_bmi_request.dart';
 import 'package:frontend/core/core.dart';
 
 class BmiRepository {
@@ -14,7 +13,7 @@ class BmiRepository {
   Future<ApiResponse<BmiMeasurement>> createMeasurement({
     required int heightCm,
     required double weightKg,
-    DateTime? measuredAt,
+    required DateTime measuredAt,
   }) async {
     try {
       final request = CreateBmiRequest(
@@ -25,31 +24,6 @@ class BmiRepository {
 
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiConstants.bmi,
-        data: request.toJson(),
-      );
-
-      return ApiResponse.fromJson(
-        response.data!,
-        (json) => BmiMeasurement.fromJson(json! as Map<String, dynamic>),
-      );
-    } on DioException catch (e) {
-      return ApiResponse.error(message: extractDioErrorMessage(e));
-    }
-  }
-
-  Future<ApiResponse<BmiMeasurement>> updateMeasurement({
-    required int id,
-    required int heightCm,
-    required double weightKg,
-  }) async {
-    try {
-      final request = UpdateBmiRequest(
-        heightCm: heightCm,
-        weightKg: weightKg,
-      );
-
-      final response = await _apiClient.put<Map<String, dynamic>>(
-        '${ApiConstants.bmi}/$id',
         data: request.toJson(),
       );
 

@@ -35,7 +35,7 @@ class AdminDashboardView extends StatelessWidget {
                   if (value == 'logout') {
                     await context.read<AuthCubit>().logout();
                     if (context.mounted) {
-                      context.router.replaceAll([const LoginRoute()]);
+                      await context.router.replaceAll([const LoginRoute()]);
                     }
                   }
                 },

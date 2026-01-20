@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/core/theme/app_theme.dart';
-import 'package:frontend/core/widgets/app_primary_button.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/bmi/cubit/bmi_cubit.dart';
+import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class BmiForm extends StatefulWidget {
@@ -11,14 +12,15 @@ class BmiForm extends StatefulWidget {
     super.key,
   });
 
-  final void Function(int heightCm, double weightKg) onSubmit;
+  final void Function(int heightCm, double weightKg, DateTime measuredAt)
+      onSubmit;
   final bool isLoading;
 
   @override
   BmiFormState createState() => BmiFormState();
 }
 
-class BmiFormState extends State<BmiForm> {
+class BmiFormState extends State<BmiForm> with DateTimePickerMixin {
   final _formKey = GlobalKey<FormState>();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
@@ -27,6 +29,7 @@ class BmiFormState extends State<BmiForm> {
   @override
   void initState() {
     super.initState();
+    initDateTime();
     _heightController.addListener(_calculateBmi);
     _weightController.addListener(_calculateBmi);
   }
@@ -40,11 +43,11 @@ class BmiFormState extends State<BmiForm> {
     super.dispose();
   }
 
-  /// Clears the form. Call this from parent when save succeeds.
   void clearForm() {
     _heightController.clear();
     _weightController.clear();
     _formKey.currentState?.reset();
+    resetDateTime();
     setState(() {
       _calculatedBmi = null;
     });
@@ -57,8 +60,12 @@ class BmiFormState extends State<BmiForm> {
     final height = int.tryParse(heightText);
     final weight = double.tryParse(weightText);
 
-    if (height != null && height >= 50 && height <= 250 &&
-        weight != null && weight >= 20 && weight <= 300) {
+    if (height != null &&
+        height >= 50 &&
+        height <= 250 &&
+        weight != null &&
+        weight >= 20 &&
+        weight <= 300) {
       final heightM = height / 100;
       final bmi = weight / (heightM * heightM);
       setState(() {
@@ -77,8 +84,7 @@ class BmiFormState extends State<BmiForm> {
       final weightKg = double.parse(
         _weightController.text.replaceAll(',', '.'),
       );
-      widget.onSubmit(heightCm, weightKg);
-      // Don't clear here - wait for success confirmation via clearForm parameter
+      widget.onSubmit(heightCm, weightKg, combinedDateTime);
     }
   }
 
@@ -109,59 +115,69 @@ class BmiFormState extends State<BmiForm> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l10n.bmiNewSection,
-            style: context.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+    return BlocListener<BmiCubit, BmiState>(
+      listenWhen: (previous, current) => current is BmiSaved,
+      listener: (context, state) => clearForm(),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.bmiNewSection,
+              style: context.sectionHeader,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.bmiNewHint,
-            style: context.bodyMedium?.copyWith(
-              color: AppColors.secondaryText,
+            const SizedBox(height: 16),
+            DateTimePickerRow(
+              selectedDate: selectedDate,
+              selectedTime: selectedTime,
+              onDateChanged: updateDate,
+              onTimeChanged: updateTime,
             ),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _heightController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(3),
-            ],
-            decoration: InputDecoration(
-              labelText: l10n.heightLabel,
-              suffixText: l10n.cmUnit,
-              helperText: l10n.heightRange,
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _heightController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(3),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: l10n.heightLabel,
+                      suffixText: l10n.cmUnit,
+                      helperText: l10n.heightRange,
+                    ),
+                    validator: _validateHeight,
+                    textInputAction: TextInputAction.next,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    controller: _weightController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
+                      LengthLimitingTextInputFormatter(6),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: l10n.weightLabel,
+                      suffixText: l10n.kgUnit,
+                      helperText: l10n.weightRange,
+                    ),
+                    validator: _validateWeight,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                  ),
+                ),
+              ],
             ),
-            validator: _validateHeight,
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _weightController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
-              LengthLimitingTextInputFormatter(6),
-            ],
-            decoration: InputDecoration(
-              labelText: l10n.weightLabel,
-              suffixText: l10n.kgUnit,
-              helperText: l10n.weightRange,
-            ),
-            validator: _validateWeight,
-            textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) => _submit(),
-          ),
-          const SizedBox(height: 16),
-          if (_calculatedBmi != null)
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -179,33 +195,36 @@ class BmiFormState extends State<BmiForm> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _calculatedBmi!.toStringAsFixed(2),
+                    _calculatedBmi?.toStringAsFixed(2) ?? '—',
                     style: context.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: _calculatedBmi != null
+                          ? AppColors.primary
+                          : AppColors.secondaryText,
                     ),
                   ),
                 ],
               ),
             ),
-          const SizedBox(height: 24),
-          SizedBox(
-            height: 56,
-            child: AppPrimaryButton(
-              onPressed: widget.isLoading ? null : _submit,
-              child: widget.isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(l10n.saveButton),
+            const SizedBox(height: 24),
+            SizedBox(
+              height: 56,
+              child: AppPrimaryButton(
+                onPressed: widget.isLoading ? null : _submit,
+                child: widget.isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(l10n.saveButton),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

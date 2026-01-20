@@ -1,31 +1,31 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
+import 'package:frontend/bmi/data/models/bmi_measurement.dart';
 import 'package:frontend/core/theme/app_theme.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:intl/intl.dart';
 
 enum GraphPeriod { week, month, year }
 
-class BloodPressureGraph extends StatefulWidget {
-  const BloodPressureGraph({
-    required this.readings,
+class BmiGraph extends StatefulWidget {
+  const BmiGraph({
+    required this.measurements,
     required this.isLoading,
     super.key,
   });
 
-  final List<BloodPressureReading> readings;
+  final List<BmiMeasurement> measurements;
   final bool isLoading;
 
   @override
-  State<BloodPressureGraph> createState() => _BloodPressureGraphState();
+  State<BmiGraph> createState() => _BmiGraphState();
 }
 
-class _BloodPressureGraphState extends State<BloodPressureGraph> {
-  GraphPeriod _selectedPeriod = GraphPeriod.week;
+class _BmiGraphState extends State<BmiGraph> {
+  GraphPeriod _selectedPeriod = GraphPeriod.month;
 
-  List<BloodPressureReading> get _filteredReadings {
-    if (widget.readings.isEmpty) return [];
+  List<BmiMeasurement> get _filteredMeasurements {
+    if (widget.measurements.isEmpty) return [];
 
     final now = DateTime.now();
     final cutoff = switch (_selectedPeriod) {
@@ -34,8 +34,8 @@ class _BloodPressureGraphState extends State<BloodPressureGraph> {
       GraphPeriod.year => now.subtract(const Duration(days: 365)),
     };
 
-    return widget.readings
-        .where((r) => r.measuredAt.isAfter(cutoff))
+    return widget.measurements
+        .where((m) => m.measuredAt.isAfter(cutoff))
         .toList()
       ..sort((a, b) => a.measuredAt.compareTo(b.measuredAt));
   }
@@ -58,7 +58,7 @@ class _BloodPressureGraphState extends State<BloodPressureGraph> {
         Expanded(
           child: widget.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _filteredReadings.isEmpty
+              : _filteredMeasurements.isEmpty
                   ? Center(
                       child: Text(
                         l10n.noDataYet,
@@ -69,13 +69,13 @@ class _BloodPressureGraphState extends State<BloodPressureGraph> {
                     )
                   : Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 24, 16),
-                      child: _BloodPressureLineChart(
-                        readings: _filteredReadings,
+                      child: _BmiLineChart(
+                        measurements: _filteredMeasurements,
                         period: _selectedPeriod,
                       ),
                     ),
         ),
-        _Legend(),
+        const _Legend(),
       ],
     );
   }
@@ -132,44 +132,38 @@ class _PeriodSelector extends StatelessWidget {
   }
 }
 
-class _BloodPressureLineChart extends StatelessWidget {
-  const _BloodPressureLineChart({
-    required this.readings,
+class _BmiLineChart extends StatelessWidget {
+  const _BmiLineChart({
+    required this.measurements,
     required this.period,
   });
 
-  final List<BloodPressureReading> readings;
+  final List<BmiMeasurement> measurements;
   final GraphPeriod period;
 
   @override
   Widget build(BuildContext context) {
-    if (readings.isEmpty) return const SizedBox.shrink();
+    if (measurements.isEmpty) return const SizedBox.shrink();
 
-    final l10n = context.l10n;
-    final systolicSpots = <FlSpot>[];
-    final diastolicSpots = <FlSpot>[];
+    final bmiSpots = <FlSpot>[];
 
-    final startDate = readings.first.measuredAt;
+    final startDate = measurements.first.measuredAt;
 
-    for (var i = 0; i < readings.length; i++) {
-      final reading = readings[i];
-      // Use minutes for more precise positioning of multiple daily readings
+    for (var i = 0; i < measurements.length; i++) {
+      final measurement = measurements[i];
       final minutesDiff =
-          reading.measuredAt.difference(startDate).inMinutes / (24.0 * 60);
-      systolicSpots.add(FlSpot(minutesDiff, reading.systolic.toDouble()));
-      diastolicSpots.add(FlSpot(minutesDiff, reading.diastolic.toDouble()));
+          measurement.measuredAt.difference(startDate).inMinutes / (24.0 * 60);
+      bmiSpots.add(FlSpot(minutesDiff, measurement.bmiValue));
     }
 
-    final allValues = readings.expand((r) => [r.systolic, r.diastolic]);
-    final minY = (allValues.reduce((a, b) => a < b ? a : b) - 10)
-        .toDouble()
-        .clamp(30.0, 200.0);
-    final maxY = (allValues.reduce((a, b) => a > b ? a : b) + 10)
-        .toDouble()
-        .clamp(50.0, 250.0);
+    final allValues = measurements.map((m) => m.bmiValue);
+    final minY =
+        (allValues.reduce((a, b) => a < b ? a : b) - 2).clamp(10.0, 40.0);
+    final maxY =
+        (allValues.reduce((a, b) => a > b ? a : b) + 2).clamp(15.0, 50.0);
 
-    final maxX =
-        readings.last.measuredAt.difference(startDate).inMinutes / (24.0 * 60);
+    final maxX = measurements.last.measuredAt.difference(startDate).inMinutes /
+        (24.0 * 60);
 
     return LineChart(
       LineChartData(
@@ -178,7 +172,7 @@ class _BloodPressureLineChart extends StatelessWidget {
         minX: 0,
         maxX: maxX > 0 ? maxX : 1,
         gridData: FlGridData(
-          horizontalInterval: 20,
+          horizontalInterval: 5,
           verticalInterval: _getVerticalInterval(),
           getDrawingHorizontalLine: (value) => FlLine(
             color: Colors.grey.shade300,
@@ -194,10 +188,10 @@ class _BloodPressureLineChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
-              interval: 20,
+              interval: 5,
               getTitlesWidget: (value, meta) {
                 return Text(
-                  value.toInt().toString(),
+                  value.toStringAsFixed(0),
                   style: context.bodySmall?.copyWith(
                     color: AppColors.secondaryText,
                   ),
@@ -211,8 +205,8 @@ class _BloodPressureLineChart extends StatelessWidget {
               reservedSize: 32,
               interval: _getBottomInterval(),
               getTitlesWidget: (value, meta) {
-                final date =
-                    startDate.add(Duration(minutes: (value * 24 * 60).toInt()));
+                final date = startDate
+                    .add(Duration(minutes: (value * 24 * 60).toInt()));
                 final format = period == GraphPeriod.year
                     ? DateFormat('MM/dd')
                     : DateFormat('MM/dd');
@@ -240,43 +234,23 @@ class _BloodPressureLineChart extends StatelessWidget {
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: systolicSpots,
+            spots: bmiSpots,
             isCurved: true,
             curveSmoothness: 0.3,
-            color: AppColors.error,
+            color: AppColors.primary,
             barWidth: 3,
             dotData: FlDotData(
-              show: readings.length <= 14,
+              show: measurements.length <= 14,
               getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
                 radius: 4,
-                color: AppColors.error,
+                color: AppColors.primary,
                 strokeWidth: 2,
                 strokeColor: Colors.white,
               ),
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: AppColors.error.withValues(alpha: 0.1),
-            ),
-          ),
-          LineChartBarData(
-            spots: diastolicSpots,
-            isCurved: true,
-            curveSmoothness: 0.3,
-            color: AppColors.secondary,
-            barWidth: 3,
-            dotData: FlDotData(
-              show: readings.length <= 14,
-              getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-                radius: 4,
-                color: AppColors.secondary,
-                strokeWidth: 2,
-                strokeColor: Colors.white,
-              ),
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppColors.secondary.withValues(alpha: 0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -287,32 +261,24 @@ class _BloodPressureLineChart extends StatelessWidget {
             getTooltipItems: (touchedSpots) {
               if (touchedSpots.isEmpty) return [];
 
-              // Find the reading that matches this x position
               final xValue = touchedSpots.first.x;
-              final readingIndex = _findReadingIndex(xValue, startDate);
-              final reading =
-                  readingIndex != null ? readings[readingIndex] : null;
+              final measurementIndex = _findMeasurementIndex(xValue, startDate);
+              final measurement = measurementIndex != null
+                  ? measurements[measurementIndex]
+                  : null;
 
-              return touchedSpots.asMap().entries.map((entry) {
-                final index = entry.key;
-                final spot = entry.value;
-                final isSystolic = spot.barIndex == 0;
-
-                // Show date/time on first line only
+              return touchedSpots.map((spot) {
                 var dateTimeText = '';
-                if (index == 0 && reading != null) {
+                if (measurement != null) {
                   final formatted =
-                      DateFormat('MM/dd HH:mm').format(reading.measuredAt);
+                      DateFormat('MM/dd HH:mm').format(measurement.measuredAt);
                   dateTimeText = '$formatted\n';
                 }
 
-                final label =
-                    isSystolic ? l10n.systolicLabel : l10n.diastolicLabel;
-
                 return LineTooltipItem(
-                  '$dateTimeText$label: ${spot.y.toInt()} mmHg',
-                  TextStyle(
-                    color: isSystolic ? AppColors.error : AppColors.secondary,
+                  '${dateTimeText}KMI: ${spot.y.toStringAsFixed(1)}',
+                  const TextStyle(
+                    color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
                   ),
@@ -325,12 +291,11 @@ class _BloodPressureLineChart extends StatelessWidget {
     );
   }
 
-  int? _findReadingIndex(double xValue, DateTime startDate) {
-    for (var i = 0; i < readings.length; i++) {
-      final reading = readings[i];
+  int? _findMeasurementIndex(double xValue, DateTime startDate) {
+    for (var i = 0; i < measurements.length; i++) {
+      final measurement = measurements[i];
       final minutesDiff =
-          reading.measuredAt.difference(startDate).inMinutes / (24.0 * 60);
-      // Allow small tolerance for floating point comparison
+          measurement.measuredAt.difference(startDate).inMinutes / (24.0 * 60);
       if ((minutesDiff - xValue).abs() < 0.001) {
         return i;
       }
@@ -356,6 +321,8 @@ class _BloodPressureLineChart extends StatelessWidget {
 }
 
 class _Legend extends StatelessWidget {
+  const _Legend();
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -365,51 +332,23 @@ class _Legend extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _LegendItem(
-            color: AppColors.error,
-            label: l10n.systolicLabel,
+          Container(
+            width: 16,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-          const SizedBox(width: 24),
-          _LegendItem(
-            color: AppColors.secondary,
-            label: l10n.diastolicLabel,
+          const SizedBox(width: 8),
+          Text(
+            l10n.bmiTitle,
+            style: context.bodySmall?.copyWith(
+              color: AppColors.secondaryText,
+            ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _LegendItem extends StatelessWidget {
-  const _LegendItem({
-    required this.color,
-    required this.label,
-  });
-
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 16,
-          height: 4,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: context.bodySmall?.copyWith(
-            color: AppColors.secondaryText,
-          ),
-        ),
-      ],
     );
   }
 }

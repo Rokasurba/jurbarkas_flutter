@@ -7,8 +7,8 @@ import 'package:frontend/bmi/cubit/bmi_cubit.dart';
 import 'package:frontend/bmi/data/models/bmi_measurement.dart';
 import 'package:frontend/bmi/data/repositories/bmi_repository.dart';
 import 'package:frontend/bmi/widgets/bmi_form.dart';
+import 'package:frontend/bmi/widgets/bmi_graph.dart';
 import 'package:frontend/bmi/widgets/bmi_history.dart';
-import 'package:frontend/bmi/widgets/edit_bmi_sheet.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 
@@ -40,18 +40,21 @@ class _BmiView extends StatefulWidget {
   State<_BmiView> createState() => _BmiViewState();
 }
 
-class _BmiViewState extends State<_BmiView> {
+class _BmiViewState extends State<_BmiView>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
   final _scrollController = ScrollController();
-  final _formKey = GlobalKey<BmiFormState>();
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -71,27 +74,11 @@ class _BmiViewState extends State<_BmiView> {
     return currentScroll >= (maxScroll * 0.9);
   }
 
-  void _onEdit(BmiMeasurement measurement) {
-    EditBmiSheet.show(
-      context,
-      measurement: measurement,
-      onUpdate: (heightCm, weightKg) {
-        unawaited(
-          context.read<BmiCubit>().updateMeasurement(
-                id: measurement.id,
-                heightCm: heightCm,
-                weightKg: weightKg,
-              ),
-        );
-      },
-      isLoading: false,
-    );
-  }
-
   void _onDelete(BmiMeasurement measurement) {
     DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
+        Navigator.of(context).pop();
         unawaited(
           context.read<BmiCubit>().deleteMeasurement(id: measurement.id),
         );
@@ -103,88 +90,138 @@ class _BmiViewState extends State<_BmiView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return BlocConsumer<BmiCubit, BmiState>(
+    return BlocListener<BmiCubit, BmiState>(
       listener: (context, state) {
         state.maybeWhen(
-          saved: (_, _) {
-            _formKey.currentState?.clearForm();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.dataSaved),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            context.read<BmiCubit>().clearSavedState();
+          saved: (measurement, measurements) {
+            context.showSuccessSnackbar(l10n.dataSaved);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<BmiCubit>().clearSavedState();
+            });
           },
-          updated: (_, _) {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.dataUpdated),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            context.read<BmiCubit>().clearUpdatedState();
-          },
-          deleted: (_) {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.dataDeleted),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            context.read<BmiCubit>().clearDeletedState();
+          deleted: (measurements) {
+            context.showSuccessSnackbar(l10n.dataDeleted);
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: context.errorColor,
-              ),
-            );
+            context.showErrorSnackbar(message);
           },
           orElse: () {},
         );
       },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: AppColors.secondary,
-            foregroundColor: Colors.white,
-            title: Text(l10n.bmiTitle),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.secondary,
+          foregroundColor: Colors.white,
+          title: Text(
+            l10n.bmiTitle,
+            style: context.appBarTitle,
           ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BmiHistory(
-                    measurements: state.measurements,
-                    isLoading: state.isLoading,
-                    isLoadingMore: state.isLoadingMore,
-                    onEdit: _onEdit,
-                    onDelete: _onDelete,
-                  ),
-                  const SizedBox(height: 24),
-                  BmiForm(
-                    key: _formKey,
-                    onSubmit: (heightCm, weightKg) {
-                      unawaited(
-                        context.read<BmiCubit>().saveMeasurement(
-                              heightCm: heightCm,
-                              weightKg: weightKg,
-                            ),
-                      );
-                    },
-                    isLoading: state.isSaving,
-                  ),
-                ],
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.white,
+            tabs: [
+              Tab(text: l10n.tabRecords),
+              Tab(text: l10n.tabGraph),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _RecordsTab(
+                scrollController: _scrollController,
+                onDelete: _onDelete,
               ),
+              const _GraphTab(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RecordsTab extends StatelessWidget {
+  const _RecordsTab({
+    required this.scrollController,
+    required this.onDelete,
+  });
+
+  final ScrollController scrollController;
+  final void Function(BmiMeasurement measurement) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // History list with its own BlocBuilder
+        Expanded(
+          child: BlocBuilder<BmiCubit, BmiState>(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                child: BmiHistory(
+                  measurements: state.measurements,
+                  isLoading: state.isLoading,
+                  isLoadingMore: state.isLoadingMore,
+                  onDelete: onDelete,
+                ),
+              );
+            },
+          ),
+        ),
+        // Form container
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: BlocSelector<BmiCubit, BmiState, bool>(
+              selector: (state) => state.isSaving,
+              builder: (context, isSaving) {
+                return BmiForm(
+                  onSubmit: (heightCm, weightKg, measuredAt) {
+                    unawaited(
+                      context.read<BmiCubit>().saveMeasurement(
+                            heightCm: heightCm,
+                            weightKg: weightKg,
+                            measuredAt: measuredAt,
+                          ),
+                    );
+                  },
+                  isLoading: isSaving,
+                );
+              },
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _GraphTab extends StatelessWidget {
+  const _GraphTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BmiCubit, BmiState>(
+      builder: (context, state) {
+        return BmiGraph(
+          measurements: state.measurements,
+          isLoading: state.isLoading,
         );
       },
     );

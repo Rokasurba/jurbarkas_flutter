@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
 import 'package:frontend/blood_pressure/data/models/create_blood_pressure_request.dart';
-import 'package:frontend/blood_pressure/data/models/update_blood_pressure_request.dart';
 import 'package:frontend/core/core.dart';
 
 class BloodPressureRepository {
@@ -14,7 +13,7 @@ class BloodPressureRepository {
   Future<ApiResponse<BloodPressureReading>> createReading({
     required int systolic,
     required int diastolic,
-    DateTime? measuredAt,
+    required DateTime measuredAt,
   }) async {
     try {
       final request = CreateBloodPressureRequest(
@@ -25,31 +24,6 @@ class BloodPressureRepository {
 
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiConstants.bloodPressure,
-        data: request.toJson(),
-      );
-
-      return ApiResponse.fromJson(
-        response.data!,
-        (json) => BloodPressureReading.fromJson(json! as Map<String, dynamic>),
-      );
-    } on DioException catch (e) {
-      return ApiResponse.error(message: extractDioErrorMessage(e));
-    }
-  }
-
-  Future<ApiResponse<BloodPressureReading>> updateReading({
-    required int id,
-    required int systolic,
-    required int diastolic,
-  }) async {
-    try {
-      final request = UpdateBloodPressureRequest(
-        systolic: systolic,
-        diastolic: diastolic,
-      );
-
-      final response = await _apiClient.put<Map<String, dynamic>>(
-        '${ApiConstants.bloodPressure}/$id',
         data: request.toJson(),
       );
 

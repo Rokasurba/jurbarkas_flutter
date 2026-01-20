@@ -15,6 +15,7 @@ class FakePaginationParams extends Fake implements PaginationParams {}
 void main() {
   setUpAll(() {
     registerFallbackValue(FakePaginationParams());
+    registerFallbackValue(DateTime(2026));
   });
   late MockBloodPressureRepository mockRepository;
 
@@ -92,7 +93,11 @@ void main() {
         );
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveReading(systolic: 120, diastolic: 80),
+      act: (cubit) => cubit.saveReading(
+        systolic: 120,
+        diastolic: 80,
+        measuredAt: DateTime(2026, 1, 19, 14, 30),
+      ),
       expect: () => [
         const BloodPressureState.saving([]),
         BloodPressureState.saved(mockReading, [mockReading]),
@@ -113,10 +118,16 @@ void main() {
         );
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveReading(systolic: 50, diastolic: 30),
+      act: (cubit) => cubit.saveReading(
+        systolic: 50,
+        diastolic: 30,
+        measuredAt: DateTime(2026, 1, 19),
+      ),
       expect: () => [
         const BloodPressureState.saving([]),
         const BloodPressureState.failure('Validation error'),
+        // Cubit restores to loaded state after failure
+        const BloodPressureState.loaded([], hasMore: false),
       ],
     );
 
@@ -153,7 +164,11 @@ void main() {
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
       },
       seed: () => BloodPressureState.loaded(mockReadings),
-      act: (cubit) => cubit.saveReading(systolic: 125, diastolic: 82),
+      act: (cubit) => cubit.saveReading(
+        systolic: 125,
+        diastolic: 82,
+        measuredAt: DateTime(2026, 1, 19, 15),
+      ),
       expect: () => [
         BloodPressureState.saving(mockReadings),
         isA<BloodPressureSaved>()

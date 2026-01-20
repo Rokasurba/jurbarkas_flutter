@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/core/theme/app_theme.dart';
-import 'package:frontend/core/widgets/app_primary_button.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/blood_sugar/cubit/blood_sugar_cubit.dart';
+import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class BloodSugarForm extends StatefulWidget {
@@ -11,16 +12,23 @@ class BloodSugarForm extends StatefulWidget {
     super.key,
   });
 
-  final void Function(double glucoseLevel) onSubmit;
+  final void Function(double glucoseLevel, DateTime measuredAt) onSubmit;
   final bool isLoading;
 
   @override
   BloodSugarFormState createState() => BloodSugarFormState();
 }
 
-class BloodSugarFormState extends State<BloodSugarForm> {
+class BloodSugarFormState extends State<BloodSugarForm>
+    with DateTimePickerMixin {
   final _formKey = GlobalKey<FormState>();
   final _glucoseController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    initDateTime();
+  }
 
   @override
   void dispose() {
@@ -31,7 +39,8 @@ class BloodSugarFormState extends State<BloodSugarForm> {
   /// Clears the form. Call this from parent when save succeeds.
   void clearForm() {
     _glucoseController.clear();
-    _formKey.currentState?.reset();
+    resetDateTime();
+    setState(() {});
   }
 
   void _submit() {
@@ -39,8 +48,7 @@ class BloodSugarFormState extends State<BloodSugarForm> {
       final glucoseLevel = double.parse(
         _glucoseController.text.replaceAll(',', '.'),
       );
-      widget.onSubmit(glucoseLevel);
-      // Don't clear here - wait for success confirmation via clearForm parameter
+      widget.onSubmit(glucoseLevel, combinedDateTime);
     }
   }
 
@@ -60,23 +68,17 @@ class BloodSugarFormState extends State<BloodSugarForm> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Form(
-      key: _formKey,
-      child: Column(
+    return BlocListener<BloodSugarCubit, BloodSugarState>(
+      listenWhen: (previous, current) => current is BloodSugarSaved,
+      listener: (context, state) => clearForm(),
+      child: Form(
+        key: _formKey,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             l10n.bloodSugarNewSection,
-            style: context.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.bloodSugarNewHint,
-            style: context.bodyMedium?.copyWith(
-              color: AppColors.secondaryText,
-            ),
+            style: context.sectionHeader,
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -94,6 +96,13 @@ class BloodSugarFormState extends State<BloodSugarForm> {
             validator: _validateGlucose,
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => _submit(),
+          ),
+          const SizedBox(height: 16),
+          DateTimePickerRow(
+            selectedDate: selectedDate,
+            selectedTime: selectedTime,
+            onDateChanged: updateDate,
+            onTimeChanged: updateTime,
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -113,6 +122,7 @@ class BloodSugarFormState extends State<BloodSugarForm> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

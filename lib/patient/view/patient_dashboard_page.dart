@@ -56,7 +56,10 @@ class PatientDashboardView extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
-            title: Text(l10n.dashboardTitle),
+            title: Text(
+              l10n.dashboardTitle,
+              style: context.appBarTitle,
+            ),
             leading: isMobile
                 ? Builder(
                     builder: (context) => IconButton(
@@ -161,7 +164,8 @@ class PatientDashboardView extends StatelessWidget {
                     const SizedBox(height: 8),
                     MetricCard(
                       title: l10n.bloodSugarTitle,
-                      value: data.latestBloodSugar?.glucoseLevel,
+                      value: data.latestBloodSugar?.glucoseLevel
+                          .toStringAsFixed(2),
                       unit: data.latestBloodSugar != null
                           ? l10n.mmolLUnit
                           : null,
@@ -179,7 +183,7 @@ class PatientDashboardView extends StatelessWidget {
                     const SizedBox(height: 8),
                     MetricCard(
                       title: l10n.bmiTitle,
-                      value: data.latestBmi?.bmiValue,
+                      value: data.latestBmi?.bmiValue.toStringAsFixed(1),
                       icon: Icons.monitor_weight,
                       measuredAt: data.latestBmi?.measuredAt,
                       onTap: () async {
