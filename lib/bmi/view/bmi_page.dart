@@ -31,8 +31,42 @@ class BmiPage extends StatelessWidget {
   }
 }
 
-class _BmiView extends StatelessWidget {
+class _BmiView extends StatefulWidget {
   const _BmiView();
+
+  @override
+  State<_BmiView> createState() => _BmiViewState();
+}
+
+class _BmiViewState extends State<_BmiView> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      unawaited(context.read<BmiCubit>().loadMore());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +104,7 @@ class _BmiView extends StatelessWidget {
           ),
           body: SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,6 +112,7 @@ class _BmiView extends StatelessWidget {
                   BmiHistory(
                     measurements: state.measurements,
                     isLoading: state.isLoading,
+                    isLoadingMore: state.isLoadingMore,
                   ),
                   const SizedBox(height: 24),
                   BmiForm(

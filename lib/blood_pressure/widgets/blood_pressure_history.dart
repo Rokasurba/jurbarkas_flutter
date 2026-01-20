@@ -8,11 +8,13 @@ class BloodPressureHistory extends StatelessWidget {
   const BloodPressureHistory({
     required this.readings,
     required this.isLoading,
+    this.isLoadingMore = false,
     super.key,
   });
 
   final List<BloodPressureReading> readings;
   final bool isLoading;
+  final bool isLoadingMore;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class BloodPressureHistory extends StatelessWidget {
           )
         else if (readings.isEmpty)
           _EmptyState(l10n: l10n)
-        else
+        else ...[
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -48,6 +50,18 @@ class BloodPressureHistory extends StatelessWidget {
               return _ReadingCard(reading: reading, l10n: l10n);
             },
           ),
+          if (isLoadingMore)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+        ],
       ],
     );
   }

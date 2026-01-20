@@ -14,13 +14,43 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
 
   final BloodPressureRepository _bloodPressureRepository;
 
+  static const int _pageSize = 20;
+
   Future<void> loadHistory({int? limit}) async {
     emit(const BloodPressureState.loading());
 
-    final response = await _bloodPressureRepository.getHistory(limit: limit);
+    final response = await _bloodPressureRepository.getHistory(
+      limit: limit ?? _pageSize,
+    );
 
     response.when(
-      success: (readings, _) => emit(BloodPressureState.loaded(readings)),
+      success: (readings, _) {
+        final hasMore = readings.length >= _pageSize;
+        emit(BloodPressureState.loaded(readings, hasMore: hasMore));
+      },
+      error: (message, _) => emit(BloodPressureState.failure(message)),
+    );
+  }
+
+  Future<void> loadMore() async {
+    if (state.isLoadingMore || !state.hasMore) return;
+
+    final currentReadings = state.readings;
+    emit(BloodPressureState.loadingMore(currentReadings));
+
+    final response = await _bloodPressureRepository.getHistory(
+      limit: _pageSize,
+      offset: currentReadings.length,
+    );
+
+    response.when(
+      success: (newReadings, _) {
+        final allReadings = [...currentReadings, ...newReadings];
+        emit(BloodPressureState.loaded(
+          allReadings,
+          hasMore: newReadings.length >= _pageSize,
+        ));
+      },
       error: (message, _) => emit(BloodPressureState.failure(message)),
     );
   }
@@ -29,13 +59,9 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     required int systolic,
     required int diastolic,
   }) async {
-    // Keep current readings if we have them
-    final currentReadings = state.maybeWhen(
-      loaded: (readings) => readings,
-      orElse: () => <BloodPressureReading>[],
-    );
+    final currentReadings = state.readings;
 
-    emit(const BloodPressureState.saving());
+    emit(BloodPressureState.saving(currentReadings));
 
     final response = await _bloodPressureRepository.createReading(
       systolic: systolic,
@@ -44,7 +70,6 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
 
     response.when(
       success: (reading, _) {
-        // Add the new reading to the beginning of the list
         final updatedReadings = [reading, ...currentReadings];
         emit(BloodPressureState.saved(reading, updatedReadings));
       },

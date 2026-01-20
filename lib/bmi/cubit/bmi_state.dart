@@ -6,8 +6,16 @@ sealed class BmiState with _$BmiState {
 
   const factory BmiState.initial() = BmiInitial;
   const factory BmiState.loading() = BmiLoading;
-  const factory BmiState.loaded(List<BmiMeasurement> measurements) = BmiLoaded;
-  const factory BmiState.saving() = BmiSaving;
+  const factory BmiState.loaded(
+    List<BmiMeasurement> measurements, {
+    @Default(true) bool hasMore,
+  }) = BmiLoaded;
+  const factory BmiState.loadingMore(
+    List<BmiMeasurement> measurements,
+  ) = BmiLoadingMore;
+  const factory BmiState.saving(
+    List<BmiMeasurement> measurements,
+  ) = BmiSaving;
   const factory BmiState.saved(
     BmiMeasurement measurement,
     List<BmiMeasurement> measurements,
@@ -16,9 +24,17 @@ sealed class BmiState with _$BmiState {
 
   bool get isLoading => this is BmiLoading;
   bool get isSaving => this is BmiSaving;
+  bool get isLoadingMore => this is BmiLoadingMore;
+
+  bool get hasMore => maybeWhen(
+        loaded: (_, hasMore) => hasMore,
+        orElse: () => false,
+      );
 
   List<BmiMeasurement> get measurements => maybeWhen(
-        loaded: (measurements) => measurements,
+        loaded: (measurements, _) => measurements,
+        loadingMore: (measurements) => measurements,
+        saving: (measurements) => measurements,
         saved: (_, measurements) => measurements,
         orElse: () => [],
       );

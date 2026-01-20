@@ -44,8 +44,12 @@ void main() {
     blocTest<BmiCubit, BmiState>(
       'emits [loading, loaded] when loadHistory succeeds',
       build: () {
-        when(() => mockRepository.getHistory(limit: any(named: 'limit')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          ),
+        ).thenAnswer(
           (_) async => ApiResponse.success(data: mockMeasurements),
         );
         return BmiCubit(bmiRepository: mockRepository);
@@ -53,15 +57,19 @@ void main() {
       act: (cubit) => cubit.loadHistory(),
       expect: () => [
         const BmiState.loading(),
-        BmiState.loaded(mockMeasurements),
+        BmiState.loaded(mockMeasurements, hasMore: false),
       ],
     );
 
     blocTest<BmiCubit, BmiState>(
       'emits [loading, failure] when loadHistory fails',
       build: () {
-        when(() => mockRepository.getHistory(limit: any(named: 'limit')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          ),
+        ).thenAnswer(
           (_) async => const ApiResponse.error(message: 'Network error'),
         );
         return BmiCubit(bmiRepository: mockRepository);
@@ -89,7 +97,7 @@ void main() {
       },
       act: (cubit) => cubit.saveMeasurement(heightCm: 175, weightKg: 70),
       expect: () => [
-        const BmiState.saving(),
+        const BmiState.saving([]),
         BmiState.saved(mockMeasurement, [mockMeasurement]),
       ],
     );
@@ -110,7 +118,7 @@ void main() {
       },
       act: (cubit) => cubit.saveMeasurement(heightCm: 30, weightKg: 10),
       expect: () => [
-        const BmiState.saving(),
+        const BmiState.saving([]),
         const BmiState.failure('Validation error'),
       ],
     );
@@ -150,10 +158,51 @@ void main() {
       seed: () => BmiState.loaded(mockMeasurements),
       act: (cubit) => cubit.saveMeasurement(heightCm: 175, weightKg: 71),
       expect: () => [
-        const BmiState.saving(),
+        BmiState.saving(mockMeasurements),
         isA<BmiSaved>()
             .having((s) => s.measurements.length, 'measurements length', 3),
       ],
+    );
+
+    blocTest<BmiCubit, BmiState>(
+      'loadMore appends new measurements',
+      build: () {
+        when(
+          () => mockRepository.getHistory(
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          ),
+        ).thenAnswer(
+          (_) async => ApiResponse.success(
+            data: [
+              BmiMeasurement(
+                id: 3,
+                heightCm: 175,
+                weightKg: '68.00',
+                bmiValue: '22.20',
+                measuredAt: DateTime(2026, 1, 17, 10),
+              ),
+            ],
+          ),
+        );
+        return BmiCubit(bmiRepository: mockRepository);
+      },
+      seed: () => BmiState.loaded(mockMeasurements, hasMore: true),
+      act: (cubit) => cubit.loadMore(),
+      expect: () => [
+        BmiState.loadingMore(mockMeasurements),
+        isA<BmiLoaded>()
+            .having((s) => s.measurements.length, 'measurements length', 3)
+            .having((s) => s.hasMore, 'hasMore', false),
+      ],
+    );
+
+    blocTest<BmiCubit, BmiState>(
+      'loadMore does nothing when hasMore is false',
+      build: () => BmiCubit(bmiRepository: mockRepository),
+      seed: () => BmiState.loaded(mockMeasurements, hasMore: false),
+      act: (cubit) => cubit.loadMore(),
+      expect: () => [],
     );
   });
 
@@ -165,13 +214,34 @@ void main() {
     });
 
     test('isSaving returns true for saving state', () {
-      const state = BmiState.saving();
+      const state = BmiState.saving([]);
       expect(state.isSaving, isTrue);
       expect(state.isLoading, isFalse);
     });
 
+    test('isLoadingMore returns true for loadingMore state', () {
+      const state = BmiState.loadingMore([]);
+      expect(state.isLoadingMore, isTrue);
+      expect(state.isLoading, isFalse);
+    });
+
+    test('hasMore returns true for loaded state with hasMore', () {
+      final state = BmiState.loaded(mockMeasurements, hasMore: true);
+      expect(state.hasMore, isTrue);
+    });
+
+    test('hasMore returns false by default for other states', () {
+      const state = BmiState.initial();
+      expect(state.hasMore, isFalse);
+    });
+
     test('measurements returns list for loaded state', () {
       final state = BmiState.loaded(mockMeasurements);
+      expect(state.measurements, mockMeasurements);
+    });
+
+    test('measurements returns list for loadingMore state', () {
+      final state = BmiState.loadingMore(mockMeasurements);
       expect(state.measurements, mockMeasurements);
     });
 

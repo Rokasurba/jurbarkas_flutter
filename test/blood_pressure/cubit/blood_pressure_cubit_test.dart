@@ -43,8 +43,12 @@ void main() {
     blocTest<BloodPressureCubit, BloodPressureState>(
       'emits [loading, loaded] when loadHistory succeeds',
       build: () {
-        when(() => mockRepository.getHistory(limit: any(named: 'limit')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          ),
+        ).thenAnswer(
           (_) async => ApiResponse.success(data: mockReadings),
         );
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
@@ -52,15 +56,19 @@ void main() {
       act: (cubit) => cubit.loadHistory(),
       expect: () => [
         const BloodPressureState.loading(),
-        BloodPressureState.loaded(mockReadings),
+        BloodPressureState.loaded(mockReadings, hasMore: false),
       ],
     );
 
     blocTest<BloodPressureCubit, BloodPressureState>(
       'emits [loading, failure] when loadHistory fails',
       build: () {
-        when(() => mockRepository.getHistory(limit: any(named: 'limit')))
-            .thenAnswer(
+        when(
+          () => mockRepository.getHistory(
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          ),
+        ).thenAnswer(
           (_) async => const ApiResponse.error(message: 'Network error'),
         );
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
@@ -88,7 +96,7 @@ void main() {
       },
       act: (cubit) => cubit.saveReading(systolic: 120, diastolic: 80),
       expect: () => [
-        const BloodPressureState.saving(),
+        const BloodPressureState.saving([]),
         BloodPressureState.saved(mockReading, [mockReading]),
       ],
     );
@@ -109,7 +117,7 @@ void main() {
       },
       act: (cubit) => cubit.saveReading(systolic: 50, diastolic: 30),
       expect: () => [
-        const BloodPressureState.saving(),
+        const BloodPressureState.saving([]),
         const BloodPressureState.failure('Validation error'),
       ],
     );
@@ -148,10 +156,50 @@ void main() {
       seed: () => BloodPressureState.loaded(mockReadings),
       act: (cubit) => cubit.saveReading(systolic: 125, diastolic: 82),
       expect: () => [
-        const BloodPressureState.saving(),
+        BloodPressureState.saving(mockReadings),
         isA<BloodPressureSaved>()
             .having((s) => s.readings.length, 'readings length', 3),
       ],
+    );
+
+    blocTest<BloodPressureCubit, BloodPressureState>(
+      'loadMore appends new readings',
+      build: () {
+        when(
+          () => mockRepository.getHistory(
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          ),
+        ).thenAnswer(
+          (_) async => ApiResponse.success(
+            data: [
+              BloodPressureReading(
+                id: 3,
+                systolic: 118,
+                diastolic: 78,
+                measuredAt: DateTime(2026, 1, 17, 10),
+              ),
+            ],
+          ),
+        );
+        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+      },
+      seed: () => BloodPressureState.loaded(mockReadings, hasMore: true),
+      act: (cubit) => cubit.loadMore(),
+      expect: () => [
+        BloodPressureState.loadingMore(mockReadings),
+        isA<BloodPressureLoaded>()
+            .having((s) => s.readings.length, 'readings length', 3)
+            .having((s) => s.hasMore, 'hasMore', false),
+      ],
+    );
+
+    blocTest<BloodPressureCubit, BloodPressureState>(
+      'loadMore does nothing when hasMore is false',
+      build: () => BloodPressureCubit(bloodPressureRepository: mockRepository),
+      seed: () => BloodPressureState.loaded(mockReadings, hasMore: false),
+      act: (cubit) => cubit.loadMore(),
+      expect: () => [],
     );
   });
 
@@ -163,13 +211,34 @@ void main() {
     });
 
     test('isSaving returns true for saving state', () {
-      const state = BloodPressureState.saving();
+      const state = BloodPressureState.saving([]);
       expect(state.isSaving, isTrue);
       expect(state.isLoading, isFalse);
     });
 
+    test('isLoadingMore returns true for loadingMore state', () {
+      const state = BloodPressureState.loadingMore([]);
+      expect(state.isLoadingMore, isTrue);
+      expect(state.isLoading, isFalse);
+    });
+
+    test('hasMore returns true for loaded state with hasMore', () {
+      final state = BloodPressureState.loaded(mockReadings, hasMore: true);
+      expect(state.hasMore, isTrue);
+    });
+
+    test('hasMore returns false by default for other states', () {
+      const state = BloodPressureState.initial();
+      expect(state.hasMore, isFalse);
+    });
+
     test('readings returns list for loaded state', () {
       final state = BloodPressureState.loaded(mockReadings);
+      expect(state.readings, mockReadings);
+    });
+
+    test('readings returns list for loadingMore state', () {
+      final state = BloodPressureState.loadingMore(mockReadings);
       expect(state.readings, mockReadings);
     });
 

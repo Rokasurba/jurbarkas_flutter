@@ -14,13 +14,43 @@ class BmiCubit extends Cubit<BmiState> {
 
   final BmiRepository _bmiRepository;
 
+  static const int _pageSize = 20;
+
   Future<void> loadHistory({int? limit}) async {
     emit(const BmiState.loading());
 
-    final response = await _bmiRepository.getHistory(limit: limit);
+    final response = await _bmiRepository.getHistory(
+      limit: limit ?? _pageSize,
+    );
 
     response.when(
-      success: (measurements, _) => emit(BmiState.loaded(measurements)),
+      success: (measurements, _) {
+        final hasMore = measurements.length >= _pageSize;
+        emit(BmiState.loaded(measurements, hasMore: hasMore));
+      },
+      error: (message, _) => emit(BmiState.failure(message)),
+    );
+  }
+
+  Future<void> loadMore() async {
+    if (state.isLoadingMore || !state.hasMore) return;
+
+    final currentMeasurements = state.measurements;
+    emit(BmiState.loadingMore(currentMeasurements));
+
+    final response = await _bmiRepository.getHistory(
+      limit: _pageSize,
+      offset: currentMeasurements.length,
+    );
+
+    response.when(
+      success: (newMeasurements, _) {
+        final allMeasurements = [...currentMeasurements, ...newMeasurements];
+        emit(BmiState.loaded(
+          allMeasurements,
+          hasMore: newMeasurements.length >= _pageSize,
+        ));
+      },
       error: (message, _) => emit(BmiState.failure(message)),
     );
   }
@@ -29,13 +59,9 @@ class BmiCubit extends Cubit<BmiState> {
     required int heightCm,
     required double weightKg,
   }) async {
-    // Keep current measurements if we have them
-    final currentMeasurements = state.maybeWhen(
-      loaded: (measurements) => measurements,
-      orElse: () => <BmiMeasurement>[],
-    );
+    final currentMeasurements = state.measurements;
 
-    emit(const BmiState.saving());
+    emit(BmiState.saving(currentMeasurements));
 
     final response = await _bmiRepository.createMeasurement(
       heightCm: heightCm,
@@ -44,7 +70,6 @@ class BmiCubit extends Cubit<BmiState> {
 
     response.when(
       success: (measurement, _) {
-        // Add the new measurement to the beginning of the list
         final updatedMeasurements = [measurement, ...currentMeasurements];
         emit(BmiState.saved(measurement, updatedMeasurements));
       },

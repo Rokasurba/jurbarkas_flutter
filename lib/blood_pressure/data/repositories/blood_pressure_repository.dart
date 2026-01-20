@@ -38,11 +38,15 @@ class BloodPressureRepository {
 
   Future<ApiResponse<List<BloodPressureReading>>> getHistory({
     int? limit,
+    int? offset,
   }) async {
     try {
       final queryParams = <String, dynamic>{};
       if (limit != null) {
         queryParams['limit'] = limit;
+      }
+      if (offset != null && offset > 0) {
+        queryParams['offset'] = offset;
       }
 
       final response = await _apiClient.get<Map<String, dynamic>>(

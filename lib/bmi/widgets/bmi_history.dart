@@ -8,11 +8,13 @@ class BmiHistory extends StatelessWidget {
   const BmiHistory({
     required this.measurements,
     required this.isLoading,
+    this.isLoadingMore = false,
     super.key,
   });
 
   final List<BmiMeasurement> measurements;
   final bool isLoading;
+  final bool isLoadingMore;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class BmiHistory extends StatelessWidget {
           )
         else if (measurements.isEmpty)
           _EmptyState(l10n: l10n)
-        else
+        else ...[
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -48,6 +50,18 @@ class BmiHistory extends StatelessWidget {
               return _MeasurementCard(measurement: measurement, l10n: l10n);
             },
           ),
+          if (isLoadingMore)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+        ],
       ],
     );
   }

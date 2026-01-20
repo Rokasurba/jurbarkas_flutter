@@ -31,8 +31,42 @@ class BloodPressurePage extends StatelessWidget {
   }
 }
 
-class _BloodPressureView extends StatelessWidget {
+class _BloodPressureView extends StatefulWidget {
   const _BloodPressureView();
+
+  @override
+  State<_BloodPressureView> createState() => _BloodPressureViewState();
+}
+
+class _BloodPressureViewState extends State<_BloodPressureView> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      unawaited(context.read<BloodPressureCubit>().loadMore());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +104,7 @@ class _BloodPressureView extends StatelessWidget {
           ),
           body: SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,6 +112,7 @@ class _BloodPressureView extends StatelessWidget {
                   BloodPressureHistory(
                     readings: state.readings,
                     isLoading: state.isLoading,
+                    isLoadingMore: state.isLoadingMore,
                   ),
                   const SizedBox(height: 24),
                   BloodPressureForm(
