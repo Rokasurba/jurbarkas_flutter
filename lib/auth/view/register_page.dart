@@ -224,7 +224,7 @@ class _RegisterViewState extends State<RegisterView> {
                       // Register button
                       SizedBox(
                         height: 56,
-                        child: ElevatedButton(
+                        child: AppPrimaryButton(
                           onPressed: state.isLoading ? null : _handleRegister,
                           child: state.isLoading
                               ? const SizedBox(

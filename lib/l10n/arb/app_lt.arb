@@ -140,13 +140,17 @@
     "@forgotPasswordTitle": {
         "description": "Forgot password page title"
     },
-    "forgotPasswordSubtitle": "Įveskite savo el. paštą ir atsiųsime patvirtinimo kodą",
+    "forgotPasswordSubtitle": "Įrašykite paskyros el. pašto adresą, kuriuo gausite patvirtinimo kodą.",
     "@forgotPasswordSubtitle": {
         "description": "Forgot password page subtitle"
     },
-    "sendCodeButton": "Siųsti kodą",
+    "sendCodeButton": "Siųsti",
     "@sendCodeButton": {
         "description": "Send verification code button text"
+    },
+    "emailPlaceholder": "Įveskite...",
+    "@emailPlaceholder": {
+        "description": "Email field placeholder text"
     },
     "backToLoginLink": "Grįžti į prisijungimą",
     "@backToLoginLink": {
@@ -285,5 +289,61 @@
     "diastolicRange": "Diastolinis: 40-150",
     "@diastolicRange": {
         "description": "Diastolic range hint"
+    },
+    "bmiTitle": "Kūno masės indeksas",
+    "@bmiTitle": {
+        "description": "BMI page title"
+    },
+    "bmiHistorySection": "Senesni duomenys",
+    "@bmiHistorySection": {
+        "description": "BMI history section header"
+    },
+    "bmiNewSection": "Nauja informacija",
+    "@bmiNewSection": {
+        "description": "BMI new entry section header"
+    },
+    "bmiNewHint": "Įveskite savo ūgį ir svorį.",
+    "@bmiNewHint": {
+        "description": "BMI new entry hint"
+    },
+    "heightLabel": "Ūgis",
+    "@heightLabel": {
+        "description": "Height field label"
+    },
+    "weightLabel": "Svoris",
+    "@weightLabel": {
+        "description": "Weight field label"
+    },
+    "cmUnit": "cm",
+    "@cmUnit": {
+        "description": "Centimeter unit"
+    },
+    "kgUnit": "kg",
+    "@kgUnit": {
+        "description": "Kilogram unit"
+    },
+    "heightRange": "Ūgis: 50-250 cm",
+    "@heightRange": {
+        "description": "Height range hint"
+    },
+    "weightRange": "Svoris: 20-300 kg",
+    "@weightRange": {
+        "description": "Weight range hint"
+    },
+    "heightRequired": "Įveskite ūgį",
+    "@heightRequired": {
+        "description": "Height required error"
+    },
+    "weightRequired": "Įveskite svorį",
+    "@weightRequired": {
+        "description": "Weight required error"
+    },
+    "addFirstMeasurement": "Pridėkite pirmą matavimą",
+    "@addFirstMeasurement": {
+        "description": "Add first measurement prompt"
+    },
+    "yourBmi": "Jūsų KMI:",
+    "@yourBmi": {
+        "description": "Label for real-time BMI calculation display"
     }
 }

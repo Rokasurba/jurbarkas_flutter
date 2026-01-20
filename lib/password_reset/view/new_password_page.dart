@@ -130,7 +130,7 @@ class _NewPasswordViewState extends State<NewPasswordView> {
                       const SizedBox(height: 24),
                       SizedBox(
                         height: 56,
-                        child: ElevatedButton(
+                        child: AppPrimaryButton(
                           onPressed:
                               state.isLoading ? null : _handleResetPassword,
                           child: state.isLoading

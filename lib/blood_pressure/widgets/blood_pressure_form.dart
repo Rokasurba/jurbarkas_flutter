@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/core/theme/app_theme.dart';
+import 'package:frontend/core/widgets/app_primary_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class BloodPressureForm extends StatefulWidget {
@@ -139,7 +140,7 @@ class _BloodPressureFormState extends State<BloodPressureForm> {
           const SizedBox(height: 24),
           SizedBox(
             height: 56,
-            child: ElevatedButton(
+            child: AppPrimaryButton(
               onPressed: widget.isLoading ? null : _submit,
               child: widget.isLoading
                   ? const SizedBox(

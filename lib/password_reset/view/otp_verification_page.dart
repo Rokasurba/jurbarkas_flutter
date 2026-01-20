@@ -167,7 +167,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                       const SizedBox(height: 24),
                       SizedBox(
                         height: 56,
-                        child: ElevatedButton(
+                        child: AppPrimaryButton(
                           onPressed: state.isLoading || !_isOtpComplete
                               ? null
                               : _handleVerify,

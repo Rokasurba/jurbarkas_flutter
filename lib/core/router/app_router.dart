@@ -5,6 +5,7 @@ import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/auth/view/login_page.dart';
 import 'package:frontend/auth/view/register_page.dart';
 import 'package:frontend/blood_pressure/view/blood_pressure_page.dart';
+import 'package:frontend/bmi/view/bmi_page.dart';
 import 'package:frontend/doctor/view/doctor_dashboard_page.dart';
 import 'package:frontend/password_reset/cubit/password_reset_cubit.dart';
 import 'package:frontend/password_reset/view/forgot_password_page.dart';
@@ -50,6 +51,11 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: '/blood-pressure',
           page: BloodPressureRoute.page,
+          guards: [AuthGuard(authCubit)],
+        ),
+        AutoRoute(
+          path: '/bmi',
+          page: BmiRoute.page,
           guards: [AuthGuard(authCubit)],
         ),
         AutoRoute(

@@ -140,13 +140,17 @@
     "@forgotPasswordTitle": {
         "description": "Forgot password page title"
     },
-    "forgotPasswordSubtitle": "Enter your email and we'll send you a verification code",
+    "forgotPasswordSubtitle": "Enter your account email address to receive a verification code.",
     "@forgotPasswordSubtitle": {
         "description": "Forgot password page subtitle"
     },
-    "sendCodeButton": "Send Code",
+    "sendCodeButton": "Send",
     "@sendCodeButton": {
         "description": "Send verification code button text"
+    },
+    "emailPlaceholder": "Enter...",
+    "@emailPlaceholder": {
+        "description": "Email field placeholder text"
     },
     "backToLoginLink": "Back to login",
     "@backToLoginLink": {
@@ -285,5 +289,61 @@
     "diastolicRange": "Diastolic: 40-150",
     "@diastolicRange": {
         "description": "Diastolic range hint"
+    },
+    "bmiTitle": "Body Mass Index",
+    "@bmiTitle": {
+        "description": "BMI page title"
+    },
+    "bmiHistorySection": "Previous data",
+    "@bmiHistorySection": {
+        "description": "BMI history section header"
+    },
+    "bmiNewSection": "New measurement",
+    "@bmiNewSection": {
+        "description": "BMI new entry section header"
+    },
+    "bmiNewHint": "Enter your height and weight.",
+    "@bmiNewHint": {
+        "description": "BMI new entry hint"
+    },
+    "heightLabel": "Height",
+    "@heightLabel": {
+        "description": "Height field label"
+    },
+    "weightLabel": "Weight",
+    "@weightLabel": {
+        "description": "Weight field label"
+    },
+    "cmUnit": "cm",
+    "@cmUnit": {
+        "description": "Centimeter unit"
+    },
+    "kgUnit": "kg",
+    "@kgUnit": {
+        "description": "Kilogram unit"
+    },
+    "heightRange": "Height: 50-250 cm",
+    "@heightRange": {
+        "description": "Height range hint"
+    },
+    "weightRange": "Weight: 20-300 kg",
+    "@weightRange": {
+        "description": "Weight range hint"
+    },
+    "heightRequired": "Enter height",
+    "@heightRequired": {
+        "description": "Height required error"
+    },
+    "weightRequired": "Enter weight",
+    "@weightRequired": {
+        "description": "Weight required error"
+    },
+    "addFirstMeasurement": "Add your first measurement",
+    "@addFirstMeasurement": {
+        "description": "Add first measurement prompt"
+    },
+    "yourBmi": "Your BMI:",
+    "@yourBmi": {
+        "description": "Label for real-time BMI calculation display"
     }
 }

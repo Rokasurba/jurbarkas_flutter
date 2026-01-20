@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -53,9 +54,11 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
         title: Text(l10n.forgotPasswordTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => context.router.maybePop(),
         ),
       ),
@@ -83,72 +86,109 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           );
         },
         builder: (context, state) {
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: ResponsiveCard(
-                maxWidth: 420,
-                padding: const EdgeInsets.all(32),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Icon(
-                        Icons.lock_reset,
-                        size: 80,
-                        color: context.primaryColor,
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        l10n.forgotPasswordTitle,
-                        style: context.headlineMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.forgotPasswordSubtitle,
-                        style: context.bodyMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      AppEmailField(
-                        controller: _emailController,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (_) => _handleSendCode(),
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: state.isLoading ? null : _handleSendCode,
-                          child: state.isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+          return ResponsiveBuilder(
+            builder: (context, info) {
+              final content = SafeArea(
+                child: Column(
+                  children: [
+                    // Main content
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: 48),
+                                // Email icon
+                                const _EmailIcon(),
+                                const SizedBox(height: 24),
+                                // Subtitle
+                                Text(
+                                  l10n.forgotPasswordSubtitle,
+                                  style: context.bodyLarge?.copyWith(
+                                    color: AppColors.secondaryText,
                                   ),
-                                )
-                              : Text(l10n.sendCodeButton),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 32),
+                                // Email label
+                                Text(
+                                  l10n.emailLabel,
+                                  style: context.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                // Email field
+                                TextFormField(
+                                  controller: _emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.done,
+                                  autocorrect: false,
+                                  enabled: !state.isLoading,
+                                  onFieldSubmitted: (_) => _handleSendCode(),
+                                  decoration: InputDecoration(
+                                    hintText: l10n.emailPlaceholder,
+                                    filled: true,
+                                    fillColor: AppColors.inputFill,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: AppValidators.email(context),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => context.router.maybePop(),
-                        child: Text(l10n.backToLoginLink),
+                    ),
+                    // Bottom button
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: AppPrimaryButton(
+                        onPressed: _handleSendCode,
+                        isLoading: state.isLoading,
+                        child: Text(l10n.sendCodeButton),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
+              );
+
+              // On web/desktop, center the content in a constrained container
+              if (info.isDesktop || info.isTablet) {
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: content,
+                  ),
+                );
+              }
+
+              return content;
+            },
           );
         },
       ),
+    );
+  }
+}
+
+/// Email icon from SVG asset.
+class _EmailIcon extends StatelessWidget {
+  const _EmailIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      Assets.mailIcon,
+      height: 92,
+      width: 86,
     );
   }
 }
