@@ -37,21 +37,12 @@ class BmiRepository {
   }
 
   Future<ApiResponse<List<BmiMeasurement>>> getHistory({
-    int? limit,
-    int? offset,
+    PaginationParams params = const PaginationParams(),
   }) async {
     try {
-      final queryParams = <String, dynamic>{};
-      if (limit != null) {
-        queryParams['limit'] = limit;
-      }
-      if (offset != null && offset > 0) {
-        queryParams['offset'] = offset;
-      }
-
       final response = await _apiClient.get<Map<String, dynamic>>(
         ApiConstants.bmi,
-        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+        queryParameters: params.toQueryMapOrNull(),
       );
 
       return ApiResponse.fromJson(

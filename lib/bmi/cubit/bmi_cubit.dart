@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/bmi/data/models/bmi_measurement.dart';
 import 'package:frontend/bmi/data/repositories/bmi_repository.dart';
+import 'package:frontend/core/data/query_params.dart';
 
 part 'bmi_state.dart';
 part 'bmi_cubit.freezed.dart';
@@ -14,18 +15,16 @@ class BmiCubit extends Cubit<BmiState> {
 
   final BmiRepository _bmiRepository;
 
-  static const int _pageSize = 20;
-
-  Future<void> loadHistory({int? limit}) async {
+  Future<void> loadHistory() async {
     emit(const BmiState.loading());
 
     final response = await _bmiRepository.getHistory(
-      limit: limit ?? _pageSize,
+      params: const PaginationParams.firstPage(),
     );
 
     response.when(
       success: (measurements, _) {
-        final hasMore = measurements.length >= _pageSize;
+        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
         emit(BmiState.loaded(measurements, hasMore: hasMore));
       },
       error: (message, _) => emit(BmiState.failure(message)),
@@ -39,17 +38,15 @@ class BmiCubit extends Cubit<BmiState> {
     emit(BmiState.loadingMore(currentMeasurements));
 
     final response = await _bmiRepository.getHistory(
-      limit: _pageSize,
-      offset: currentMeasurements.length,
+      params: PaginationParams.nextPage(currentMeasurements.length),
     );
 
     response.when(
       success: (newMeasurements, _) {
         final allMeasurements = [...currentMeasurements, ...newMeasurements];
-        emit(BmiState.loaded(
-          allMeasurements,
-          hasMore: newMeasurements.length >= _pageSize,
-        ));
+        final hasMore =
+            newMeasurements.length >= PaginationParams.defaultPageSize;
+        emit(BmiState.loaded(allMeasurements, hasMore: hasMore));
       },
       error: (message, _) => emit(BmiState.failure(message)),
     );

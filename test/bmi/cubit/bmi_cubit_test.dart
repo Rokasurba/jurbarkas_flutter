@@ -4,11 +4,17 @@ import 'package:frontend/bmi/cubit/bmi_cubit.dart';
 import 'package:frontend/bmi/data/models/bmi_measurement.dart';
 import 'package:frontend/bmi/data/repositories/bmi_repository.dart';
 import 'package:frontend/core/data/api_response.dart';
+import 'package:frontend/core/data/query_params.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockBmiRepository extends Mock implements BmiRepository {}
 
+class FakePaginationParams extends Fake implements PaginationParams {}
+
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakePaginationParams());
+  });
   late MockBmiRepository mockRepository;
 
   final mockMeasurement = BmiMeasurement(
@@ -44,12 +50,8 @@ void main() {
     blocTest<BmiCubit, BmiState>(
       'emits [loading, loaded] when loadHistory succeeds',
       build: () {
-        when(
-          () => mockRepository.getHistory(
-            limit: any(named: 'limit'),
-            offset: any(named: 'offset'),
-          ),
-        ).thenAnswer(
+        when(() => mockRepository.getHistory(params: any(named: 'params')))
+            .thenAnswer(
           (_) async => ApiResponse.success(data: mockMeasurements),
         );
         return BmiCubit(bmiRepository: mockRepository);
@@ -64,12 +66,8 @@ void main() {
     blocTest<BmiCubit, BmiState>(
       'emits [loading, failure] when loadHistory fails',
       build: () {
-        when(
-          () => mockRepository.getHistory(
-            limit: any(named: 'limit'),
-            offset: any(named: 'offset'),
-          ),
-        ).thenAnswer(
+        when(() => mockRepository.getHistory(params: any(named: 'params')))
+            .thenAnswer(
           (_) async => const ApiResponse.error(message: 'Network error'),
         );
         return BmiCubit(bmiRepository: mockRepository);
@@ -167,12 +165,8 @@ void main() {
     blocTest<BmiCubit, BmiState>(
       'loadMore appends new measurements',
       build: () {
-        when(
-          () => mockRepository.getHistory(
-            limit: any(named: 'limit'),
-            offset: any(named: 'offset'),
-          ),
-        ).thenAnswer(
+        when(() => mockRepository.getHistory(params: any(named: 'params')))
+            .thenAnswer(
           (_) async => ApiResponse.success(
             data: [
               BmiMeasurement(

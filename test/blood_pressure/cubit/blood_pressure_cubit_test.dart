@@ -4,12 +4,18 @@ import 'package:frontend/blood_pressure/cubit/blood_pressure_cubit.dart';
 import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
 import 'package:frontend/blood_pressure/data/repositories/blood_pressure_repository.dart';
 import 'package:frontend/core/data/api_response.dart';
+import 'package:frontend/core/data/query_params.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockBloodPressureRepository extends Mock
     implements BloodPressureRepository {}
 
+class FakePaginationParams extends Fake implements PaginationParams {}
+
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakePaginationParams());
+  });
   late MockBloodPressureRepository mockRepository;
 
   final mockReading = BloodPressureReading(
@@ -43,12 +49,8 @@ void main() {
     blocTest<BloodPressureCubit, BloodPressureState>(
       'emits [loading, loaded] when loadHistory succeeds',
       build: () {
-        when(
-          () => mockRepository.getHistory(
-            limit: any(named: 'limit'),
-            offset: any(named: 'offset'),
-          ),
-        ).thenAnswer(
+        when(() => mockRepository.getHistory(params: any(named: 'params')))
+            .thenAnswer(
           (_) async => ApiResponse.success(data: mockReadings),
         );
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
@@ -63,12 +65,8 @@ void main() {
     blocTest<BloodPressureCubit, BloodPressureState>(
       'emits [loading, failure] when loadHistory fails',
       build: () {
-        when(
-          () => mockRepository.getHistory(
-            limit: any(named: 'limit'),
-            offset: any(named: 'offset'),
-          ),
-        ).thenAnswer(
+        when(() => mockRepository.getHistory(params: any(named: 'params')))
+            .thenAnswer(
           (_) async => const ApiResponse.error(message: 'Network error'),
         );
         return BloodPressureCubit(bloodPressureRepository: mockRepository);
@@ -165,12 +163,8 @@ void main() {
     blocTest<BloodPressureCubit, BloodPressureState>(
       'loadMore appends new readings',
       build: () {
-        when(
-          () => mockRepository.getHistory(
-            limit: any(named: 'limit'),
-            offset: any(named: 'offset'),
-          ),
-        ).thenAnswer(
+        when(() => mockRepository.getHistory(params: any(named: 'params')))
+            .thenAnswer(
           (_) async => ApiResponse.success(
             data: [
               BloodPressureReading(

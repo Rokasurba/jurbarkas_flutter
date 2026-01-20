@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
 import 'package:frontend/blood_pressure/data/repositories/blood_pressure_repository.dart';
+import 'package:frontend/core/data/query_params.dart';
 
 part 'blood_pressure_state.dart';
 part 'blood_pressure_cubit.freezed.dart';
@@ -14,18 +15,16 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
 
   final BloodPressureRepository _bloodPressureRepository;
 
-  static const int _pageSize = 20;
-
-  Future<void> loadHistory({int? limit}) async {
+  Future<void> loadHistory() async {
     emit(const BloodPressureState.loading());
 
     final response = await _bloodPressureRepository.getHistory(
-      limit: limit ?? _pageSize,
+      params: const PaginationParams.firstPage(),
     );
 
     response.when(
       success: (readings, _) {
-        final hasMore = readings.length >= _pageSize;
+        final hasMore = readings.length >= PaginationParams.defaultPageSize;
         emit(BloodPressureState.loaded(readings, hasMore: hasMore));
       },
       error: (message, _) => emit(BloodPressureState.failure(message)),
@@ -39,17 +38,14 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     emit(BloodPressureState.loadingMore(currentReadings));
 
     final response = await _bloodPressureRepository.getHistory(
-      limit: _pageSize,
-      offset: currentReadings.length,
+      params: PaginationParams.nextPage(currentReadings.length),
     );
 
     response.when(
       success: (newReadings, _) {
         final allReadings = [...currentReadings, ...newReadings];
-        emit(BloodPressureState.loaded(
-          allReadings,
-          hasMore: newReadings.length >= _pageSize,
-        ));
+        final hasMore = newReadings.length >= PaginationParams.defaultPageSize;
+        emit(BloodPressureState.loaded(allReadings, hasMore: hasMore));
       },
       error: (message, _) => emit(BloodPressureState.failure(message)),
     );
