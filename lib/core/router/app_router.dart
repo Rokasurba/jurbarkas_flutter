@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/admin/view/admin_dashboard_page.dart';
+import 'package:frontend/app/view/splash_page.dart';
 import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/auth/view/login_page.dart';
 import 'package:frontend/auth/view/register_page.dart';
@@ -24,6 +27,10 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
+        AutoRoute(
+          path: '/splash',
+          page: SplashRoute.page,
+        ),
         AutoRoute(
           path: '/login',
           page: LoginRoute.page,
@@ -74,7 +81,7 @@ class AppRouter extends RootStackRouter {
           page: AdminDashboardRoute.page,
           guards: [AuthGuard(authCubit)],
         ),
-        RedirectRoute(path: '/', redirectTo: '/login'),
+        RedirectRoute(path: '/', redirectTo: '/splash'),
       ];
 
   @override
@@ -94,7 +101,7 @@ class AuthGuard extends AutoRouteGuard {
     if (authCubit.state.isAuthenticated) {
       resolver.next();
     } else {
-      resolver.redirect(const LoginRoute());
+      unawaited(resolver.redirect(const LoginRoute()));
     }
   }
 }

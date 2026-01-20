@@ -56,6 +56,7 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     required int diastolic,
   }) async {
     final currentReadings = state.readings;
+    final currentHasMore = state.hasMore;
 
     emit(BloodPressureState.saving(currentReadings));
 
@@ -67,9 +68,16 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     response.when(
       success: (reading, _) {
         final updatedReadings = [reading, ...currentReadings];
+        // Emit saved first for the listener to show snackbar and clear form
         emit(BloodPressureState.saved(reading, updatedReadings));
+        // Then immediately emit loaded to preserve the state
+        emit(BloodPressureState.loaded(updatedReadings, hasMore: currentHasMore));
       },
-      error: (message, _) => emit(BloodPressureState.failure(message)),
+      error: (message, _) {
+        // On error, show failure then restore to loaded state with original data
+        emit(BloodPressureState.failure(message));
+        emit(BloodPressureState.loaded(currentReadings, hasMore: currentHasMore));
+      },
     );
   }
 
@@ -79,6 +87,7 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     required int diastolic,
   }) async {
     final currentReadings = state.readings;
+    final currentHasMore = state.hasMore;
 
     emit(BloodPressureState.updating(currentReadings));
 
@@ -93,14 +102,22 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
         final updatedReadings = currentReadings.map((reading) {
           return reading.id == id ? updatedReading : reading;
         }).toList();
+        // Emit updated first for the listener to close sheet and show snackbar
         emit(BloodPressureState.updated(updatedReading, updatedReadings));
+        // Then immediately emit loaded to preserve the state
+        emit(BloodPressureState.loaded(updatedReadings, hasMore: currentHasMore));
       },
-      error: (message, _) => emit(BloodPressureState.failure(message)),
+      error: (message, _) {
+        // On error, show failure then restore to loaded state with original data
+        emit(BloodPressureState.failure(message));
+        emit(BloodPressureState.loaded(currentReadings, hasMore: currentHasMore));
+      },
     );
   }
 
   Future<void> deleteReading({required int id}) async {
     final currentReadings = state.readings;
+    final currentHasMore = state.hasMore;
 
     emit(BloodPressureState.deleting(currentReadings));
 
@@ -110,9 +127,16 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
       success: (_, __) {
         final updatedReadings =
             currentReadings.where((reading) => reading.id != id).toList();
+        // First emit deleted for the listener to show snackbar
         emit(BloodPressureState.deleted(updatedReadings));
+        // Then immediately emit loaded to preserve the state
+        emit(BloodPressureState.loaded(updatedReadings, hasMore: currentHasMore));
       },
-      error: (message, _) => emit(BloodPressureState.failure(message)),
+      error: (message, _) {
+        // On error, show failure then restore to loaded state with original data
+        emit(BloodPressureState.failure(message));
+        emit(BloodPressureState.loaded(currentReadings, hasMore: currentHasMore));
+      },
     );
   }
 
@@ -142,14 +166,9 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
   }
 
   void clearDeletedState() {
-    state.maybeWhen(
-      deleted: (readings) {
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
-        emit(BloodPressureState.loaded(readings, hasMore: hasMore));
-      },
-      orElse: () {
-        emit(const BloodPressureState.initial());
-      },
-    );
+    // Always preserve current readings when clearing deleted state
+    final currentReadings = state.readings;
+    final hasMore = currentReadings.length >= PaginationParams.defaultPageSize;
+    emit(BloodPressureState.loaded(currentReadings, hasMore: hasMore));
   }
 }

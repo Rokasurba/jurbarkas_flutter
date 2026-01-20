@@ -23,6 +23,7 @@ class PatientProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
+      surfaceTintColor: Colors.transparent,
       elevation: 2,
       shadowColor: AppColors.primary.withValues(alpha: 0.25),
       shape: RoundedRectangleBorder(

@@ -39,7 +39,7 @@ sealed class ApiResponse<T> with _$ApiResponse<T> {
   ) {
     final success = json['success'] as bool? ?? false;
 
-    if (success && json['data'] != null) {
+    if (success) {
       return ApiResponse.success(
         data: fromJsonT(json['data']),
         message: json['message'] as String?,

@@ -132,8 +132,7 @@ class _LoginViewState extends State<LoginView> {
                                     },
                                     child: Text(
                                       l10n.forgotPassword,
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                                      style: context.bodyMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -162,8 +161,7 @@ class _LoginViewState extends State<LoginView> {
                             children: [
                               Text(
                                 l10n.noAccountQuestion,
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                style: context.bodyMedium?.copyWith(
                                   color: AppColors.secondaryText,
                                 ),
                               ),
@@ -174,8 +172,7 @@ class _LoginViewState extends State<LoginView> {
                                 },
                                 child: Text(
                                   l10n.registerLink,
-                                  style: const TextStyle(
-                                    fontSize: 14,
+                                  style: context.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.primary,
                                   ),
@@ -190,12 +187,22 @@ class _LoginViewState extends State<LoginView> {
                 ),
               );
 
-              // On web/desktop, center the content in a constrained container
+              // On web/desktop, center in a floating card
               if (info.isDesktop || info.isTablet) {
                 return Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 480),
-                    child: content,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Card(
+                      elevation: 8,
+                      shadowColor: AppColors.primary.withValues(alpha: 0.15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 420),
+                        child: _buildWebContent(context, l10n, state),
+                      ),
+                    ),
                   ),
                 );
               }
@@ -205,6 +212,120 @@ class _LoginViewState extends State<LoginView> {
           );
         },
       ),
+    );
+  }
+}
+
+extension _LoginViewHelpers on _LoginViewState {
+  Widget _buildWebContent(
+    BuildContext context,
+    AppLocalizations l10n,
+    AuthState state,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Logo banner with rounded top corners
+        ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          child: Image.asset(
+            Assets.logoBanner,
+            fit: BoxFit.cover,
+            width: double.infinity,
+          ),
+        ),
+        // Form content
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.loginTitle,
+                  style: context.headlineMedium?.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  l10n.emailLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppEmailField(
+                  controller: _emailController,
+                  enabled: !state.isLoading,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.passwordLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppPasswordField(
+                  controller: _passwordController,
+                  onFieldSubmitted: (_) => _handleLogin(),
+                  enabled: !state.isLoading,
+                  validator: AppValidators.required(l10n.passwordRequired),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () async {
+                      await context.router.push(const ForgotPasswordRoute());
+                    },
+                    child: Text(
+                      l10n.forgotPassword,
+                      style: context.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                AppPrimaryButton(
+                  onPressed: _handleLogin,
+                  isLoading: state.isLoading,
+                  child: Text(l10n.loginButton),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      l10n.noAccountQuestion,
+                      style: context.bodyMedium?.copyWith(
+                        color: AppColors.secondaryText,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        await context.router.push(const RegisterRoute());
+                      },
+                      child: Text(
+                        l10n.registerLink,
+                        style: context.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:frontend/blood_pressure/cubit/blood_pressure_cubit.dart';
 import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
 import 'package:frontend/blood_pressure/data/repositories/blood_pressure_repository.dart';
 import 'package:frontend/blood_pressure/widgets/blood_pressure_form.dart';
+import 'package:frontend/blood_pressure/widgets/blood_pressure_graph.dart';
 import 'package:frontend/blood_pressure/widgets/blood_pressure_history.dart';
 import 'package:frontend/blood_pressure/widgets/edit_blood_pressure_sheet.dart';
 import 'package:frontend/core/core.dart';
@@ -40,18 +41,22 @@ class _BloodPressureView extends StatefulWidget {
   State<_BloodPressureView> createState() => _BloodPressureViewState();
 }
 
-class _BloodPressureViewState extends State<_BloodPressureView> {
+class _BloodPressureViewState extends State<_BloodPressureView>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
   final _scrollController = ScrollController();
   final _formKey = GlobalKey<BloodPressureFormState>();
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -92,6 +97,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
     DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
+        Navigator.of(context).pop();
         unawaited(
           context.read<BloodPressureCubit>().deleteReading(id: reading.id),
         );
@@ -114,7 +120,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
                 backgroundColor: AppColors.primary,
               ),
             );
-            context.read<BloodPressureCubit>().clearSavedState();
+            // No need to clear - cubit emits loaded immediately after saved
           },
           updated: (_, _) {
             Navigator.of(context).pop();
@@ -124,17 +130,16 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
                 backgroundColor: AppColors.primary,
               ),
             );
-            context.read<BloodPressureCubit>().clearUpdatedState();
+            // No need to clear - cubit emits loaded immediately after updated
           },
           deleted: (_) {
-            Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(l10n.dataDeleted),
                 backgroundColor: AppColors.primary,
               ),
             );
-            context.read<BloodPressureCubit>().clearDeletedState();
+            // No need to clear - cubit emits loaded immediately after deleted
           },
           failure: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -153,40 +158,101 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
             title: Text(l10n.bloodPressureTitle),
+            bottom: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              indicatorColor: Colors.white,
+              tabs: [
+                Tab(text: l10n.tabRecords),
+                Tab(text: l10n.tabGraph),
+              ],
+            ),
           ),
           body: SafeArea(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BloodPressureHistory(
-                    readings: state.readings,
-                    isLoading: state.isLoading,
-                    isLoadingMore: state.isLoadingMore,
-                    onEdit: _onEdit,
-                    onDelete: _onDelete,
-                  ),
-                  const SizedBox(height: 24),
-                  BloodPressureForm(
-                    key: _formKey,
-                    onSubmit: (systolic, diastolic) {
-                      unawaited(
-                        context.read<BloodPressureCubit>().saveReading(
-                              systolic: systolic,
-                              diastolic: diastolic,
-                            ),
-                      );
-                    },
-                    isLoading: state.isSaving,
-                  ),
-                ],
-              ),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _RecordsTab(
+                  scrollController: _scrollController,
+                  formKey: _formKey,
+                  state: state,
+                  onEdit: _onEdit,
+                  onDelete: _onDelete,
+                ),
+                BloodPressureGraph(
+                  readings: state.readings,
+                  isLoading: state.isLoading,
+                ),
+              ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _RecordsTab extends StatelessWidget {
+  const _RecordsTab({
+    required this.scrollController,
+    required this.formKey,
+    required this.state,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final ScrollController scrollController;
+  final GlobalKey<BloodPressureFormState> formKey;
+  final BloodPressureState state;
+  final void Function(BloodPressureReading reading) onEdit;
+  final void Function(BloodPressureReading reading) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            padding: const EdgeInsets.all(16),
+            child: BloodPressureHistory(
+              readings: state.readings,
+              isLoading: state.isLoading,
+              isLoadingMore: state.isLoadingMore,
+              onEdit: onEdit,
+              onDelete: onDelete,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: BloodPressureForm(
+              key: formKey,
+              onSubmit: (systolic, diastolic) {
+                unawaited(
+                  context.read<BloodPressureCubit>().saveReading(
+                        systolic: systolic,
+                        diastolic: diastolic,
+                      ),
+                );
+              },
+              isLoading: state.isSaving,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

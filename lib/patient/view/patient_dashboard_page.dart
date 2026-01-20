@@ -36,62 +36,83 @@ class PatientDashboardPage extends StatelessWidget {
 class PatientDashboardView extends StatelessWidget {
   const PatientDashboardView({super.key});
 
+  Future<void> _handleLogout(BuildContext context) async {
+    await context.read<AuthCubit>().logout();
+    if (context.mounted) {
+      await context.router.replaceAll([const LoginRoute()]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return ResponsiveScaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
-        title: Text(l10n.dashboardTitle),
-        actions: [
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              return PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle),
-                onSelected: (value) async {
-                  if (value == 'logout') {
-                    await context.read<AuthCubit>().logout();
-                    if (context.mounted) {
-                      await context.router.replaceAll([const LoginRoute()]);
-                    }
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    enabled: false,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.user?.fullName ?? '',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          state.user?.email ?? '',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
+    return ResponsiveBuilder(
+      builder: (context, info) {
+        final isMobile = info.isMobile;
+
+        return ResponsiveScaffold(
+          drawer: isMobile ? _buildDrawer(context, l10n) : null,
+          appBar: AppBar(
+            backgroundColor: AppColors.secondary,
+            foregroundColor: Colors.white,
+            title: Text(l10n.dashboardTitle),
+            leading: isMobile
+                ? Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
-                  ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    value: 'logout',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.logout),
-                        const SizedBox(width: 8),
-                        Text(l10n.logoutButton),
-                      ],
+                  )
+                : null,
+            actions: isMobile
+                ? null
+                : [
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
+                        return PopupMenuButton<String>(
+                          icon: const Icon(Icons.account_circle),
+                          onSelected: (value) async {
+                            if (value == 'logout') {
+                              await _handleLogout(context);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              enabled: false,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    state.user?.fullName ?? '',
+                                    style: context.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    state.user?.email ?? '',
+                                    style: context.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(),
+                            PopupMenuItem(
+                              value: 'logout',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.logout),
+                                  const SizedBox(width: 8),
+                                  Text(l10n.logoutButton),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ),
-                ],
-              );
-            },
+                  ],
           ),
-        ],
-      ),
       body: BlocBuilder<DashboardCubit, DashboardState>(
         builder: (context, state) {
           return state.when(
@@ -128,8 +149,14 @@ class PatientDashboardView extends StatelessWidget {
                           : null,
                       icon: Icons.favorite,
                       measuredAt: data.latestBloodPressure?.measuredAt,
-                      onTap: () =>
-                          context.router.push(const BloodPressureRoute()),
+                      onTap: () async {
+                        await context.router.push(const BloodPressureRoute());
+                        if (context.mounted) {
+                          unawaited(
+                            context.read<DashboardCubit>().refresh(),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(height: 8),
                     MetricCard(
@@ -140,7 +167,14 @@ class PatientDashboardView extends StatelessWidget {
                           : null,
                       icon: Icons.water_drop,
                       measuredAt: data.latestBloodSugar?.measuredAt,
-                      onTap: () => context.router.push(const BloodSugarRoute()),
+                      onTap: () async {
+                        await context.router.push(const BloodSugarRoute());
+                        if (context.mounted) {
+                          unawaited(
+                            context.read<DashboardCubit>().refresh(),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(height: 8),
                     MetricCard(
@@ -148,7 +182,14 @@ class PatientDashboardView extends StatelessWidget {
                       value: data.latestBmi?.bmiValue,
                       icon: Icons.monitor_weight,
                       measuredAt: data.latestBmi?.measuredAt,
-                      onTap: () => context.router.push(const BmiRoute()),
+                      onTap: () async {
+                        await context.router.push(const BmiRoute());
+                        if (context.mounted) {
+                          unawaited(
+                            context.read<DashboardCubit>().refresh(),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -174,6 +215,75 @@ class PatientDashboardView extends StatelessWidget {
             ),
           );
         },
+      ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context, AppLocalizations l10n) {
+    return Drawer(
+      child: Column(
+        children: [
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              return Container(
+                width: double.infinity,
+                color: AppColors.secondary,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            state.user?.initials ?? '',
+                            style: context.titleLarge?.copyWith(
+                              color: AppColors.secondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          state.user?.fullName ?? '',
+                          style: context.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          state.user?.email ?? '',
+                          style: context.bodyMedium?.copyWith(
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const Spacer(),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: Text(l10n.logoutButton),
+            onTap: () async {
+              Navigator.of(context).pop();
+              await _handleLogout(context);
+            },
+          ),
+          const SafeArea(
+            top: false,
+            child: SizedBox(height: 8),
+          ),
+        ],
       ),
     );
   }

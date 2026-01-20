@@ -22,6 +22,13 @@ class User with _$User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   String get fullName => '$name $surname'.trim();
+
+  String get initials {
+    final namePart = name.isNotEmpty ? name[0] : '';
+    final surnamePart = surname.isNotEmpty ? surname[0] : '';
+    return '$namePart$surnamePart'.toUpperCase();
+  }
+
   bool get isPatient => role == 'patient';
   bool get isDoctor => role == 'doctor';
   bool get isAdmin => role == 'admin';

@@ -26,6 +26,7 @@ class EditBloodPressureSheet extends StatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.white,
       builder: (context) => EditBloodPressureSheet(
         reading: reading,
         onUpdate: onUpdate,
@@ -169,26 +170,32 @@ class _EditBloodPressureSheetState extends State<EditBloodPressureSheet> {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed:
-                        widget.isLoading ? null : () => Navigator.pop(context),
-                    child: Text(l10n.cancelButton),
+                  child: SizedBox(
+                    height: 48,
+                    child: OutlinedButton(
+                      onPressed:
+                          widget.isLoading ? null : () => Navigator.pop(context),
+                      child: Text(l10n.cancelButton),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: AppPrimaryButton(
-                    onPressed: widget.isLoading ? null : _submit,
-                    child: widget.isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(l10n.updateButton),
+                  child: SizedBox(
+                    height: 48,
+                    child: AppPrimaryButton(
+                      onPressed: widget.isLoading ? null : _submit,
+                      child: widget.isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(l10n.updateButton),
+                    ),
                   ),
                 ),
               ],

@@ -83,13 +83,6 @@ class BloodPressureFormState extends State<BloodPressureForm> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.bloodPressureNewHint,
-            style: context.bodyMedium?.copyWith(
-              color: AppColors.secondaryText,
-            ),
-          ),
           const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

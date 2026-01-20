@@ -230,17 +230,33 @@
     "@bloodPressureTitle": {
         "description": "Blood pressure page title"
     },
-    "bloodPressureHistorySection": "Senesni duomenys",
+    "bloodPressureHistorySection": "Fiksavimo istorija",
     "@bloodPressureHistorySection": {
         "description": "Blood pressure history section header"
     },
-    "bloodPressureNewSection": "Nauja informacija",
+    "bloodPressureNewSection": "Naujas įrašas",
     "@bloodPressureNewSection": {
         "description": "Blood pressure new entry section header"
     },
-    "bloodPressureNewHint": "Pildykite dabar.",
-    "@bloodPressureNewHint": {
-        "description": "Blood pressure new entry hint"
+    "tabRecords": "Įrašai",
+    "@tabRecords": {
+        "description": "Tab label for records/input view"
+    },
+    "tabGraph": "Grafikas",
+    "@tabGraph": {
+        "description": "Tab label for graph view"
+    },
+    "periodWeek": "Savaitė",
+    "@periodWeek": {
+        "description": "Week period label for graph"
+    },
+    "periodMonth": "Mėnuo",
+    "@periodMonth": {
+        "description": "Month period label for graph"
+    },
+    "periodYear": "Metai",
+    "@periodYear": {
+        "description": "Year period label for graph"
     },
     "systolicLabel": "Sistolinis",
     "@systolicLabel": {

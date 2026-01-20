@@ -32,6 +32,8 @@ class DeleteConfirmationDialog extends StatelessWidget {
     final l10n = context.l10n;
 
     return AlertDialog(
+      surfaceTintColor: Colors.transparent,
+      backgroundColor: Colors.white,
       title: Text(l10n.deleteConfirmTitle),
       content: Text(l10n.deleteConfirmMessage),
       actions: [

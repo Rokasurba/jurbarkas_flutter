@@ -52,7 +52,6 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-        border: const OutlineInputBorder(),
       ),
       validator: validator,
     );
@@ -92,7 +91,6 @@ class AppEmailField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
         labelText: l10n.emailLabel,
-        border: const OutlineInputBorder(),
       ),
       validator: AppValidators.email(context),
     );
@@ -142,7 +140,6 @@ class _AppPasswordFieldState extends State<AppPasswordField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
         labelText: widget.labelText ?? l10n.passwordLabel,
-        border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText
@@ -197,7 +194,6 @@ class _AppConfirmPasswordFieldState extends State<AppConfirmPasswordField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
         labelText: l10n.confirmPasswordLabel,
-        border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText
@@ -244,7 +240,6 @@ class AppOtpDigitField extends StatelessWidget {
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: const InputDecoration(
           counterText: '',
-          border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(vertical: 16),
         ),
         style: Theme.of(context).textTheme.headlineSmall,

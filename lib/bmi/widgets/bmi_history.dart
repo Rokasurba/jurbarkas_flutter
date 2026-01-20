@@ -84,6 +84,9 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      elevation: 1,
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -138,6 +141,9 @@ class _MeasurementCard extends StatelessWidget {
     final showActions = _canModify && (onEdit != null || onDelete != null);
 
     return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      elevation: 1,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(

@@ -77,6 +77,7 @@ class _AppProvidersState extends State<_AppProviders> {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<ApiClient>.value(value: _apiClient),
         RepositoryProvider.value(value: _authRepository),
         RepositoryProvider.value(value: _passwordResetRepository),
       ],

@@ -12,6 +12,7 @@ dependencies:
   bloc: ^9.0.1
   dio: ^5.9.0
   envied: ^1.1.1
+  fl_chart: ^0.70.2
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
