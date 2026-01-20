@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
+import 'package:frontend/blood_sugar/data/models/blood_sugar_reading.dart';
 import 'package:frontend/core/theme/app_theme.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:intl/intl.dart';
 
-class BloodPressureHistory extends StatelessWidget {
-  const BloodPressureHistory({
+class BloodSugarHistory extends StatelessWidget {
+  const BloodSugarHistory({
     required this.readings,
     required this.isLoading,
     this.isLoadingMore = false,
@@ -14,11 +14,11 @@ class BloodPressureHistory extends StatelessWidget {
     super.key,
   });
 
-  final List<BloodPressureReading> readings;
+  final List<BloodSugarReading> readings;
   final bool isLoading;
   final bool isLoadingMore;
-  final void Function(BloodPressureReading reading)? onEdit;
-  final void Function(BloodPressureReading reading)? onDelete;
+  final void Function(BloodSugarReading reading)? onEdit;
+  final void Function(BloodSugarReading reading)? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class BloodPressureHistory extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          l10n.bloodPressureHistorySection,
+          l10n.bloodSugarHistorySection,
           style: context.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -89,7 +89,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           children: [
             Icon(
-              Icons.favorite_outline,
+              Icons.water_drop_outlined,
               size: 48,
               color: AppColors.primary.withValues(alpha: 0.5),
             ),
@@ -120,10 +120,10 @@ class _ReadingCard extends StatelessWidget {
     this.onDelete,
   });
 
-  final BloodPressureReading reading;
+  final BloodSugarReading reading;
   final AppLocalizations l10n;
-  final void Function(BloodPressureReading reading)? onEdit;
-  final void Function(BloodPressureReading reading)? onDelete;
+  final void Function(BloodSugarReading reading)? onEdit;
+  final void Function(BloodSugarReading reading)? onDelete;
 
   bool get _canModify {
     final now = DateTime.now();
@@ -150,7 +150,7 @@ class _ReadingCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
-                Icons.favorite,
+                Icons.water_drop,
                 color: AppColors.primary,
               ),
             ),
@@ -160,7 +160,7 @@ class _ReadingCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${reading.systolic}/${reading.diastolic} ${l10n.mmHgUnit}',
+                    '${reading.glucoseLevel} ${l10n.mmolLUnit}',
                     style: context.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

@@ -345,5 +345,103 @@
     "yourBmi": "Jūsų KMI:",
     "@yourBmi": {
         "description": "Label for real-time BMI calculation display"
+    },
+    "bloodSugarTitle": "Cukraus kiekis",
+    "@bloodSugarTitle": {
+        "description": "Blood sugar page title"
+    },
+    "bloodSugarHistorySection": "Senesni duomenys",
+    "@bloodSugarHistorySection": {
+        "description": "Blood sugar history section header"
+    },
+    "bloodSugarNewSection": "Nauja informacija",
+    "@bloodSugarNewSection": {
+        "description": "Blood sugar new entry section header"
+    },
+    "bloodSugarNewHint": "Pildykite dabar.",
+    "@bloodSugarNewHint": {
+        "description": "Blood sugar new entry hint"
+    },
+    "glucoseLevelLabel": "Gliukozės kiekis",
+    "@glucoseLevelLabel": {
+        "description": "Glucose level field label"
+    },
+    "mmolLUnit": "mmol/l",
+    "@mmolLUnit": {
+        "description": "Blood sugar unit"
+    },
+    "glucoseLevelRange": "Gliukozė: 1.0-35.0 mmol/l",
+    "@glucoseLevelRange": {
+        "description": "Glucose level range hint"
+    },
+    "glucoseLevelRequired": "Įveskite gliukozės kiekį",
+    "@glucoseLevelRequired": {
+        "description": "Glucose level required error"
+    },
+    "editButton": "Redaguoti",
+    "@editButton": {
+        "description": "Edit button text"
+    },
+    "deleteButton": "Ištrinti",
+    "@deleteButton": {
+        "description": "Delete button text"
+    },
+    "editEntry": "Redaguoti įrašą",
+    "@editEntry": {
+        "description": "Edit entry dialog/bottom sheet title"
+    },
+    "updateButton": "Atnaujinti",
+    "@updateButton": {
+        "description": "Update button text"
+    },
+    "dataUpdated": "Duomenys atnaujinti",
+    "@dataUpdated": {
+        "description": "Data updated success message"
+    },
+    "dataDeleted": "Duomenys ištrinti",
+    "@dataDeleted": {
+        "description": "Data deleted success message"
+    },
+    "deleteConfirmTitle": "Ištrinti įrašą?",
+    "@deleteConfirmTitle": {
+        "description": "Delete confirmation dialog title"
+    },
+    "deleteConfirmMessage": "Ar tikrai norite ištrinti šį įrašą? Šio veiksmo negalima atšaukti.",
+    "@deleteConfirmMessage": {
+        "description": "Delete confirmation dialog message"
+    },
+    "confirmButton": "Patvirtinti",
+    "@confirmButton": {
+        "description": "Confirm button text"
+    },
+    "dashboardTitle": "Rodikliai",
+    "@dashboardTitle": {
+        "description": "Dashboard page title"
+    },
+    "mainIndicators": "Pagrindiniai rodikliai",
+    "@mainIndicators": {
+        "description": "Section header for health metric cards"
+    },
+    "birthDateLabel": "Gimimo data:",
+    "@birthDateLabel": {
+        "description": "Label prefix for date of birth in profile card"
+    },
+    "phoneNumberLabel": "Telefono numeris:",
+    "@phoneNumberLabel": {
+        "description": "Label prefix for phone number in profile card"
+    },
+    "checkedAt": "Tikrinta: {time}",
+    "@checkedAt": {
+        "description": "Timestamp label for when a reading was taken",
+        "placeholders": {
+            "time": {
+                "type": "String",
+                "example": "Vakar"
+            }
+        }
+    },
+    "retryButton": "Bandyti dar kartą",
+    "@retryButton": {
+        "description": "Retry button text for error states"
     }
 }

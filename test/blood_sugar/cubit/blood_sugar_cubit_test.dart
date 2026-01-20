@@ -1,14 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/blood_pressure/cubit/blood_pressure_cubit.dart';
-import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
-import 'package:frontend/blood_pressure/data/repositories/blood_pressure_repository.dart';
+import 'package:frontend/blood_sugar/cubit/blood_sugar_cubit.dart';
+import 'package:frontend/blood_sugar/data/models/blood_sugar_reading.dart';
+import 'package:frontend/blood_sugar/data/repositories/blood_sugar_repository.dart';
 import 'package:frontend/core/data/api_response.dart';
 import 'package:frontend/core/data/query_params.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockBloodPressureRepository extends Mock
-    implements BloodPressureRepository {}
+class MockBloodSugarRepository extends Mock implements BloodSugarRepository {}
 
 class FakePaginationParams extends Fake implements PaginationParams {}
 
@@ -16,234 +15,227 @@ void main() {
   setUpAll(() {
     registerFallbackValue(FakePaginationParams());
   });
-  late MockBloodPressureRepository mockRepository;
+  late MockBloodSugarRepository mockRepository;
 
-  final mockReading = BloodPressureReading(
+  final mockReading = BloodSugarReading(
     id: 1,
-    systolic: 120,
-    diastolic: 80,
-    measuredAt: DateTime(2026, 1, 19, 14, 30),
+    glucoseLevel: '5.50',
+    measuredAt: DateTime(2026, 1, 20, 14, 30),
   );
 
   final mockReadings = [
     mockReading,
-    BloodPressureReading(
+    BloodSugarReading(
       id: 2,
-      systolic: 130,
-      diastolic: 85,
-      measuredAt: DateTime(2026, 1, 18, 10),
+      glucoseLevel: '6.20',
+      measuredAt: DateTime(2026, 1, 19, 10),
     ),
   ];
 
   setUp(() {
-    mockRepository = MockBloodPressureRepository();
+    mockRepository = MockBloodSugarRepository();
   });
 
-  group('BloodPressureCubit', () {
-    test('initial state is BloodPressureInitial', () {
-      final cubit = BloodPressureCubit(bloodPressureRepository: mockRepository);
-      expect(cubit.state, const BloodPressureState.initial());
+  group('BloodSugarCubit', () {
+    test('initial state is BloodSugarInitial', () {
+      final cubit = BloodSugarCubit(bloodSugarRepository: mockRepository);
+      expect(cubit.state, const BloodSugarState.initial());
       cubit.close();
     });
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'emits [loading, loaded] when loadHistory succeeds',
       build: () {
         when(() => mockRepository.getHistory(params: any(named: 'params')))
             .thenAnswer(
           (_) async => ApiResponse.success(data: mockReadings),
         );
-        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+        return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
       act: (cubit) => cubit.loadHistory(),
       expect: () => [
-        const BloodPressureState.loading(),
-        BloodPressureState.loaded(mockReadings, hasMore: false),
+        const BloodSugarState.loading(),
+        BloodSugarState.loaded(mockReadings, hasMore: false),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'emits [loading, failure] when loadHistory fails',
       build: () {
         when(() => mockRepository.getHistory(params: any(named: 'params')))
             .thenAnswer(
           (_) async => const ApiResponse.error(message: 'Network error'),
         );
-        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+        return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
       act: (cubit) => cubit.loadHistory(),
       expect: () => [
-        const BloodPressureState.loading(),
-        const BloodPressureState.failure('Network error'),
+        const BloodSugarState.loading(),
+        const BloodSugarState.failure('Network error'),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'emits [saving, saved] when saveReading succeeds',
       build: () {
         when(
           () => mockRepository.createReading(
-            systolic: any(named: 'systolic'),
-            diastolic: any(named: 'diastolic'),
+            glucoseLevel: any(named: 'glucoseLevel'),
             measuredAt: any(named: 'measuredAt'),
           ),
         ).thenAnswer(
           (_) async => ApiResponse.success(data: mockReading),
         );
-        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+        return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveReading(systolic: 120, diastolic: 80),
+      act: (cubit) => cubit.saveReading(glucoseLevel: 5.5),
       expect: () => [
-        const BloodPressureState.saving([]),
-        BloodPressureState.saved(mockReading, [mockReading]),
+        const BloodSugarState.saving([]),
+        BloodSugarState.saved(mockReading, [mockReading]),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'emits [saving, failure] when saveReading fails',
       build: () {
         when(
           () => mockRepository.createReading(
-            systolic: any(named: 'systolic'),
-            diastolic: any(named: 'diastolic'),
+            glucoseLevel: any(named: 'glucoseLevel'),
             measuredAt: any(named: 'measuredAt'),
           ),
         ).thenAnswer(
           (_) async => const ApiResponse.error(message: 'Validation error'),
         );
-        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+        return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
-      act: (cubit) => cubit.saveReading(systolic: 50, diastolic: 30),
+      act: (cubit) => cubit.saveReading(glucoseLevel: 0.5),
       expect: () => [
-        const BloodPressureState.saving([]),
-        const BloodPressureState.failure('Validation error'),
+        const BloodSugarState.saving([]),
+        const BloodSugarState.failure('Validation error'),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'clearSavedState transitions from saved to loaded with correct hasMore',
-      build: () => BloodPressureCubit(bloodPressureRepository: mockRepository),
-      seed: () => BloodPressureState.saved(mockReading, mockReadings),
+      build: () => BloodSugarCubit(bloodSugarRepository: mockRepository),
+      seed: () => BloodSugarState.saved(mockReading, mockReadings),
       act: (cubit) => cubit.clearSavedState(),
       expect: () => [
         // hasMore is false because 2 readings < defaultPageSize (20)
-        BloodPressureState.loaded(mockReadings, hasMore: false),
+        BloodSugarState.loaded(mockReadings, hasMore: false),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'saveReading preserves existing readings on success',
       build: () {
         when(
           () => mockRepository.createReading(
-            systolic: any(named: 'systolic'),
-            diastolic: any(named: 'diastolic'),
+            glucoseLevel: any(named: 'glucoseLevel'),
             measuredAt: any(named: 'measuredAt'),
           ),
         ).thenAnswer(
           (_) async => ApiResponse.success(
-            data: BloodPressureReading(
+            data: BloodSugarReading(
               id: 3,
-              systolic: 125,
-              diastolic: 82,
-              measuredAt: DateTime(2026, 1, 19, 15),
+              glucoseLevel: '7.10',
+              measuredAt: DateTime(2026, 1, 20, 15),
             ),
           ),
         );
-        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+        return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
-      seed: () => BloodPressureState.loaded(mockReadings),
-      act: (cubit) => cubit.saveReading(systolic: 125, diastolic: 82),
+      seed: () => BloodSugarState.loaded(mockReadings),
+      act: (cubit) => cubit.saveReading(glucoseLevel: 7.1),
       expect: () => [
-        BloodPressureState.saving(mockReadings),
-        isA<BloodPressureSaved>()
+        BloodSugarState.saving(mockReadings),
+        isA<BloodSugarSaved>()
             .having((s) => s.readings.length, 'readings length', 3),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'loadMore appends new readings',
       build: () {
         when(() => mockRepository.getHistory(params: any(named: 'params')))
             .thenAnswer(
           (_) async => ApiResponse.success(
             data: [
-              BloodPressureReading(
+              BloodSugarReading(
                 id: 3,
-                systolic: 118,
-                diastolic: 78,
-                measuredAt: DateTime(2026, 1, 17, 10),
+                glucoseLevel: '5.80',
+                measuredAt: DateTime(2026, 1, 18, 10),
               ),
             ],
           ),
         );
-        return BloodPressureCubit(bloodPressureRepository: mockRepository);
+        return BloodSugarCubit(bloodSugarRepository: mockRepository);
       },
-      seed: () => BloodPressureState.loaded(mockReadings),
+      seed: () => BloodSugarState.loaded(mockReadings),
       act: (cubit) => cubit.loadMore(),
       expect: () => [
-        BloodPressureState.loadingMore(mockReadings),
-        isA<BloodPressureLoaded>()
+        BloodSugarState.loadingMore(mockReadings),
+        isA<BloodSugarLoaded>()
             .having((s) => s.readings.length, 'readings length', 3)
             .having((s) => s.hasMore, 'hasMore', false),
       ],
     );
 
-    blocTest<BloodPressureCubit, BloodPressureState>(
+    blocTest<BloodSugarCubit, BloodSugarState>(
       'loadMore does nothing when hasMore is false',
-      build: () => BloodPressureCubit(bloodPressureRepository: mockRepository),
-      seed: () => BloodPressureState.loaded(mockReadings, hasMore: false),
+      build: () => BloodSugarCubit(bloodSugarRepository: mockRepository),
+      seed: () => BloodSugarState.loaded(mockReadings, hasMore: false),
       act: (cubit) => cubit.loadMore(),
       expect: () => [],
     );
   });
 
-  group('BloodPressureState', () {
+  group('BloodSugarState', () {
     test('isLoading returns true for loading state', () {
-      const state = BloodPressureState.loading();
+      const state = BloodSugarState.loading();
       expect(state.isLoading, isTrue);
       expect(state.isSaving, isFalse);
     });
 
     test('isSaving returns true for saving state', () {
-      const state = BloodPressureState.saving([]);
+      const state = BloodSugarState.saving([]);
       expect(state.isSaving, isTrue);
       expect(state.isLoading, isFalse);
     });
 
     test('isLoadingMore returns true for loadingMore state', () {
-      const state = BloodPressureState.loadingMore([]);
+      const state = BloodSugarState.loadingMore([]);
       expect(state.isLoadingMore, isTrue);
       expect(state.isLoading, isFalse);
     });
 
     test('hasMore returns true for loaded state with hasMore', () {
-      final state = BloodPressureState.loaded(mockReadings);
+      final state = BloodSugarState.loaded(mockReadings);
       expect(state.hasMore, isTrue);
     });
 
     test('hasMore returns false by default for other states', () {
-      const state = BloodPressureState.initial();
+      const state = BloodSugarState.initial();
       expect(state.hasMore, isFalse);
     });
 
     test('readings returns list for loaded state', () {
-      final state = BloodPressureState.loaded(mockReadings);
+      final state = BloodSugarState.loaded(mockReadings);
       expect(state.readings, mockReadings);
     });
 
     test('readings returns list for loadingMore state', () {
-      final state = BloodPressureState.loadingMore(mockReadings);
+      final state = BloodSugarState.loadingMore(mockReadings);
       expect(state.readings, mockReadings);
     });
 
     test('readings returns list for saved state', () {
-      final state = BloodPressureState.saved(mockReading, mockReadings);
+      final state = BloodSugarState.saved(mockReading, mockReadings);
       expect(state.readings, mockReadings);
     });
 
     test('readings returns empty list for initial state', () {
-      const state = BloodPressureState.initial();
+      const state = BloodSugarState.initial();
       expect(state.readings, isEmpty);
     });
   });

@@ -1,61 +1,57 @@
 import 'package:dio/dio.dart';
-import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
-import 'package:frontend/blood_pressure/data/models/create_blood_pressure_request.dart';
-import 'package:frontend/blood_pressure/data/models/update_blood_pressure_request.dart';
+import 'package:frontend/blood_sugar/data/models/blood_sugar_reading.dart';
+import 'package:frontend/blood_sugar/data/models/create_blood_sugar_request.dart';
+import 'package:frontend/blood_sugar/data/models/update_blood_sugar_request.dart';
 import 'package:frontend/core/core.dart';
 
-class BloodPressureRepository {
-  BloodPressureRepository({
+class BloodSugarRepository {
+  BloodSugarRepository({
     required ApiClient apiClient,
   }) : _apiClient = apiClient;
 
   final ApiClient _apiClient;
 
-  Future<ApiResponse<BloodPressureReading>> createReading({
-    required int systolic,
-    required int diastolic,
+  Future<ApiResponse<BloodSugarReading>> createReading({
+    required double glucoseLevel,
     DateTime? measuredAt,
   }) async {
     try {
-      final request = CreateBloodPressureRequest(
-        systolic: systolic,
-        diastolic: diastolic,
+      final request = CreateBloodSugarRequest(
+        glucoseLevel: glucoseLevel,
         measuredAt: measuredAt,
       );
 
       final response = await _apiClient.post<Map<String, dynamic>>(
-        ApiConstants.bloodPressure,
+        ApiConstants.bloodSugar,
         data: request.toJson(),
       );
 
       return ApiResponse.fromJson(
         response.data!,
-        (json) => BloodPressureReading.fromJson(json! as Map<String, dynamic>),
+        (json) => BloodSugarReading.fromJson(json! as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       return ApiResponse.error(message: extractDioErrorMessage(e));
     }
   }
 
-  Future<ApiResponse<BloodPressureReading>> updateReading({
+  Future<ApiResponse<BloodSugarReading>> updateReading({
     required int id,
-    required int systolic,
-    required int diastolic,
+    required double glucoseLevel,
   }) async {
     try {
-      final request = UpdateBloodPressureRequest(
-        systolic: systolic,
-        diastolic: diastolic,
+      final request = UpdateBloodSugarRequest(
+        glucoseLevel: glucoseLevel,
       );
 
       final response = await _apiClient.put<Map<String, dynamic>>(
-        '${ApiConstants.bloodPressure}/$id',
+        '${ApiConstants.bloodSugar}/$id',
         data: request.toJson(),
       );
 
       return ApiResponse.fromJson(
         response.data!,
-        (json) => BloodPressureReading.fromJson(json! as Map<String, dynamic>),
+        (json) => BloodSugarReading.fromJson(json! as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       return ApiResponse.error(message: extractDioErrorMessage(e));
@@ -65,7 +61,7 @@ class BloodPressureRepository {
   Future<ApiResponse<void>> deleteReading({required int id}) async {
     try {
       final response = await _apiClient.delete<Map<String, dynamic>>(
-        '${ApiConstants.bloodPressure}/$id',
+        '${ApiConstants.bloodSugar}/$id',
       );
 
       return ApiResponse.fromJson(
@@ -77,12 +73,12 @@ class BloodPressureRepository {
     }
   }
 
-  Future<ApiResponse<List<BloodPressureReading>>> getHistory({
+  Future<ApiResponse<List<BloodSugarReading>>> getHistory({
     PaginationParams params = const PaginationParams(),
   }) async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiConstants.bloodPressure,
+        ApiConstants.bloodSugar,
         queryParameters: params.toQueryMapOrNull(),
       );
 
@@ -90,7 +86,7 @@ class BloodPressureRepository {
         response.data!,
         (json) => (json! as List<dynamic>)
             .map(
-              (e) => BloodPressureReading.fromJson(e as Map<String, dynamic>),
+              (e) => BloodSugarReading.fromJson(e as Map<String, dynamic>),
             )
             .toList(),
       );

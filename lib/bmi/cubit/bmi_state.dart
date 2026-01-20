@@ -20,10 +20,25 @@ sealed class BmiState with _$BmiState {
     BmiMeasurement measurement,
     List<BmiMeasurement> measurements,
   ) = BmiSaved;
+  const factory BmiState.updating(
+    List<BmiMeasurement> measurements,
+  ) = BmiUpdating;
+  const factory BmiState.updated(
+    BmiMeasurement measurement,
+    List<BmiMeasurement> measurements,
+  ) = BmiUpdated;
+  const factory BmiState.deleting(
+    List<BmiMeasurement> measurements,
+  ) = BmiDeleting;
+  const factory BmiState.deleted(
+    List<BmiMeasurement> measurements,
+  ) = BmiDeleted;
   const factory BmiState.failure(String message) = BmiFailure;
 
   bool get isLoading => this is BmiLoading;
   bool get isSaving => this is BmiSaving;
+  bool get isUpdating => this is BmiUpdating;
+  bool get isDeleting => this is BmiDeleting;
   bool get isLoadingMore => this is BmiLoadingMore;
 
   bool get hasMore => maybeWhen(
@@ -36,6 +51,10 @@ sealed class BmiState with _$BmiState {
         loadingMore: (measurements) => measurements,
         saving: (measurements) => measurements,
         saved: (_, measurements) => measurements,
+        updating: (measurements) => measurements,
+        updated: (_, measurements) => measurements,
+        deleting: (measurements) => measurements,
+        deleted: (measurements) => measurements,
         orElse: () => [],
       );
 }

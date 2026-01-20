@@ -29,4 +29,7 @@ abstract class AppColors {
   /// Input field fill color.
   /// Figma: #F4F4F4
   static const Color inputFill = Color(0xFFF4F4F4);
+
+  /// Error color - used for destructive actions and errors.
+  static const Color error = Color(0xFFDC3545);
 }

@@ -20,11 +20,26 @@ sealed class BloodPressureState with _$BloodPressureState {
     BloodPressureReading reading,
     List<BloodPressureReading> readings,
   ) = BloodPressureSaved;
+  const factory BloodPressureState.updating(
+    List<BloodPressureReading> readings,
+  ) = BloodPressureUpdating;
+  const factory BloodPressureState.updated(
+    BloodPressureReading reading,
+    List<BloodPressureReading> readings,
+  ) = BloodPressureUpdated;
+  const factory BloodPressureState.deleting(
+    List<BloodPressureReading> readings,
+  ) = BloodPressureDeleting;
+  const factory BloodPressureState.deleted(
+    List<BloodPressureReading> readings,
+  ) = BloodPressureDeleted;
   const factory BloodPressureState.failure(String message) =
       BloodPressureFailure;
 
   bool get isLoading => this is BloodPressureLoading;
   bool get isSaving => this is BloodPressureSaving;
+  bool get isUpdating => this is BloodPressureUpdating;
+  bool get isDeleting => this is BloodPressureDeleting;
   bool get isLoadingMore => this is BloodPressureLoadingMore;
 
   bool get hasMore => maybeWhen(
@@ -37,6 +52,10 @@ sealed class BloodPressureState with _$BloodPressureState {
         loadingMore: (readings) => readings,
         saving: (readings) => readings,
         saved: (_, readings) => readings,
+        updating: (readings) => readings,
+        updated: (_, readings) => readings,
+        deleting: (readings) => readings,
+        deleted: (readings) => readings,
         orElse: () => [],
       );
 }

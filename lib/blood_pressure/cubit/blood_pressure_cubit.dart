@@ -73,15 +73,83 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
     );
   }
 
-  void clearSavedState() {
-    final readings = state.maybeWhen(
-      saved: (_, readings) => readings,
-      orElse: () => <BloodPressureReading>[],
+  Future<void> updateReading({
+    required int id,
+    required int systolic,
+    required int diastolic,
+  }) async {
+    final currentReadings = state.readings;
+
+    emit(BloodPressureState.updating(currentReadings));
+
+    final response = await _bloodPressureRepository.updateReading(
+      id: id,
+      systolic: systolic,
+      diastolic: diastolic,
     );
-    if (readings.isNotEmpty) {
-      emit(BloodPressureState.loaded(readings));
-    } else {
-      emit(const BloodPressureState.initial());
-    }
+
+    response.when(
+      success: (updatedReading, _) {
+        final updatedReadings = currentReadings.map((reading) {
+          return reading.id == id ? updatedReading : reading;
+        }).toList();
+        emit(BloodPressureState.updated(updatedReading, updatedReadings));
+      },
+      error: (message, _) => emit(BloodPressureState.failure(message)),
+    );
+  }
+
+  Future<void> deleteReading({required int id}) async {
+    final currentReadings = state.readings;
+
+    emit(BloodPressureState.deleting(currentReadings));
+
+    final response = await _bloodPressureRepository.deleteReading(id: id);
+
+    response.when(
+      success: (_, __) {
+        final updatedReadings =
+            currentReadings.where((reading) => reading.id != id).toList();
+        emit(BloodPressureState.deleted(updatedReadings));
+      },
+      error: (message, _) => emit(BloodPressureState.failure(message)),
+    );
+  }
+
+  void clearSavedState() {
+    state.maybeWhen(
+      saved: (_, readings) {
+        // Preserve hasMore based on whether we had a full page of readings
+        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        emit(BloodPressureState.loaded(readings, hasMore: hasMore));
+      },
+      orElse: () {
+        emit(const BloodPressureState.initial());
+      },
+    );
+  }
+
+  void clearUpdatedState() {
+    state.maybeWhen(
+      updated: (_, readings) {
+        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        emit(BloodPressureState.loaded(readings, hasMore: hasMore));
+      },
+      orElse: () {
+        emit(const BloodPressureState.initial());
+      },
+    );
+  }
+
+  void clearDeletedState() {
+    state.maybeWhen(
+      deleted: (readings) {
+        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        emit(BloodPressureState.loaded(readings, hasMore: hasMore));
+      },
+      orElse: () {
+        emit(const BloodPressureState.initial());
+      },
+    );
   }
 }

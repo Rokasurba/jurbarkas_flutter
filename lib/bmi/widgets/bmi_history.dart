@@ -9,12 +9,16 @@ class BmiHistory extends StatelessWidget {
     required this.measurements,
     required this.isLoading,
     this.isLoadingMore = false,
+    this.onEdit,
+    this.onDelete,
     super.key,
   });
 
   final List<BmiMeasurement> measurements;
   final bool isLoading;
   final bool isLoadingMore;
+  final void Function(BmiMeasurement measurement)? onEdit;
+  final void Function(BmiMeasurement measurement)? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +48,15 @@ class BmiHistory extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: measurements.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final measurement = measurements[index];
-              return _MeasurementCard(measurement: measurement, l10n: l10n);
+              return _MeasurementCard(
+                measurement: measurement,
+                l10n: l10n,
+                onEdit: onEdit,
+                onDelete: onDelete,
+              );
             },
           ),
           if (isLoadingMore)
@@ -107,15 +116,26 @@ class _MeasurementCard extends StatelessWidget {
   const _MeasurementCard({
     required this.measurement,
     required this.l10n,
+    this.onEdit,
+    this.onDelete,
   });
 
   final BmiMeasurement measurement;
   final AppLocalizations l10n;
+  final void Function(BmiMeasurement measurement)? onEdit;
+  final void Function(BmiMeasurement measurement)? onDelete;
+
+  bool get _canModify {
+    final now = DateTime.now();
+    final difference = now.difference(measurement.measuredAt);
+    return difference.inDays < 7;
+  }
 
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('yyyy-MM-dd');
     final timeFormat = DateFormat('HH:mm');
+    final showActions = _canModify && (onEdit != null || onDelete != null);
 
     return Card(
       child: Padding(
@@ -163,6 +183,23 @@ class _MeasurementCard extends StatelessWidget {
                 ],
               ),
             ),
+            if (showActions) ...[
+              IconButton(
+                onPressed: () => onEdit?.call(measurement),
+                icon: const Icon(Icons.edit_outlined),
+                tooltip: l10n.editButton,
+                iconSize: 20,
+                visualDensity: VisualDensity.compact,
+              ),
+              IconButton(
+                onPressed: () => onDelete?.call(measurement),
+                icon: const Icon(Icons.delete_outline),
+                tooltip: l10n.deleteButton,
+                iconSize: 20,
+                visualDensity: VisualDensity.compact,
+                color: AppColors.error,
+              ),
+            ],
           ],
         ),
       ),

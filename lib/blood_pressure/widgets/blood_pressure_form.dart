@@ -15,10 +15,10 @@ class BloodPressureForm extends StatefulWidget {
   final bool isLoading;
 
   @override
-  State<BloodPressureForm> createState() => _BloodPressureFormState();
+  BloodPressureFormState createState() => BloodPressureFormState();
 }
 
-class _BloodPressureFormState extends State<BloodPressureForm> {
+class BloodPressureFormState extends State<BloodPressureForm> {
   final _formKey = GlobalKey<FormState>();
   final _systolicController = TextEditingController();
   final _diastolicController = TextEditingController();
@@ -30,13 +30,19 @@ class _BloodPressureFormState extends State<BloodPressureForm> {
     super.dispose();
   }
 
+  /// Clears the form. Call this from parent when save succeeds.
+  void clearForm() {
+    _systolicController.clear();
+    _diastolicController.clear();
+    _formKey.currentState?.reset();
+  }
+
   void _submit() {
     if (_formKey.currentState!.validate()) {
       final systolic = int.parse(_systolicController.text);
       final diastolic = int.parse(_diastolicController.text);
       widget.onSubmit(systolic, diastolic);
-      _systolicController.clear();
-      _diastolicController.clear();
+      // Don't clear here - wait for success confirmation via clearForm parameter
     }
   }
 

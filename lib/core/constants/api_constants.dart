@@ -19,4 +19,8 @@ abstract class ApiConstants {
   // Health data endpoints
   static const String bloodPressure = '/blood-pressure';
   static const String bmi = '/bmi';
+  static const String bloodSugar = '/blood-sugar';
+
+  // Dashboard endpoint
+  static const String dashboard = '/dashboard';
 }

@@ -4,9 +4,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/bmi/cubit/bmi_cubit.dart';
+import 'package:frontend/bmi/data/models/bmi_measurement.dart';
 import 'package:frontend/bmi/data/repositories/bmi_repository.dart';
 import 'package:frontend/bmi/widgets/bmi_form.dart';
 import 'package:frontend/bmi/widgets/bmi_history.dart';
+import 'package:frontend/bmi/widgets/edit_bmi_sheet.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 
@@ -40,6 +42,7 @@ class _BmiView extends StatefulWidget {
 
 class _BmiViewState extends State<_BmiView> {
   final _scrollController = ScrollController();
+  final _formKey = GlobalKey<BmiFormState>();
 
   @override
   void initState() {
@@ -68,6 +71,34 @@ class _BmiViewState extends State<_BmiView> {
     return currentScroll >= (maxScroll * 0.9);
   }
 
+  void _onEdit(BmiMeasurement measurement) {
+    EditBmiSheet.show(
+      context,
+      measurement: measurement,
+      onUpdate: (heightCm, weightKg) {
+        unawaited(
+          context.read<BmiCubit>().updateMeasurement(
+                id: measurement.id,
+                heightCm: heightCm,
+                weightKg: weightKg,
+              ),
+        );
+      },
+      isLoading: false,
+    );
+  }
+
+  void _onDelete(BmiMeasurement measurement) {
+    DeleteConfirmationDialog.show(
+      context,
+      onConfirm: () {
+        unawaited(
+          context.read<BmiCubit>().deleteMeasurement(id: measurement.id),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -76,6 +107,7 @@ class _BmiViewState extends State<_BmiView> {
       listener: (context, state) {
         state.maybeWhen(
           saved: (_, _) {
+            _formKey.currentState?.clearForm();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(l10n.dataSaved),
@@ -83,6 +115,26 @@ class _BmiViewState extends State<_BmiView> {
               ),
             );
             context.read<BmiCubit>().clearSavedState();
+          },
+          updated: (_, _) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.dataUpdated),
+                backgroundColor: AppColors.primary,
+              ),
+            );
+            context.read<BmiCubit>().clearUpdatedState();
+          },
+          deleted: (_) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.dataDeleted),
+                backgroundColor: AppColors.primary,
+              ),
+            );
+            context.read<BmiCubit>().clearDeletedState();
           },
           failure: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -113,9 +165,12 @@ class _BmiViewState extends State<_BmiView> {
                     measurements: state.measurements,
                     isLoading: state.isLoading,
                     isLoadingMore: state.isLoadingMore,
+                    onEdit: _onEdit,
+                    onDelete: _onDelete,
                   ),
                   const SizedBox(height: 24),
                   BmiForm(
+                    key: _formKey,
                     onSubmit: (heightCm, weightKg) {
                       unawaited(
                         context.read<BmiCubit>().saveMeasurement(

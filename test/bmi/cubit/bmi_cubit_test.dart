@@ -122,12 +122,13 @@ void main() {
     );
 
     blocTest<BmiCubit, BmiState>(
-      'clearSavedState transitions from saved to loaded',
+      'clearSavedState transitions from saved to loaded with correct hasMore',
       build: () => BmiCubit(bmiRepository: mockRepository),
       seed: () => BmiState.saved(mockMeasurement, mockMeasurements),
       act: (cubit) => cubit.clearSavedState(),
       expect: () => [
-        BmiState.loaded(mockMeasurements),
+        // hasMore is false because 2 measurements < defaultPageSize (20)
+        BmiState.loaded(mockMeasurements, hasMore: false),
       ],
     );
 
@@ -181,7 +182,7 @@ void main() {
         );
         return BmiCubit(bmiRepository: mockRepository);
       },
-      seed: () => BmiState.loaded(mockMeasurements, hasMore: true),
+      seed: () => BmiState.loaded(mockMeasurements),
       act: (cubit) => cubit.loadMore(),
       expect: () => [
         BmiState.loadingMore(mockMeasurements),
@@ -220,7 +221,7 @@ void main() {
     });
 
     test('hasMore returns true for loaded state with hasMore', () {
-      final state = BmiState.loaded(mockMeasurements, hasMore: true);
+      final state = BmiState.loaded(mockMeasurements);
       expect(state.hasMore, isTrue);
     });
 

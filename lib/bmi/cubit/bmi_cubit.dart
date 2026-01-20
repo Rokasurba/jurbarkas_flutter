@@ -74,15 +74,84 @@ class BmiCubit extends Cubit<BmiState> {
     );
   }
 
-  void clearSavedState() {
-    final measurements = state.maybeWhen(
-      saved: (_, measurements) => measurements,
-      orElse: () => <BmiMeasurement>[],
+  Future<void> updateMeasurement({
+    required int id,
+    required int heightCm,
+    required double weightKg,
+  }) async {
+    final currentMeasurements = state.measurements;
+
+    emit(BmiState.updating(currentMeasurements));
+
+    final response = await _bmiRepository.updateMeasurement(
+      id: id,
+      heightCm: heightCm,
+      weightKg: weightKg,
     );
-    if (measurements.isNotEmpty) {
-      emit(BmiState.loaded(measurements));
-    } else {
-      emit(const BmiState.initial());
-    }
+
+    response.when(
+      success: (updatedMeasurement, _) {
+        final updatedMeasurements = currentMeasurements.map((measurement) {
+          return measurement.id == id ? updatedMeasurement : measurement;
+        }).toList();
+        emit(BmiState.updated(updatedMeasurement, updatedMeasurements));
+      },
+      error: (message, _) => emit(BmiState.failure(message)),
+    );
+  }
+
+  Future<void> deleteMeasurement({required int id}) async {
+    final currentMeasurements = state.measurements;
+
+    emit(BmiState.deleting(currentMeasurements));
+
+    final response = await _bmiRepository.deleteMeasurement(id: id);
+
+    response.when(
+      success: (_, __) {
+        final updatedMeasurements = currentMeasurements
+            .where((measurement) => measurement.id != id)
+            .toList();
+        emit(BmiState.deleted(updatedMeasurements));
+      },
+      error: (message, _) => emit(BmiState.failure(message)),
+    );
+  }
+
+  void clearSavedState() {
+    state.maybeWhen(
+      saved: (_, measurements) {
+        // Preserve hasMore based on whether we had a full page of measurements
+        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
+        emit(BmiState.loaded(measurements, hasMore: hasMore));
+      },
+      orElse: () {
+        emit(const BmiState.initial());
+      },
+    );
+  }
+
+  void clearUpdatedState() {
+    state.maybeWhen(
+      updated: (_, measurements) {
+        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
+        emit(BmiState.loaded(measurements, hasMore: hasMore));
+      },
+      orElse: () {
+        emit(const BmiState.initial());
+      },
+    );
+  }
+
+  void clearDeletedState() {
+    state.maybeWhen(
+      deleted: (measurements) {
+        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
+        emit(BmiState.loaded(measurements, hasMore: hasMore));
+      },
+      orElse: () {
+        emit(const BmiState.initial());
+      },
+    );
   }
 }

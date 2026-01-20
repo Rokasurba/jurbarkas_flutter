@@ -345,5 +345,103 @@
     "yourBmi": "Your BMI:",
     "@yourBmi": {
         "description": "Label for real-time BMI calculation display"
+    },
+    "bloodSugarTitle": "Blood Sugar",
+    "@bloodSugarTitle": {
+        "description": "Blood sugar page title"
+    },
+    "bloodSugarHistorySection": "Previous data",
+    "@bloodSugarHistorySection": {
+        "description": "Blood sugar history section header"
+    },
+    "bloodSugarNewSection": "New reading",
+    "@bloodSugarNewSection": {
+        "description": "Blood sugar new entry section header"
+    },
+    "bloodSugarNewHint": "Enter now.",
+    "@bloodSugarNewHint": {
+        "description": "Blood sugar new entry hint"
+    },
+    "glucoseLevelLabel": "Glucose level",
+    "@glucoseLevelLabel": {
+        "description": "Glucose level field label"
+    },
+    "mmolLUnit": "mmol/l",
+    "@mmolLUnit": {
+        "description": "Blood sugar unit"
+    },
+    "glucoseLevelRange": "Glucose: 1.0-35.0 mmol/l",
+    "@glucoseLevelRange": {
+        "description": "Glucose level range hint"
+    },
+    "glucoseLevelRequired": "Enter glucose level",
+    "@glucoseLevelRequired": {
+        "description": "Glucose level required error"
+    },
+    "editButton": "Edit",
+    "@editButton": {
+        "description": "Edit button text"
+    },
+    "deleteButton": "Delete",
+    "@deleteButton": {
+        "description": "Delete button text"
+    },
+    "editEntry": "Edit entry",
+    "@editEntry": {
+        "description": "Edit entry dialog/bottom sheet title"
+    },
+    "updateButton": "Update",
+    "@updateButton": {
+        "description": "Update button text"
+    },
+    "dataUpdated": "Data updated",
+    "@dataUpdated": {
+        "description": "Data updated success message"
+    },
+    "dataDeleted": "Data deleted",
+    "@dataDeleted": {
+        "description": "Data deleted success message"
+    },
+    "deleteConfirmTitle": "Delete entry?",
+    "@deleteConfirmTitle": {
+        "description": "Delete confirmation dialog title"
+    },
+    "deleteConfirmMessage": "Are you sure you want to delete this entry? This action cannot be undone.",
+    "@deleteConfirmMessage": {
+        "description": "Delete confirmation dialog message"
+    },
+    "confirmButton": "Confirm",
+    "@confirmButton": {
+        "description": "Confirm button text"
+    },
+    "dashboardTitle": "Indicators",
+    "@dashboardTitle": {
+        "description": "Dashboard page title"
+    },
+    "mainIndicators": "Main indicators",
+    "@mainIndicators": {
+        "description": "Section header for health metric cards"
+    },
+    "birthDateLabel": "Date of birth:",
+    "@birthDateLabel": {
+        "description": "Label prefix for date of birth in profile card"
+    },
+    "phoneNumberLabel": "Phone number:",
+    "@phoneNumberLabel": {
+        "description": "Label prefix for phone number in profile card"
+    },
+    "checkedAt": "Checked: {time}",
+    "@checkedAt": {
+        "description": "Timestamp label for when a reading was taken",
+        "placeholders": {
+            "time": {
+                "type": "String",
+                "example": "Yesterday"
+            }
+        }
+    },
+    "retryButton": "Retry",
+    "@retryButton": {
+        "description": "Retry button text for error states"
     }
 }

@@ -3,46 +3,46 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/blood_pressure/cubit/blood_pressure_cubit.dart';
-import 'package:frontend/blood_pressure/data/models/blood_pressure_reading.dart';
-import 'package:frontend/blood_pressure/data/repositories/blood_pressure_repository.dart';
-import 'package:frontend/blood_pressure/widgets/blood_pressure_form.dart';
-import 'package:frontend/blood_pressure/widgets/blood_pressure_history.dart';
-import 'package:frontend/blood_pressure/widgets/edit_blood_pressure_sheet.dart';
+import 'package:frontend/blood_sugar/cubit/blood_sugar_cubit.dart';
+import 'package:frontend/blood_sugar/data/models/blood_sugar_reading.dart';
+import 'package:frontend/blood_sugar/data/repositories/blood_sugar_repository.dart';
+import 'package:frontend/blood_sugar/widgets/blood_sugar_form.dart';
+import 'package:frontend/blood_sugar/widgets/blood_sugar_history.dart';
+import 'package:frontend/blood_sugar/widgets/edit_blood_sugar_sheet.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 @RoutePage()
-class BloodPressurePage extends StatelessWidget {
-  const BloodPressurePage({super.key});
+class BloodSugarPage extends StatelessWidget {
+  const BloodSugarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-        final cubit = BloodPressureCubit(
-          bloodPressureRepository: BloodPressureRepository(
+        final cubit = BloodSugarCubit(
+          bloodSugarRepository: BloodSugarRepository(
             apiClient: context.read<ApiClient>(),
           ),
         );
         unawaited(cubit.loadHistory());
         return cubit;
       },
-      child: const _BloodPressureView(),
+      child: const _BloodSugarView(),
     );
   }
 }
 
-class _BloodPressureView extends StatefulWidget {
-  const _BloodPressureView();
+class _BloodSugarView extends StatefulWidget {
+  const _BloodSugarView();
 
   @override
-  State<_BloodPressureView> createState() => _BloodPressureViewState();
+  State<_BloodSugarView> createState() => _BloodSugarViewState();
 }
 
-class _BloodPressureViewState extends State<_BloodPressureView> {
+class _BloodSugarViewState extends State<_BloodSugarView> {
   final _scrollController = ScrollController();
-  final _formKey = GlobalKey<BloodPressureFormState>();
+  final _formKey = GlobalKey<BloodSugarFormState>();
 
   @override
   void initState() {
@@ -60,7 +60,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
 
   void _onScroll() {
     if (_isBottom) {
-      unawaited(context.read<BloodPressureCubit>().loadMore());
+      unawaited(context.read<BloodSugarCubit>().loadMore());
     }
   }
 
@@ -71,16 +71,15 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
     return currentScroll >= (maxScroll * 0.9);
   }
 
-  void _onEdit(BloodPressureReading reading) {
-    EditBloodPressureSheet.show(
+  void _onEdit(BloodSugarReading reading) {
+    EditBloodSugarSheet.show(
       context,
       reading: reading,
-      onUpdate: (systolic, diastolic) {
+      onUpdate: (glucoseLevel) {
         unawaited(
-          context.read<BloodPressureCubit>().updateReading(
+          context.read<BloodSugarCubit>().updateReading(
                 id: reading.id,
-                systolic: systolic,
-                diastolic: diastolic,
+                glucoseLevel: glucoseLevel,
               ),
         );
       },
@@ -88,12 +87,12 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
     );
   }
 
-  void _onDelete(BloodPressureReading reading) {
+  void _onDelete(BloodSugarReading reading) {
     DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
         unawaited(
-          context.read<BloodPressureCubit>().deleteReading(id: reading.id),
+          context.read<BloodSugarCubit>().deleteReading(id: reading.id),
         );
       },
     );
@@ -103,10 +102,10 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return BlocConsumer<BloodPressureCubit, BloodPressureState>(
+    return BlocConsumer<BloodSugarCubit, BloodSugarState>(
       listener: (context, state) {
         state.maybeWhen(
-          saved: (_, _) {
+          saved: (_, __) {
             _formKey.currentState?.clearForm();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -114,9 +113,9 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
                 backgroundColor: AppColors.primary,
               ),
             );
-            context.read<BloodPressureCubit>().clearSavedState();
+            context.read<BloodSugarCubit>().clearSavedState();
           },
-          updated: (_, _) {
+          updated: (_, __) {
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -124,7 +123,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
                 backgroundColor: AppColors.primary,
               ),
             );
-            context.read<BloodPressureCubit>().clearUpdatedState();
+            context.read<BloodSugarCubit>().clearUpdatedState();
           },
           deleted: (_) {
             Navigator.of(context).pop();
@@ -134,7 +133,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
                 backgroundColor: AppColors.primary,
               ),
             );
-            context.read<BloodPressureCubit>().clearDeletedState();
+            context.read<BloodSugarCubit>().clearDeletedState();
           },
           failure: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -152,7 +151,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
           appBar: AppBar(
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
-            title: Text(l10n.bloodPressureTitle),
+            title: Text(l10n.bloodSugarTitle),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -161,7 +160,7 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  BloodPressureHistory(
+                  BloodSugarHistory(
                     readings: state.readings,
                     isLoading: state.isLoading,
                     isLoadingMore: state.isLoadingMore,
@@ -169,13 +168,12 @@ class _BloodPressureViewState extends State<_BloodPressureView> {
                     onDelete: _onDelete,
                   ),
                   const SizedBox(height: 24),
-                  BloodPressureForm(
+                  BloodSugarForm(
                     key: _formKey,
-                    onSubmit: (systolic, diastolic) {
+                    onSubmit: (glucoseLevel) {
                       unawaited(
-                        context.read<BloodPressureCubit>().saveReading(
-                              systolic: systolic,
-                              diastolic: diastolic,
+                        context.read<BloodSugarCubit>().saveReading(
+                              glucoseLevel: glucoseLevel,
                             ),
                       );
                     },

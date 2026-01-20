@@ -15,10 +15,10 @@ class BmiForm extends StatefulWidget {
   final bool isLoading;
 
   @override
-  State<BmiForm> createState() => _BmiFormState();
+  BmiFormState createState() => BmiFormState();
 }
 
-class _BmiFormState extends State<BmiForm> {
+class BmiFormState extends State<BmiForm> {
   final _formKey = GlobalKey<FormState>();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
@@ -38,6 +38,16 @@ class _BmiFormState extends State<BmiForm> {
     _heightController.dispose();
     _weightController.dispose();
     super.dispose();
+  }
+
+  /// Clears the form. Call this from parent when save succeeds.
+  void clearForm() {
+    _heightController.clear();
+    _weightController.clear();
+    _formKey.currentState?.reset();
+    setState(() {
+      _calculatedBmi = null;
+    });
   }
 
   void _calculateBmi() {
@@ -68,8 +78,7 @@ class _BmiFormState extends State<BmiForm> {
         _weightController.text.replaceAll(',', '.'),
       );
       widget.onSubmit(heightCm, weightKg);
-      _heightController.clear();
-      _weightController.clear();
+      // Don't clear here - wait for success confirmation via clearForm parameter
     }
   }
 
