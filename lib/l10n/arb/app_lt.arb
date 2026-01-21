@@ -479,5 +479,39 @@
     "timeLabel": "Laikas",
     "@timeLabel": {
         "description": "Time picker label"
+    },
+    "patientsTitle": "Pacientai",
+    "@patientsTitle": {
+        "description": "Patients page title"
+    },
+    "noPatients": "Pacientų nėra",
+    "@noPatients": {
+        "description": "No patients found message"
+    },
+    "patientCode": "Paciento kodas",
+    "@patientCode": {
+        "description": "Patient code label"
+    },
+    "retry": "Bandyti dar kartą",
+    "@retry": {
+        "description": "Retry button text"
+    },
+    "patientsCount": "{count, plural, =0{Pacientai} =1{Pacientai (1)} few{Pacientai ({count})} many{Pacientai ({count})} other{Pacientai ({count})}}",
+    "@patientsCount": {
+        "description": "Patients title with count",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "42"
+            }
+        }
+    },
+    "patientProfileTitle": "Paciento profilis",
+    "@patientProfileTitle": {
+        "description": "Patient profile page title"
+    },
+    "patientProfileComingSoon": "Paciento profilis ruošiamas",
+    "@patientProfileComingSoon": {
+        "description": "Placeholder message for patient profile page"
     }
 }

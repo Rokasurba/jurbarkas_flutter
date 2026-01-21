@@ -12,6 +12,8 @@ import 'package:frontend/blood_sugar/view/blood_sugar_page.dart';
 import 'package:frontend/bmi/view/bmi_page.dart';
 import 'package:frontend/doctor/view/doctor_dashboard_page.dart';
 import 'package:frontend/password_reset/cubit/password_reset_cubit.dart';
+import 'package:frontend/patients/view/patient_profile_page.dart';
+import 'package:frontend/patients/view/patients_page.dart';
 import 'package:frontend/password_reset/view/forgot_password_page.dart';
 import 'package:frontend/password_reset/view/new_password_page.dart';
 import 'package:frontend/password_reset/view/otp_verification_page.dart';
@@ -79,6 +81,16 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: '/admin',
           page: AdminDashboardRoute.page,
+          guards: [AuthGuard(authCubit)],
+        ),
+        AutoRoute(
+          path: '/patients',
+          page: PatientsRoute.page,
+          guards: [AuthGuard(authCubit)],
+        ),
+        AutoRoute(
+          path: '/patients/:id',
+          page: PatientProfileRoute.page,
           guards: [AuthGuard(authCubit)],
         ),
         RedirectRoute(path: '/', redirectTo: '/splash'),

@@ -23,4 +23,7 @@ abstract class ApiConstants {
 
   // Dashboard endpoint
   static const String dashboard = '/dashboard';
+
+  // Patients endpoint (doctor/admin only)
+  static const String patients = '/patients';
 }

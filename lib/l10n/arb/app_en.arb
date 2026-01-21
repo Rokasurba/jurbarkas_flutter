@@ -479,5 +479,39 @@
     "timeLabel": "Time",
     "@timeLabel": {
         "description": "Time picker label"
+    },
+    "patientsTitle": "Patients",
+    "@patientsTitle": {
+        "description": "Patients page title"
+    },
+    "noPatients": "No patients found",
+    "@noPatients": {
+        "description": "No patients found message"
+    },
+    "patientCode": "Patient code",
+    "@patientCode": {
+        "description": "Patient code label"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Retry button text"
+    },
+    "patientsCount": "{count, plural, =0{Patients} =1{Patients (1)} other{Patients ({count})}}",
+    "@patientsCount": {
+        "description": "Patients title with count",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "42"
+            }
+        }
+    },
+    "patientProfileTitle": "Patient Profile",
+    "@patientProfileTitle": {
+        "description": "Patient profile page title"
+    },
+    "patientProfileComingSoon": "Patient profile coming soon",
+    "@patientProfileComingSoon": {
+        "description": "Placeholder message for patient profile page"
     }
 }
