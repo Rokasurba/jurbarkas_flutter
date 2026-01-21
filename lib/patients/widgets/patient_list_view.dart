@@ -12,7 +12,7 @@ import 'package:frontend/patients/widgets/patient_card.dart';
 /// This widget handles:
 /// - Loading state with spinner
 /// - Error state with retry button
-/// - Empty state with message
+/// - Empty state with message (different for search vs initial)
 /// - Infinite scroll pagination
 /// - Patient card tap callbacks
 class PatientListView extends StatefulWidget {
@@ -67,10 +67,14 @@ class _PatientListViewState extends State<PatientListView> {
       builder: (context, state) {
         return state.when(
           initial: () => const SizedBox.shrink(),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          loaded: (patients, total, hasMore, isLoadingMore) {
+          loading: (_) => const Center(child: CircularProgressIndicator()),
+          loaded: (patients, total, hasMore, isLoadingMore, searchParams) {
+            final isSearchActive = searchParams.hasActiveFilters;
             if (patients.isEmpty) {
-              return _EmptyState(message: l10n.noPatients);
+              return _EmptyState(
+                message: isSearchActive ? l10n.noPatientsFound : l10n.noPatients,
+                isSearchResult: isSearchActive,
+              );
             }
 
             return ListView.builder(
@@ -98,7 +102,7 @@ class _PatientListViewState extends State<PatientListView> {
               },
             );
           },
-          error: (message) => _ErrorState(
+          error: (message, _) => _ErrorState(
             message: message,
             onRetry: () {
               unawaited(context.read<PatientsCubit>().loadPatients());
@@ -111,9 +115,13 @@ class _PatientListViewState extends State<PatientListView> {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.message});
+  const _EmptyState({
+    required this.message,
+    this.isSearchResult = false,
+  });
 
   final String message;
+  final bool isSearchResult;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +130,7 @@ class _EmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.people_outline,
+            isSearchResult ? Icons.search_off : Icons.people_outline,
             size: 64,
             color: AppColors.secondaryText.withValues(alpha: 0.5),
           ),
@@ -132,6 +140,7 @@ class _EmptyState extends StatelessWidget {
             style: context.bodyLarge?.copyWith(
               color: AppColors.secondaryText,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),

@@ -7,8 +7,11 @@ import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/patients/cubit/patients_cubit.dart';
+import 'package:frontend/patients/data/models/patient_list_params.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
+import 'package:frontend/patients/widgets/patient_filter_modal.dart';
 import 'package:frontend/patients/widgets/patient_list_view.dart';
+import 'package:frontend/patients/widgets/patient_search_header.dart';
 
 @RoutePage()
 class PatientsPage extends StatelessWidget {
@@ -38,6 +41,20 @@ class _PatientsView extends StatelessWidget {
     context.router.push(PatientProfileRoute(patientId: patientId));
   }
 
+  Future<void> _showFilterModal(BuildContext context) async {
+    final cubit = context.read<PatientsCubit>();
+    final currentFilter = cubit.state.params.filter;
+
+    final selectedFilter = await showPatientFilterModal(
+      context: context,
+      currentFilter: currentFilter,
+    );
+
+    if (selectedFilter != null && selectedFilter != currentFilter) {
+      unawaited(cubit.setFilter(selectedFilter));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -50,16 +67,34 @@ class _PatientsView extends StatelessWidget {
           builder: (context, state) {
             final total = state.total;
             return Text(
-              total > 0
-                  ? l10n.patientsCount(total)
-                  : l10n.patientsTitle,
+              total > 0 ? l10n.patientsCount(total) : l10n.patientsTitle,
               style: context.appBarTitle,
             );
           },
         ),
       ),
-      body: PatientListView(
-        onPatientTap: (patientId) => _onPatientTap(context, patientId),
+      body: Column(
+        children: [
+          BlocBuilder<PatientsCubit, PatientsState>(
+            buildWhen: (previous, current) => previous.params != current.params,
+            builder: (context, state) {
+              final params = state.params;
+              return PatientSearchHeader(
+                initialSearch: params.search,
+                hasActiveFilter: params.filter != PatientFilter.all,
+                onSearchChanged: (query) {
+                  context.read<PatientsCubit>().search(query);
+                },
+                onFilterTap: () => _showFilterModal(context),
+              );
+            },
+          ),
+          Expanded(
+            child: PatientListView(
+              onPatientTap: (patientId) => _onPatientTap(context, patientId),
+            ),
+          ),
+        ],
       ),
     );
   }

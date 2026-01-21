@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend/core/api/auth_event_controller.dart';
 import 'package:frontend/core/constants/api_constants.dart';
 import 'package:frontend/core/data/api_response.dart';
+import 'package:frontend/core/data/models/refresh_token_request.dart';
 import 'package:frontend/core/data/models/token_response.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
 
@@ -78,9 +79,10 @@ class AuthInterceptor extends QueuedInterceptor {
       final refreshToken = await secureStorage.getRefreshToken();
       if (refreshToken == null) return false;
 
+      final request = RefreshTokenRequest(refreshToken: refreshToken);
       final response = await dio.post<Map<String, dynamic>>(
         ApiConstants.refresh,
-        data: {'refresh_token': refreshToken},
+        data: request.toJson(),
       );
 
       if (response.data == null) return false;

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/patients/data/models/patient_list_item.dart';
+import 'package:frontend/patients/data/models/patient_list_params.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 
 part 'patients_state.dart';
@@ -13,14 +16,22 @@ class PatientsCubit extends Cubit<PatientsState> {
         super(const PatientsState.initial());
 
   final PatientsRepository _patientsRepository;
+  Timer? _debounce;
 
-  static const int _pageSize = 20;
+  static const Duration _debounceDuration = Duration(milliseconds: 300);
+
+  @override
+  Future<void> close() {
+    _debounce?.cancel();
+    return super.close();
+  }
 
   Future<void> loadPatients() async {
-    emit(const PatientsState.loading());
+    final params = state.params;
+    emit(PatientsState.loading(params: params));
 
     final response = await _patientsRepository.getPatients(
-      limit: _pageSize,
+      params: params,
     );
 
     response.when(
@@ -30,10 +41,11 @@ class PatientsCubit extends Cubit<PatientsState> {
             patients: data.patients,
             total: data.total,
             hasMore: data.hasMore,
+            params: params,
           ),
         );
       },
-      error: (message, _) => emit(PatientsState.error(message)),
+      error: (message, _) => emit(PatientsState.error(message, params: params)),
     );
   }
 
@@ -51,12 +63,18 @@ class PatientsCubit extends Cubit<PatientsState> {
         total: currentState.total,
         hasMore: currentState.hasMore,
         isLoadingMore: true,
+        params: currentState.params,
       ),
     );
 
+    final nextPageParams = PatientListParams.nextPage(
+      currentState.patients.length,
+      search: currentState.params.search,
+      filter: currentState.params.filter,
+    );
+
     final response = await _patientsRepository.getPatients(
-      limit: _pageSize,
-      offset: currentState.patients.length,
+      params: nextPageParams,
     );
 
     response.when(
@@ -66,6 +84,7 @@ class PatientsCubit extends Cubit<PatientsState> {
             patients: [...currentState.patients, ...data.patients],
             total: data.total,
             hasMore: data.hasMore,
+            params: currentState.params,
           ),
         );
       },
@@ -76,9 +95,70 @@ class PatientsCubit extends Cubit<PatientsState> {
             patients: currentState.patients,
             total: currentState.total,
             hasMore: currentState.hasMore,
+            params: currentState.params,
           ),
         );
       },
+    );
+  }
+
+  /// Searches patients with debounce (300ms delay).
+  /// Clearing the search (empty query) is immediate, not debounced.
+  void search(String query) {
+    _debounce?.cancel();
+
+    // Clear search immediately without debounce
+    if (query.isEmpty) {
+      _performSearch(query);
+      return;
+    }
+
+    _debounce = Timer(_debounceDuration, () {
+      _performSearch(query);
+    });
+  }
+
+  Future<void> _performSearch(String query) async {
+    final newParams = state.params.copyWith(
+      search: query.isEmpty ? null : query,
+      clearSearch: query.isEmpty,
+      clearOffset: true,
+    );
+    await _loadWithParams(newParams);
+  }
+
+  /// Sets the filter and reloads patients.
+  Future<void> setFilter(PatientFilter filter) async {
+    final newParams = state.params.copyWith(filter: filter, clearOffset: true);
+    await _loadWithParams(newParams);
+  }
+
+  /// Clears the search term and reloads (keeps filter).
+  Future<void> clearSearch() async {
+    final newParams = state.params.copyWith(clearSearch: true, clearOffset: true);
+    await _loadWithParams(newParams);
+  }
+
+  /// Internal helper to load patients with given params.
+  Future<void> _loadWithParams(PatientListParams params) async {
+    emit(PatientsState.loading(params: params));
+
+    final response = await _patientsRepository.getPatients(
+      params: params,
+    );
+
+    response.when(
+      success: (data, _) {
+        emit(
+          PatientsState.loaded(
+            patients: data.patients,
+            total: data.total,
+            hasMore: data.hasMore,
+            params: params,
+          ),
+        );
+      },
+      error: (message, _) => emit(PatientsState.error(message, params: params)),
     );
   }
 }

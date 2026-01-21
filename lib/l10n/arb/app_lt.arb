@@ -513,5 +513,29 @@
     "patientProfileComingSoon": "Paciento profilis ruošiamas",
     "@patientProfileComingSoon": {
         "description": "Placeholder message for patient profile page"
+    },
+    "searchPatientsHint": "Ieškokite...",
+    "@searchPatientsHint": {
+        "description": "Placeholder text for patient search field"
+    },
+    "filterAll": "Visi pacientai",
+    "@filterAll": {
+        "description": "Filter option for all patients"
+    },
+    "filterActive": "Aktyvūs",
+    "@filterActive": {
+        "description": "Filter option for active patients"
+    },
+    "filterInactive": "Neaktyvūs",
+    "@filterInactive": {
+        "description": "Filter option for inactive patients"
+    },
+    "filterTitle": "Filtruoti",
+    "@filterTitle": {
+        "description": "Title for filter modal"
+    },
+    "noPatientsFound": "Pacientų nerasta",
+    "@noPatientsFound": {
+        "description": "Message when search returns no results"
     }
 }

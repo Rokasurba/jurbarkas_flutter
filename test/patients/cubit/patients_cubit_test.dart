@@ -3,10 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/core/data/api_response.dart';
 import 'package:frontend/patients/cubit/patients_cubit.dart';
 import 'package:frontend/patients/data/models/patient_list_item.dart';
+import 'package:frontend/patients/data/models/patient_list_params.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockPatientsRepository extends Mock implements PatientsRepository {}
+
+class FakePatientListParams extends Fake implements PatientListParams {}
 
 void main() {
   late MockPatientsRepository mockRepository;
@@ -52,6 +55,10 @@ void main() {
     hasMore: false,
   );
 
+  setUpAll(() {
+    registerFallbackValue(FakePatientListParams());
+  });
+
   setUp(() {
     mockRepository = MockPatientsRepository();
   });
@@ -66,8 +73,9 @@ void main() {
     blocTest<PatientsCubit, PatientsState>(
       'emits [loading, loaded] when loadPatients succeeds',
       build: () {
-        when(() => mockRepository.getPatients(limit: 20))
-            .thenAnswer((_) async => ApiResponse.success(data: mockPatientsResponse));
+        when(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        ).thenAnswer((_) async => ApiResponse.success(data: mockPatientsResponse));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       act: (cubit) => cubit.loadPatients(),
@@ -84,8 +92,9 @@ void main() {
     blocTest<PatientsCubit, PatientsState>(
       'emits [loading, loaded] with empty list when no patients',
       build: () {
-        when(() => mockRepository.getPatients(limit: 20))
-            .thenAnswer((_) async => ApiResponse.success(data: mockEmptyResponse));
+        when(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        ).thenAnswer((_) async => ApiResponse.success(data: mockEmptyResponse));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       act: (cubit) => cubit.loadPatients(),
@@ -102,8 +111,9 @@ void main() {
     blocTest<PatientsCubit, PatientsState>(
       'emits [loading, error] when loadPatients fails',
       build: () {
-        when(() => mockRepository.getPatients(limit: 20))
-            .thenAnswer((_) async => const ApiResponse.error(message: 'Network error'));
+        when(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        ).thenAnswer((_) async => const ApiResponse.error(message: 'Network error'));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       act: (cubit) => cubit.loadPatients(),
@@ -116,8 +126,9 @@ void main() {
     blocTest<PatientsCubit, PatientsState>(
       'loadMore appends patients when successful',
       build: () {
-        when(() => mockRepository.getPatients(limit: 20, offset: 2))
-            .thenAnswer((_) async => ApiResponse.success(data: mockPatientsResponsePage2));
+        when(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        ).thenAnswer((_) async => ApiResponse.success(data: mockPatientsResponsePage2));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       seed: () => PatientsState.loaded(
@@ -152,7 +163,9 @@ void main() {
       act: (cubit) => cubit.loadMore(),
       expect: () => <PatientsState>[],
       verify: (_) {
-        verifyNever(() => mockRepository.getPatients(limit: any(named: 'limit'), offset: any(named: 'offset')));
+        verifyNever(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        );
       },
     );
 
@@ -168,7 +181,9 @@ void main() {
       act: (cubit) => cubit.loadMore(),
       expect: () => <PatientsState>[],
       verify: (_) {
-        verifyNever(() => mockRepository.getPatients(limit: any(named: 'limit'), offset: any(named: 'offset')));
+        verifyNever(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        );
       },
     );
 
@@ -179,15 +194,18 @@ void main() {
       act: (cubit) => cubit.loadMore(),
       expect: () => <PatientsState>[],
       verify: (_) {
-        verifyNever(() => mockRepository.getPatients(limit: any(named: 'limit'), offset: any(named: 'offset')));
+        verifyNever(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        );
       },
     );
 
     blocTest<PatientsCubit, PatientsState>(
       'loadMore restores state on error',
       build: () {
-        when(() => mockRepository.getPatients(limit: 20, offset: 2))
-            .thenAnswer((_) async => const ApiResponse.error(message: 'Network error'));
+        when(
+          () => mockRepository.getPatients(params: any(named: 'params')),
+        ).thenAnswer((_) async => const ApiResponse.error(message: 'Network error'));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       seed: () => PatientsState.loaded(

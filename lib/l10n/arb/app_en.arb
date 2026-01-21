@@ -513,5 +513,29 @@
     "patientProfileComingSoon": "Patient profile coming soon",
     "@patientProfileComingSoon": {
         "description": "Placeholder message for patient profile page"
+    },
+    "searchPatientsHint": "Search...",
+    "@searchPatientsHint": {
+        "description": "Placeholder text for patient search field"
+    },
+    "filterAll": "All patients",
+    "@filterAll": {
+        "description": "Filter option for all patients"
+    },
+    "filterActive": "Active",
+    "@filterActive": {
+        "description": "Filter option for active patients"
+    },
+    "filterInactive": "Inactive",
+    "@filterInactive": {
+        "description": "Filter option for inactive patients"
+    },
+    "filterTitle": "Filter",
+    "@filterTitle": {
+        "description": "Title for filter modal"
+    },
+    "noPatientsFound": "No patients found",
+    "@noPatientsFound": {
+        "description": "Message when search returns no results"
     }
 }

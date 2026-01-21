@@ -1,7 +1,10 @@
 export 'cubit/patients_cubit.dart';
 export 'data/models/patient_list_item.dart';
+export 'data/models/patient_list_params.dart';
 export 'data/patients_repository.dart';
 export 'view/patient_profile_page.dart';
 export 'view/patients_page.dart';
 export 'widgets/patient_card.dart';
+export 'widgets/patient_filter_modal.dart';
 export 'widgets/patient_list_view.dart';
+export 'widgets/patient_search_header.dart';

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/patients/data/models/patient_list_item.dart';
+import 'package:frontend/patients/data/models/patient_list_params.dart';
 
 class PatientsRepository {
   PatientsRepository({
@@ -10,20 +11,12 @@ class PatientsRepository {
   final ApiClient _apiClient;
 
   Future<ApiResponse<PatientsResponse>> getPatients({
-    int limit = 20,
-    int? offset,
+    PatientListParams params = const PatientListParams.firstPage(),
   }) async {
     try {
-      final queryParams = <String, dynamic>{
-        'limit': limit,
-      };
-      if (offset != null && offset > 0) {
-        queryParams['offset'] = offset;
-      }
-
       final response = await _apiClient.get<Map<String, dynamic>>(
         ApiConstants.patients,
-        queryParameters: queryParams,
+        queryParameters: params.toQueryMapOrNull(),
       );
 
       return ApiResponse.fromJson(
