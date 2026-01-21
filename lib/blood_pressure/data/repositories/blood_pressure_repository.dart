@@ -52,7 +52,7 @@ class BloodPressureRepository {
   }
 
   Future<ApiResponse<List<BloodPressureReading>>> getHistory({
-    PaginationParams params = const PaginationParams(),
+    HealthDataParams params = const HealthDataParams.firstPage(),
   }) async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(

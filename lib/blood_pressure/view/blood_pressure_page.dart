@@ -25,7 +25,9 @@ class BloodPressurePage extends StatelessWidget {
             apiClient: context.read<ApiClient>(),
           ),
         );
-        unawaited(cubit.loadHistory());
+        // Load with default month filter (30 days)
+        final defaultFromDate = DateTime.now().subtract(const Duration(days: 30));
+        unawaited(cubit.loadHistory(fromDate: defaultFromDate));
         return cubit;
       },
       child: const _BloodPressureView(),
@@ -224,6 +226,13 @@ class _GraphTab extends StatelessWidget {
         return BloodPressureGraph(
           readings: state.readings,
           isLoading: state.isLoading,
+          onPeriodChanged: (period) {
+            unawaited(
+              context
+                  .read<BloodPressureCubit>()
+                  .loadHistory(fromDate: period.toFromDate()),
+            );
+          },
         );
       },
     );

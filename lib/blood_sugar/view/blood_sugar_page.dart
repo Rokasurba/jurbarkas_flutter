@@ -25,7 +25,9 @@ class BloodSugarPage extends StatelessWidget {
             apiClient: context.read<ApiClient>(),
           ),
         );
-        unawaited(cubit.loadHistory());
+        // Load with default month filter (30 days)
+        final defaultFromDate = DateTime.now().subtract(const Duration(days: 30));
+        unawaited(cubit.loadHistory(fromDate: defaultFromDate));
         return cubit;
       },
       child: const _BloodSugarView(),
@@ -222,6 +224,13 @@ class _GraphTab extends StatelessWidget {
         return BloodSugarGraph(
           readings: state.readings,
           isLoading: state.isLoading,
+          onPeriodChanged: (period) {
+            unawaited(
+              context
+                  .read<BloodSugarCubit>()
+                  .loadHistory(fromDate: period.toFromDate()),
+            );
+          },
         );
       },
     );

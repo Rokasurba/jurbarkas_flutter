@@ -5,17 +5,35 @@ import 'package:frontend/core/theme/app_theme.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:intl/intl.dart';
 
-enum GraphPeriod { week, month, year }
+enum GraphPeriod {
+  week,
+  month,
+  threeMonths,
+  allTime;
+
+  /// Returns the from date for this period, or null for allTime.
+  DateTime? toFromDate() {
+    final now = DateTime.now();
+    return switch (this) {
+      GraphPeriod.week => now.subtract(const Duration(days: 7)),
+      GraphPeriod.month => now.subtract(const Duration(days: 30)),
+      GraphPeriod.threeMonths => now.subtract(const Duration(days: 90)),
+      GraphPeriod.allTime => null,
+    };
+  }
+}
 
 class BmiGraph extends StatefulWidget {
   const BmiGraph({
     required this.measurements,
     required this.isLoading,
+    required this.onPeriodChanged,
     super.key,
   });
 
   final List<BmiMeasurement> measurements;
   final bool isLoading;
+  final void Function(GraphPeriod period) onPeriodChanged;
 
   @override
   State<BmiGraph> createState() => _BmiGraphState();
@@ -24,19 +42,11 @@ class BmiGraph extends StatefulWidget {
 class _BmiGraphState extends State<BmiGraph> {
   GraphPeriod _selectedPeriod = GraphPeriod.month;
 
-  List<BmiMeasurement> get _filteredMeasurements {
+  /// Measurements are already filtered by the cubit based on the selected period.
+  /// We just need to sort them for the chart.
+  List<BmiMeasurement> get _sortedMeasurements {
     if (widget.measurements.isEmpty) return [];
-
-    final now = DateTime.now();
-    final cutoff = switch (_selectedPeriod) {
-      GraphPeriod.week => now.subtract(const Duration(days: 7)),
-      GraphPeriod.month => now.subtract(const Duration(days: 30)),
-      GraphPeriod.year => now.subtract(const Duration(days: 365)),
-    };
-
-    return widget.measurements
-        .where((m) => m.measuredAt.isAfter(cutoff))
-        .toList()
+    return widget.measurements.toList()
       ..sort((a, b) => a.measuredAt.compareTo(b.measuredAt));
   }
 
@@ -52,25 +62,44 @@ class _BmiGraphState extends State<BmiGraph> {
             selectedPeriod: _selectedPeriod,
             onPeriodChanged: (period) {
               setState(() => _selectedPeriod = period);
+              widget.onPeriodChanged(period);
             },
           ),
         ),
         Expanded(
           child: widget.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _filteredMeasurements.isEmpty
+              : _sortedMeasurements.length < 2
                   ? Center(
-                      child: Text(
-                        l10n.noDataYet,
-                        style: context.bodyLarge?.copyWith(
-                          color: AppColors.secondaryText,
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.show_chart,
+                              size: 48,
+                              color: AppColors.secondaryText
+                                  .withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _sortedMeasurements.isEmpty
+                                  ? l10n.noDataYet
+                                  : l10n.chartNeedsMoreData,
+                              style: context.bodyLarge?.copyWith(
+                                color: AppColors.secondaryText,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     )
                   : Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 24, 16),
                       child: _BmiLineChart(
-                        measurements: _filteredMeasurements,
+                        measurements: _sortedMeasurements,
                         period: _selectedPeriod,
                       ),
                     ),
@@ -105,8 +134,12 @@ class _PeriodSelector extends StatelessWidget {
           label: Text(l10n.periodMonth),
         ),
         ButtonSegment(
-          value: GraphPeriod.year,
-          label: Text(l10n.periodYear),
+          value: GraphPeriod.threeMonths,
+          label: Text(l10n.periodThreeMonths),
+        ),
+        ButtonSegment(
+          value: GraphPeriod.allTime,
+          label: Text(l10n.periodAllTime),
         ),
       ],
       selected: {selectedPeriod},
@@ -207,9 +240,7 @@ class _BmiLineChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 final date = startDate
                     .add(Duration(minutes: (value * 24 * 60).toInt()));
-                final format = period == GraphPeriod.year
-                    ? DateFormat('MM/dd')
-                    : DateFormat('MM/dd');
+                final format = DateFormat('MM/dd');
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
@@ -307,7 +338,8 @@ class _BmiLineChart extends StatelessWidget {
     return switch (period) {
       GraphPeriod.week => 1,
       GraphPeriod.month => 7,
-      GraphPeriod.year => 30,
+      GraphPeriod.threeMonths => 14,
+      GraphPeriod.allTime => 30,
     };
   }
 
@@ -315,7 +347,8 @@ class _BmiLineChart extends StatelessWidget {
     return switch (period) {
       GraphPeriod.week => 1,
       GraphPeriod.month => 7,
-      GraphPeriod.year => 60,
+      GraphPeriod.threeMonths => 14,
+      GraphPeriod.allTime => 60,
     };
   }
 }

@@ -14,17 +14,27 @@ class BmiCubit extends Cubit<BmiState> {
         super(const BmiState.initial());
 
   final BmiRepository _bmiRepository;
+  DateTime? _currentFromDate;
 
-  Future<void> loadHistory() async {
+  /// Current date filter being applied
+  DateTime? get currentFromDate => _currentFromDate;
+
+  Future<void> loadHistory({DateTime? fromDate}) async {
+    _currentFromDate = fromDate;
     emit(const BmiState.loading());
 
-    final response = await _bmiRepository.getHistory(
-      params: const PaginationParams.firstPage(),
-    );
+    final params = fromDate != null
+        ? HealthDataParams.withDateFilter(fromDate)
+        : const HealthDataParams.firstPage();
+
+    final response = await _bmiRepository.getHistory(params: params);
 
     response.when(
       success: (measurements, _) {
-        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
+        // When filtering by date, we don't support pagination (all data fetched)
+        // When no filter, we support pagination
+        final hasMore = fromDate == null &&
+            measurements.length >= HealthDataParams.defaultPageSize;
         emit(BmiState.loaded(measurements, hasMore: hasMore));
       },
       error: (message, _) => emit(BmiState.failure(message)),
@@ -32,20 +42,23 @@ class BmiCubit extends Cubit<BmiState> {
   }
 
   Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
+    // Don't allow load more when a date filter is applied
+    if (state.isLoadingMore || !state.hasMore || _currentFromDate != null) {
+      return;
+    }
 
     final currentMeasurements = state.measurements;
     emit(BmiState.loadingMore(currentMeasurements));
 
     final response = await _bmiRepository.getHistory(
-      params: PaginationParams.nextPage(currentMeasurements.length),
+      params: HealthDataParams.nextPage(currentMeasurements.length),
     );
 
     response.when(
       success: (newMeasurements, _) {
         final allMeasurements = [...currentMeasurements, ...newMeasurements];
         final hasMore =
-            newMeasurements.length >= PaginationParams.defaultPageSize;
+            newMeasurements.length >= HealthDataParams.defaultPageSize;
         emit(BmiState.loaded(allMeasurements, hasMore: hasMore));
       },
       error: (message, _) => emit(BmiState.failure(message)),
@@ -75,8 +88,8 @@ class BmiCubit extends Cubit<BmiState> {
       error: (message, _) {
         emit(BmiState.failure(message));
         // Restore loaded state after failure
-        final hasMore =
-            currentMeasurements.length >= PaginationParams.defaultPageSize;
+        final hasMore = _currentFromDate == null &&
+            currentMeasurements.length >= HealthDataParams.defaultPageSize;
         emit(BmiState.loaded(currentMeasurements, hasMore: hasMore));
       },
     );
@@ -103,8 +116,9 @@ class BmiCubit extends Cubit<BmiState> {
   void clearSavedState() {
     state.maybeWhen(
       saved: (_, measurements) {
-        // Preserve hasMore based on whether we had a full page of measurements
-        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
+        // When filtering, hasMore is false; otherwise based on page size
+        final hasMore = _currentFromDate == null &&
+            measurements.length >= HealthDataParams.defaultPageSize;
         emit(BmiState.loaded(measurements, hasMore: hasMore));
       },
       orElse: () {
@@ -116,7 +130,8 @@ class BmiCubit extends Cubit<BmiState> {
   void clearDeletedState() {
     state.maybeWhen(
       deleted: (measurements) {
-        final hasMore = measurements.length >= PaginationParams.defaultPageSize;
+        final hasMore = _currentFromDate == null &&
+            measurements.length >= HealthDataParams.defaultPageSize;
         emit(BmiState.loaded(measurements, hasMore: hasMore));
       },
       orElse: () {

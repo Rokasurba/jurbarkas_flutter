@@ -258,6 +258,14 @@
     "@periodYear": {
         "description": "Year period label for graph"
     },
+    "periodThreeMonths": "3 months",
+    "@periodThreeMonths": {
+        "description": "3 months period label for graph"
+    },
+    "periodAllTime": "All",
+    "@periodAllTime": {
+        "description": "All time period label for graph"
+    },
     "systolicLabel": "Systolic",
     "@systolicLabel": {
         "description": "Systolic blood pressure label"
@@ -285,6 +293,10 @@
     "noDataYet": "No data yet",
     "@noDataYet": {
         "description": "No data placeholder text"
+    },
+    "chartNeedsMoreData": "Add more data to see the chart",
+    "@chartNeedsMoreData": {
+        "description": "Message shown when chart needs at least 2 data points"
     },
     "addFirstReading": "Add your first reading",
     "@addFirstReading": {

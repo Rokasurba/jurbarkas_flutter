@@ -9,11 +9,11 @@ import 'package:mocktail/mocktail.dart';
 
 class MockBmiRepository extends Mock implements BmiRepository {}
 
-class FakePaginationParams extends Fake implements PaginationParams {}
+class FakeHealthDataParams extends Fake implements HealthDataParams {}
 
 void main() {
   setUpAll(() {
-    registerFallbackValue(FakePaginationParams());
+    registerFallbackValue(FakeHealthDataParams());
     registerFallbackValue(DateTime(2026));
   });
   late MockBmiRepository mockRepository;
@@ -214,6 +214,118 @@ void main() {
       act: (cubit) => cubit.loadMore(),
       expect: () => [],
     );
+
+    group('date filtering', () {
+      blocTest<BmiCubit, BmiState>(
+        'loadHistory with fromDate sets currentFromDate and disables pagination',
+        build: () {
+          when(() => mockRepository.getHistory(params: any(named: 'params')))
+              .thenAnswer(
+            (_) async => ApiResponse.success(data: mockMeasurements),
+          );
+          return BmiCubit(bmiRepository: mockRepository);
+        },
+        act: (cubit) async {
+          final fromDate = DateTime(2026, 1, 1);
+          await cubit.loadHistory(fromDate: fromDate);
+          // Verify the cubit tracks the filter
+          expect(cubit.currentFromDate, fromDate);
+        },
+        expect: () => [
+          const BmiState.loading(),
+          // hasMore is always false when filtering by date
+          BmiState.loaded(mockMeasurements, hasMore: false),
+        ],
+      );
+
+      blocTest<BmiCubit, BmiState>(
+        'loadHistory without fromDate clears currentFromDate',
+        build: () {
+          when(() => mockRepository.getHistory(params: any(named: 'params')))
+              .thenAnswer(
+            (_) async => ApiResponse.success(data: mockMeasurements),
+          );
+          return BmiCubit(bmiRepository: mockRepository);
+        },
+        act: (cubit) async {
+          // First load with filter
+          await cubit.loadHistory(fromDate: DateTime(2026, 1, 1));
+          // Then load without filter
+          await cubit.loadHistory();
+          expect(cubit.currentFromDate, isNull);
+        },
+        expect: () => [
+          const BmiState.loading(),
+          BmiState.loaded(mockMeasurements, hasMore: false),
+          const BmiState.loading(),
+          // Without filter, hasMore depends on page size
+          BmiState.loaded(mockMeasurements, hasMore: false),
+        ],
+      );
+
+      blocTest<BmiCubit, BmiState>(
+        'loadMore does nothing when date filter is applied',
+        build: () {
+          when(() => mockRepository.getHistory(params: any(named: 'params')))
+              .thenAnswer(
+            (_) async => ApiResponse.success(data: mockMeasurements),
+          );
+          return BmiCubit(bmiRepository: mockRepository);
+        },
+        act: (cubit) async {
+          // Load with date filter
+          await cubit.loadHistory(fromDate: DateTime(2026, 1, 1));
+          // Try to load more - should do nothing
+          await cubit.loadMore();
+        },
+        expect: () => [
+          const BmiState.loading(),
+          BmiState.loaded(mockMeasurements, hasMore: false),
+          // No additional states from loadMore
+        ],
+        verify: (cubit) {
+          // Repository should only be called once (for loadHistory)
+          verify(
+            () => mockRepository.getHistory(params: any(named: 'params')),
+          ).called(1);
+        },
+      );
+
+      blocTest<BmiCubit, BmiState>(
+        'switching between date filters replaces data',
+        build: () {
+          final weekMeasurements = [mockMeasurements.first];
+          final monthMeasurements = mockMeasurements;
+
+          var callCount = 0;
+          when(() => mockRepository.getHistory(params: any(named: 'params')))
+              .thenAnswer((_) async {
+            callCount++;
+            // First call returns week data, second returns month data
+            return ApiResponse.success(
+              data: callCount == 1 ? weekMeasurements : monthMeasurements,
+            );
+          });
+          return BmiCubit(bmiRepository: mockRepository);
+        },
+        act: (cubit) async {
+          // Load week filter (7 days)
+          await cubit.loadHistory(
+            fromDate: DateTime.now().subtract(const Duration(days: 7)),
+          );
+          // Switch to month filter (30 days)
+          await cubit.loadHistory(
+            fromDate: DateTime.now().subtract(const Duration(days: 30)),
+          );
+        },
+        expect: () => [
+          const BmiState.loading(),
+          BmiState.loaded([mockMeasurements.first], hasMore: false),
+          const BmiState.loading(),
+          BmiState.loaded(mockMeasurements, hasMore: false),
+        ],
+      );
+    });
   });
 
   group('BmiState', () {

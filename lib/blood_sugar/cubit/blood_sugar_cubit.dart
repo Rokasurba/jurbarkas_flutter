@@ -14,17 +14,27 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
         super(const BloodSugarState.initial());
 
   final BloodSugarRepository _bloodSugarRepository;
+  DateTime? _currentFromDate;
 
-  Future<void> loadHistory() async {
+  /// Current date filter being applied
+  DateTime? get currentFromDate => _currentFromDate;
+
+  Future<void> loadHistory({DateTime? fromDate}) async {
+    _currentFromDate = fromDate;
     emit(const BloodSugarState.loading());
 
-    final response = await _bloodSugarRepository.getHistory(
-      params: const PaginationParams.firstPage(),
-    );
+    final params = fromDate != null
+        ? HealthDataParams.withDateFilter(fromDate)
+        : const HealthDataParams.firstPage();
+
+    final response = await _bloodSugarRepository.getHistory(params: params);
 
     response.when(
       success: (readings, _) {
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        // When filtering by date, we don't support pagination (all data fetched)
+        // When no filter, we support pagination
+        final hasMore = fromDate == null &&
+            readings.length >= HealthDataParams.defaultPageSize;
         emit(BloodSugarState.loaded(readings, hasMore: hasMore));
       },
       error: (message, _) => emit(BloodSugarState.failure(message)),
@@ -32,19 +42,22 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
   }
 
   Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
+    // Don't allow load more when a date filter is applied
+    if (state.isLoadingMore || !state.hasMore || _currentFromDate != null) {
+      return;
+    }
 
     final currentReadings = state.readings;
     emit(BloodSugarState.loadingMore(currentReadings));
 
     final response = await _bloodSugarRepository.getHistory(
-      params: PaginationParams.nextPage(currentReadings.length),
+      params: HealthDataParams.nextPage(currentReadings.length),
     );
 
     response.when(
       success: (newReadings, _) {
         final allReadings = [...currentReadings, ...newReadings];
-        final hasMore = newReadings.length >= PaginationParams.defaultPageSize;
+        final hasMore = newReadings.length >= HealthDataParams.defaultPageSize;
         emit(BloodSugarState.loaded(allReadings, hasMore: hasMore));
       },
       error: (message, _) => emit(BloodSugarState.failure(message)),
@@ -56,7 +69,6 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
     required DateTime measuredAt,
   }) async {
     final currentReadings = state.readings;
-    final currentHasMore = state.hasMore;
 
     emit(BloodSugarState.saving(currentReadings));
 
@@ -72,14 +84,15 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
       },
       error: (message, _) {
         emit(BloodSugarState.failure(message));
-        emit(BloodSugarState.loaded(currentReadings, hasMore: currentHasMore));
+        final hasMore = _currentFromDate == null &&
+            currentReadings.length >= HealthDataParams.defaultPageSize;
+        emit(BloodSugarState.loaded(currentReadings, hasMore: hasMore));
       },
     );
   }
 
   Future<void> deleteReading({required int id}) async {
     final currentReadings = state.readings;
-    final currentHasMore = state.hasMore;
 
     emit(BloodSugarState.deleting(currentReadings));
 
@@ -89,14 +102,18 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
       success: (_, __) {
         final updatedReadings =
             currentReadings.where((reading) => reading.id != id).toList();
+        final hasMore = _currentFromDate == null &&
+            updatedReadings.length >= HealthDataParams.defaultPageSize;
         // First emit deleted for the listener to show snackbar
         emit(BloodSugarState.deleted(updatedReadings));
         // Then immediately emit loaded to preserve the state
-        emit(BloodSugarState.loaded(updatedReadings, hasMore: currentHasMore));
+        emit(BloodSugarState.loaded(updatedReadings, hasMore: hasMore));
       },
       error: (message, _) {
         emit(BloodSugarState.failure(message));
-        emit(BloodSugarState.loaded(currentReadings, hasMore: currentHasMore));
+        final hasMore = _currentFromDate == null &&
+            currentReadings.length >= HealthDataParams.defaultPageSize;
+        emit(BloodSugarState.loaded(currentReadings, hasMore: hasMore));
       },
     );
   }
@@ -104,8 +121,9 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
   void clearSavedState() {
     state.maybeWhen(
       saved: (_, readings) {
-        // Preserve hasMore based on whether we had a full page of readings
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        // When filtering, hasMore is false; otherwise based on page size
+        final hasMore = _currentFromDate == null &&
+            readings.length >= HealthDataParams.defaultPageSize;
         emit(BloodSugarState.loaded(readings, hasMore: hasMore));
       },
       orElse: () {
@@ -117,7 +135,8 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
   void clearDeletedState() {
     // Always preserve current readings when clearing deleted state
     final currentReadings = state.readings;
-    final hasMore = currentReadings.length >= PaginationParams.defaultPageSize;
+    final hasMore = _currentFromDate == null &&
+        currentReadings.length >= HealthDataParams.defaultPageSize;
     emit(BloodSugarState.loaded(currentReadings, hasMore: hasMore));
   }
 }

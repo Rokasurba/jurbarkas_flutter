@@ -25,7 +25,9 @@ class BmiPage extends StatelessWidget {
             apiClient: context.read<ApiClient>(),
           ),
         );
-        unawaited(cubit.loadHistory());
+        // Load with default month filter (30 days)
+        final defaultFromDate = DateTime.now().subtract(const Duration(days: 30));
+        unawaited(cubit.loadHistory(fromDate: defaultFromDate));
         return cubit;
       },
       child: const _BmiView(),
@@ -222,6 +224,11 @@ class _GraphTab extends StatelessWidget {
         return BmiGraph(
           measurements: state.measurements,
           isLoading: state.isLoading,
+          onPeriodChanged: (period) {
+            unawaited(
+              context.read<BmiCubit>().loadHistory(fromDate: period.toFromDate()),
+            );
+          },
         );
       },
     );

@@ -258,6 +258,14 @@
     "@periodYear": {
         "description": "Year period label for graph"
     },
+    "periodThreeMonths": "3 mėn.",
+    "@periodThreeMonths": {
+        "description": "3 months period label for graph"
+    },
+    "periodAllTime": "Visi",
+    "@periodAllTime": {
+        "description": "All time period label for graph"
+    },
     "systolicLabel": "Sistolinis",
     "@systolicLabel": {
         "description": "Systolic blood pressure label"
@@ -285,6 +293,10 @@
     "noDataYet": "Nėra duomenų",
     "@noDataYet": {
         "description": "No data placeholder text"
+    },
+    "chartNeedsMoreData": "Įveskite daugiau duomenų, kad matytumėte grafiką",
+    "@chartNeedsMoreData": {
+        "description": "Message shown when chart needs at least 2 data points"
     },
     "addFirstReading": "Pridėkite pirmą įrašą",
     "@addFirstReading": {

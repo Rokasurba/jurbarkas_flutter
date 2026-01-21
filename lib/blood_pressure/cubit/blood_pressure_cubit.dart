@@ -14,17 +14,27 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
         super(const BloodPressureState.initial());
 
   final BloodPressureRepository _bloodPressureRepository;
+  DateTime? _currentFromDate;
 
-  Future<void> loadHistory() async {
+  /// Current date filter being applied
+  DateTime? get currentFromDate => _currentFromDate;
+
+  Future<void> loadHistory({DateTime? fromDate}) async {
+    _currentFromDate = fromDate;
     emit(const BloodPressureState.loading());
 
-    final response = await _bloodPressureRepository.getHistory(
-      params: const PaginationParams.firstPage(),
-    );
+    final params = fromDate != null
+        ? HealthDataParams.withDateFilter(fromDate)
+        : const HealthDataParams.firstPage();
+
+    final response = await _bloodPressureRepository.getHistory(params: params);
 
     response.when(
       success: (readings, _) {
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        // When filtering by date, we don't support pagination (all data fetched)
+        // When no filter, we support pagination
+        final hasMore = fromDate == null &&
+            readings.length >= HealthDataParams.defaultPageSize;
         emit(BloodPressureState.loaded(readings, hasMore: hasMore));
       },
       error: (message, _) => emit(BloodPressureState.failure(message)),
@@ -32,19 +42,22 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
   }
 
   Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
+    // Don't allow load more when a date filter is applied
+    if (state.isLoadingMore || !state.hasMore || _currentFromDate != null) {
+      return;
+    }
 
     final currentReadings = state.readings;
     emit(BloodPressureState.loadingMore(currentReadings));
 
     final response = await _bloodPressureRepository.getHistory(
-      params: PaginationParams.nextPage(currentReadings.length),
+      params: HealthDataParams.nextPage(currentReadings.length),
     );
 
     response.when(
       success: (newReadings, _) {
         final allReadings = [...currentReadings, ...newReadings];
-        final hasMore = newReadings.length >= PaginationParams.defaultPageSize;
+        final hasMore = newReadings.length >= HealthDataParams.defaultPageSize;
         emit(BloodPressureState.loaded(allReadings, hasMore: hasMore));
       },
       error: (message, _) => emit(BloodPressureState.failure(message)),
@@ -110,8 +123,9 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
   void clearSavedState() {
     state.maybeWhen(
       saved: (_, readings) {
-        // Preserve hasMore based on whether we had a full page of readings
-        final hasMore = readings.length >= PaginationParams.defaultPageSize;
+        // When filtering, hasMore is false; otherwise based on page size
+        final hasMore = _currentFromDate == null &&
+            readings.length >= HealthDataParams.defaultPageSize;
         emit(BloodPressureState.loaded(readings, hasMore: hasMore));
       },
       orElse: () {
@@ -123,7 +137,8 @@ class BloodPressureCubit extends Cubit<BloodPressureState> {
   void clearDeletedState() {
     // Always preserve current readings when clearing deleted state
     final currentReadings = state.readings;
-    final hasMore = currentReadings.length >= PaginationParams.defaultPageSize;
+    final hasMore = _currentFromDate == null &&
+        currentReadings.length >= HealthDataParams.defaultPageSize;
     emit(BloodPressureState.loaded(currentReadings, hasMore: hasMore));
   }
 }

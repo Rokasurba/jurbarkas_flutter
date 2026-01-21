@@ -5,38 +5,48 @@ import 'package:frontend/core/theme/app_theme.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:intl/intl.dart';
 
-enum GraphPeriod { week, month, year }
+enum GraphPeriod {
+  week,
+  month,
+  threeMonths,
+  allTime;
+
+  /// Returns the from date for this period, or null for allTime.
+  DateTime? toFromDate() {
+    final now = DateTime.now();
+    return switch (this) {
+      GraphPeriod.week => now.subtract(const Duration(days: 7)),
+      GraphPeriod.month => now.subtract(const Duration(days: 30)),
+      GraphPeriod.threeMonths => now.subtract(const Duration(days: 90)),
+      GraphPeriod.allTime => null,
+    };
+  }
+}
 
 class BloodSugarGraph extends StatefulWidget {
   const BloodSugarGraph({
     required this.readings,
     required this.isLoading,
+    required this.onPeriodChanged,
     super.key,
   });
 
   final List<BloodSugarReading> readings;
   final bool isLoading;
+  final void Function(GraphPeriod period) onPeriodChanged;
 
   @override
   State<BloodSugarGraph> createState() => _BloodSugarGraphState();
 }
 
 class _BloodSugarGraphState extends State<BloodSugarGraph> {
-  GraphPeriod _selectedPeriod = GraphPeriod.week;
+  GraphPeriod _selectedPeriod = GraphPeriod.month;
 
-  List<BloodSugarReading> get _filteredReadings {
+  /// Readings are already filtered by the cubit based on the selected period.
+  /// We just need to sort them for the chart.
+  List<BloodSugarReading> get _sortedReadings {
     if (widget.readings.isEmpty) return [];
-
-    final now = DateTime.now();
-    final cutoff = switch (_selectedPeriod) {
-      GraphPeriod.week => now.subtract(const Duration(days: 7)),
-      GraphPeriod.month => now.subtract(const Duration(days: 30)),
-      GraphPeriod.year => now.subtract(const Duration(days: 365)),
-    };
-
-    return widget.readings
-        .where((r) => r.measuredAt.isAfter(cutoff))
-        .toList()
+    return widget.readings.toList()
       ..sort((a, b) => a.measuredAt.compareTo(b.measuredAt));
   }
 
@@ -52,30 +62,49 @@ class _BloodSugarGraphState extends State<BloodSugarGraph> {
             selectedPeriod: _selectedPeriod,
             onPeriodChanged: (period) {
               setState(() => _selectedPeriod = period);
+              widget.onPeriodChanged(period);
             },
           ),
         ),
         Expanded(
           child: widget.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _filteredReadings.isEmpty
+              : _sortedReadings.length < 2
                   ? Center(
-                      child: Text(
-                        l10n.noDataYet,
-                        style: context.bodyLarge?.copyWith(
-                          color: AppColors.secondaryText,
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.show_chart,
+                              size: 48,
+                              color: AppColors.secondaryText
+                                  .withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _sortedReadings.isEmpty
+                                  ? l10n.noDataYet
+                                  : l10n.chartNeedsMoreData,
+                              style: context.bodyLarge?.copyWith(
+                                color: AppColors.secondaryText,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     )
                   : Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 24, 16),
                       child: _BloodSugarLineChart(
-                        readings: _filteredReadings,
+                        readings: _sortedReadings,
                         period: _selectedPeriod,
                       ),
                     ),
         ),
-        _Legend(),
+        const _Legend(),
       ],
     );
   }
@@ -105,8 +134,12 @@ class _PeriodSelector extends StatelessWidget {
           label: Text(l10n.periodMonth),
         ),
         ButtonSegment(
-          value: GraphPeriod.year,
-          label: Text(l10n.periodYear),
+          value: GraphPeriod.threeMonths,
+          label: Text(l10n.periodThreeMonths),
+        ),
+        ButtonSegment(
+          value: GraphPeriod.allTime,
+          label: Text(l10n.periodAllTime),
         ),
       ],
       selected: {selectedPeriod},
@@ -209,9 +242,7 @@ class _BloodSugarLineChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 final date =
                     startDate.add(Duration(minutes: (value * 24 * 60).toInt()));
-                final format = period == GraphPeriod.year
-                    ? DateFormat('MM/dd')
-                    : DateFormat('MM/dd');
+                final format = DateFormat('MM/dd');
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
@@ -280,7 +311,7 @@ class _BloodSugarLineChart extends StatelessWidget {
 
                 return LineTooltipItem(
                   '$dateTimeText${spot.y.toStringAsFixed(1)} ${l10n.mmolLUnit}',
-                  TextStyle(
+                  const TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
@@ -311,7 +342,8 @@ class _BloodSugarLineChart extends StatelessWidget {
     return switch (period) {
       GraphPeriod.week => 1,
       GraphPeriod.month => 7,
-      GraphPeriod.year => 30,
+      GraphPeriod.threeMonths => 14,
+      GraphPeriod.allTime => 30,
     };
   }
 
@@ -319,7 +351,8 @@ class _BloodSugarLineChart extends StatelessWidget {
     return switch (period) {
       GraphPeriod.week => 1,
       GraphPeriod.month => 7,
-      GraphPeriod.year => 60,
+      GraphPeriod.threeMonths => 14,
+      GraphPeriod.allTime => 60,
     };
   }
 }

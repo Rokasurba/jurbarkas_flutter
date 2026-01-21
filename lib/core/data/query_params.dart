@@ -74,3 +74,57 @@ class PaginationParams extends QueryParams {
   /// Whether this represents a request for more items (not first page).
   bool get isLoadingMore => offset != null && offset! > 0;
 }
+
+/// Query parameters for health data endpoints with date filtering.
+///
+/// Extends [PaginationParams] with optional date range filtering.
+class HealthDataParams extends QueryParams {
+  /// Creates health data params with optional pagination and date range.
+  const HealthDataParams({
+    this.limit,
+    this.offset,
+    this.from,
+  });
+
+  /// Creates params for the first page with default limit and no date filter.
+  const HealthDataParams.firstPage()
+      : limit = defaultPageSize,
+        offset = null,
+        from = null;
+
+  /// Creates params for the next page based on current item count.
+  HealthDataParams.nextPage(int currentCount, {this.from})
+      : limit = defaultPageSize,
+        offset = currentCount;
+
+  /// Creates params with a date filter (for chart filtering).
+  /// Uses a higher limit to fetch all data within the date range.
+  const HealthDataParams.withDateFilter(DateTime this.from)
+      : limit = 500,
+        offset = null;
+
+  /// Default page size used across the app.
+  static const int defaultPageSize = 20;
+
+  /// Maximum number of items to return.
+  final int? limit;
+
+  /// Number of items to skip before returning results.
+  final int? offset;
+
+  /// Filter readings from this date onwards.
+  final DateTime? from;
+
+  @override
+  Map<String, dynamic> toQueryMap() => {
+        if (limit != null) 'limit': limit,
+        if (offset != null && offset! > 0) 'offset': offset,
+        if (from != null) 'from': from!.toIso8601String().split('T').first,
+      };
+
+  /// Whether this represents a request for more items (not first page).
+  bool get isLoadingMore => offset != null && offset! > 0;
+
+  /// Whether this has a date filter applied.
+  bool get hasDateFilter => from != null;
+}
