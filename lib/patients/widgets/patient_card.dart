@@ -14,63 +14,52 @@ class PatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 72),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            // Avatar with initials
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              child: Text(
-                patient.initials,
-                style: context.titleMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.inputFill,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                // Avatar with initials
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: AppColors.secondaryLight,
+                  child: Text(
+                    patient.initials,
+                    style: context.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Name and patient code
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
+                const SizedBox(width: 16),
+                // Name
+                Expanded(
+                  child: Text(
                     patient.fullName,
                     style: context.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w500,
+                      color: AppColors.primary,
                     ),
                   ),
-                  if (patient.patientCode != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      patient.patientCode!,
-                      style: context.bodySmall?.copyWith(
-                        color: AppColors.secondaryText,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            // Arrow indicator - minimum 44x44 touch target
-            const SizedBox(
-              width: 44,
-              height: 44,
-              child: Center(
-                child: Icon(
-                  Icons.chevron_right,
-                  color: AppColors.secondaryText,
                 ),
-              ),
+                // Arrow icon
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: AppColors.mainText,
+                  size: 22,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

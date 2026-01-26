@@ -5,6 +5,7 @@ abstract final class Assets {
 
   /// Logo banner image
   static const String logoBanner = '$_images/logo_banner.png';
+  static const String logoBannerPrimary = '$_images/logo_banner_primary.png';
 
   /// Mail icon for password reset
   static const String mailIcon = '$_images/mail_icon.svg';

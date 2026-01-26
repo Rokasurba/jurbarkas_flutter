@@ -450,6 +450,10 @@
     "@mainIndicators": {
         "description": "Section header for health metric cards"
     },
+    "notChecked": "Not checked",
+    "@notChecked": {
+        "description": "Subtitle indicating data has not been reviewed"
+    },
     "birthDateLabel": "Date of birth:",
     "@birthDateLabel": {
         "description": "Label prefix for date of birth in profile card"
@@ -488,9 +492,9 @@
     "@noPatients": {
         "description": "No patients found message"
     },
-    "patientCode": "Patient code",
+    "patientCode": "Patient Code",
     "@patientCode": {
-        "description": "Patient code label"
+        "description": "Patient code label used throughout the app"
     },
     "retry": "Retry",
     "@retry": {
@@ -537,5 +541,105 @@
     "noPatientsFound": "No patients found",
     "@noPatientsFound": {
         "description": "Message when search returns no results"
+    },
+    "statusActive": "Active",
+    "@statusActive": {
+        "description": "Status badge for active patients"
+    },
+    "statusInactive": "Inactive",
+    "@statusInactive": {
+        "description": "Status badge for inactive patients"
+    },
+    "phone": "Phone",
+    "@phone": {
+        "description": "Phone label in patient profile"
+    },
+    "dateOfBirth": "Date of Birth",
+    "@dateOfBirth": {
+        "description": "Date of birth label in patient profile"
+    },
+    "registrationDate": "Registration",
+    "@registrationDate": {
+        "description": "Registration date label in patient profile"
+    },
+    "notSpecified": "Not specified",
+    "@notSpecified": {
+        "description": "Placeholder when a field value is not specified"
+    },
+    "healthData": "Health Data",
+    "@healthData": {
+        "description": "Health data navigation option"
+    },
+    "statistics": "Statistics",
+    "@statistics": {
+        "description": "Statistics navigation option"
+    },
+    "messagesLabel": "Messages",
+    "@messagesLabel": {
+        "description": "Messages navigation option"
+    },
+    "featureComingSoon": "Coming soon",
+    "@featureComingSoon": {
+        "description": "Generic message for features not yet implemented"
+    },
+    "healthDataComingSoon": "Health data view coming soon",
+    "@healthDataComingSoon": {
+        "description": "Placeholder message for health data feature"
+    },
+    "statisticsComingSoon": "Statistics view coming soon",
+    "@statisticsComingSoon": {
+        "description": "Placeholder message for statistics feature"
+    },
+    "messagesComingSoon": "Messages feature coming soon",
+    "@messagesComingSoon": {
+        "description": "Placeholder message for messages feature"
+    },
+    "patientHealthDataTitle": "Health Data",
+    "@patientHealthDataTitle": {
+        "description": "Patient health data page title"
+    },
+    "tabBloodPressure": "Blood Pressure",
+    "@tabBloodPressure": {
+        "description": "Tab label for blood pressure data"
+    },
+    "tabBmi": "BMI",
+    "@tabBmi": {
+        "description": "Tab label for BMI data"
+    },
+    "tabBloodSugar": "Blood Sugar",
+    "@tabBloodSugar": {
+        "description": "Tab label for blood sugar data"
+    },
+    "noBloodPressureData": "No blood pressure data available",
+    "@noBloodPressureData": {
+        "description": "Message when no blood pressure data is available"
+    },
+    "noBmiData": "No BMI data available",
+    "@noBmiData": {
+        "description": "Message when no BMI data is available"
+    },
+    "noBloodSugarData": "No blood sugar data available",
+    "@noBloodSugarData": {
+        "description": "Message when no blood sugar data is available"
+    },
+    "bmiLabel": "BMI",
+    "@bmiLabel": {
+        "description": "BMI label for display"
+    },
+    "dataTitle": "Data",
+    "@dataTitle": {
+        "description": "Data title for doctor dashboard"
+    },
+    "filterBy": "Filter by",
+    "@filterBy": {
+        "description": "Filter by button text"
+    },
+    "newPatient": "New patient",
+    "@newPatient": {
+        "description": "New patient button text"
+    },
+    "searchPlaceholder": "Search...",
+    "@searchPlaceholder": {
+        "description": "Search placeholder text"
     }
 }

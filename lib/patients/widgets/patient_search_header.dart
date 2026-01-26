@@ -70,73 +70,93 @@ class _PatientSearchHeaderState extends State<PatientSearchHeader> {
     final hasText = _controller.text.isNotEmpty;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              onChanged: _onChanged,
-              decoration: InputDecoration(
-                hintText: l10n.searchPatientsHint,
-                hintStyle: context.bodyMedium?.copyWith(
-                  color: AppColors.secondaryText.withValues(alpha: 0.6),
-                ),
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: AppColors.secondaryText,
-                ),
-                suffixIcon: hasText
-                    ? IconButton(
-                        icon: const Icon(Icons.close),
-                        color: AppColors.secondaryText,
-                        onPressed: _clearSearch,
-                        tooltip: l10n.cancelButton,
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppColors.inputFill,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: AppColors.secondary,
-                    width: 2,
-                  ),
-                ),
+          // Search field
+          TextField(
+            controller: _controller,
+            onChanged: _onChanged,
+            decoration: InputDecoration(
+              hintText: l10n.searchPlaceholder,
+              hintStyle: context.bodyMedium?.copyWith(
+                color: AppColors.secondaryText.withValues(alpha: 0.6),
               ),
-              style: context.bodyMedium,
+              prefixIcon: Icon(
+                Icons.search,
+                color: AppColors.secondary.withValues(alpha: 0.7),
+              ),
+              suffixIcon: hasText
+                  ? IconButton(
+                      icon: const Icon(Icons.close),
+                      color: AppColors.secondaryText,
+                      onPressed: _clearSearch,
+                      tooltip: l10n.cancelButton,
+                    )
+                  : null,
+              filled: true,
+              fillColor: AppColors.inputFill,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(11),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(11),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(11),
+                borderSide: BorderSide.none,
+              ),
             ),
+            style: context.bodyMedium,
           ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: 48,
-            height: 48,
-            child: Material(
-              color: widget.hasActiveFilter
-                  ? AppColors.secondary.withValues(alpha: 0.15)
-                  : AppColors.inputFill,
-              borderRadius: BorderRadius.circular(12),
-              child: InkWell(
-                onTap: widget.onFilterTap,
-                borderRadius: BorderRadius.circular(12),
-                child: Icon(
-                  Icons.filter_list,
+          const SizedBox(height: 12),
+          // Filter chip button
+          InkWell(
+            onTap: widget.onFilterTap,
+            borderRadius: BorderRadius.circular(11),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: widget.hasActiveFilter
+                    ? AppColors.secondary.withValues(alpha: 0.15)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(11),
+                border: Border.all(
                   color: widget.hasActiveFilter
                       ? AppColors.secondary
-                      : AppColors.secondaryText,
+                      : AppColors.secondaryText.withValues(alpha: 0.3),
                 ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.tune,
+                    size: 18,
+                    color: widget.hasActiveFilter
+                        ? AppColors.secondary
+                        : AppColors.secondaryText,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n.filterBy,
+                    style: context.bodyMedium?.copyWith(
+                      color: widget.hasActiveFilter
+                          ? AppColors.secondary
+                          : AppColors.mainText,
+                      fontWeight: widget.hasActiveFilter
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

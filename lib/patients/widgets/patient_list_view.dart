@@ -79,6 +79,7 @@ class _PatientListViewState extends State<PatientListView> {
 
             return ListView.builder(
               controller: _scrollController,
+              padding: const EdgeInsets.only(top: 8, bottom: 16),
               itemCount: patients.length + (isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == patients.length) {
@@ -89,15 +90,9 @@ class _PatientListViewState extends State<PatientListView> {
                 }
 
                 final patient = patients[index];
-                return Column(
-                  children: [
-                    PatientCard(
-                      patient: patient,
-                      onTap: () => widget.onPatientTap(patient.id),
-                    ),
-                    if (index < patients.length - 1)
-                      const Divider(height: 1, indent: 72),
-                  ],
+                return PatientCard(
+                  patient: patient,
+                  onTap: () => widget.onPatientTap(patient.id),
                 );
               },
             );

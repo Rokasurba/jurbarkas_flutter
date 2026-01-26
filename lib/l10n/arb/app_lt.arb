@@ -450,6 +450,10 @@
     "@mainIndicators": {
         "description": "Section header for health metric cards"
     },
+    "notChecked": "Netikrinta",
+    "@notChecked": {
+        "description": "Subtitle indicating data has not been reviewed"
+    },
     "birthDateLabel": "Gimimo data:",
     "@birthDateLabel": {
         "description": "Label prefix for date of birth in profile card"
@@ -490,7 +494,7 @@
     },
     "patientCode": "Paciento kodas",
     "@patientCode": {
-        "description": "Patient code label"
+        "description": "Patient code label used throughout the app"
     },
     "retry": "Bandyti dar kartą",
     "@retry": {
@@ -537,5 +541,105 @@
     "noPatientsFound": "Pacientų nerasta",
     "@noPatientsFound": {
         "description": "Message when search returns no results"
+    },
+    "statusActive": "Aktyvus",
+    "@statusActive": {
+        "description": "Status badge for active patients"
+    },
+    "statusInactive": "Neaktyvus",
+    "@statusInactive": {
+        "description": "Status badge for inactive patients"
+    },
+    "phone": "Telefonas",
+    "@phone": {
+        "description": "Phone label in patient profile"
+    },
+    "dateOfBirth": "Gimimo data",
+    "@dateOfBirth": {
+        "description": "Date of birth label in patient profile"
+    },
+    "registrationDate": "Registracija",
+    "@registrationDate": {
+        "description": "Registration date label in patient profile"
+    },
+    "notSpecified": "Nenurodyta",
+    "@notSpecified": {
+        "description": "Placeholder when a field value is not specified"
+    },
+    "healthData": "Sveikatos duomenys",
+    "@healthData": {
+        "description": "Health data navigation option"
+    },
+    "statistics": "Statistika",
+    "@statistics": {
+        "description": "Statistics navigation option"
+    },
+    "messagesLabel": "Pranešimai",
+    "@messagesLabel": {
+        "description": "Messages navigation option"
+    },
+    "featureComingSoon": "Netrukus",
+    "@featureComingSoon": {
+        "description": "Generic message for features not yet implemented"
+    },
+    "healthDataComingSoon": "Sveikatos duomenų peržiūra ruošiama",
+    "@healthDataComingSoon": {
+        "description": "Placeholder message for health data feature"
+    },
+    "statisticsComingSoon": "Statistikos peržiūra ruošiama",
+    "@statisticsComingSoon": {
+        "description": "Placeholder message for statistics feature"
+    },
+    "messagesComingSoon": "Pranešimų funkcija ruošiama",
+    "@messagesComingSoon": {
+        "description": "Placeholder message for messages feature"
+    },
+    "patientHealthDataTitle": "Sveikatos duomenys",
+    "@patientHealthDataTitle": {
+        "description": "Patient health data page title"
+    },
+    "tabBloodPressure": "Kraujo spaudimas",
+    "@tabBloodPressure": {
+        "description": "Tab label for blood pressure data"
+    },
+    "tabBmi": "KMI",
+    "@tabBmi": {
+        "description": "Tab label for BMI data"
+    },
+    "tabBloodSugar": "Cukraus kiekis",
+    "@tabBloodSugar": {
+        "description": "Tab label for blood sugar data"
+    },
+    "noBloodPressureData": "Kraujo spaudimo duomenų nėra",
+    "@noBloodPressureData": {
+        "description": "Message when no blood pressure data is available"
+    },
+    "noBmiData": "KMI duomenų nėra",
+    "@noBmiData": {
+        "description": "Message when no BMI data is available"
+    },
+    "noBloodSugarData": "Cukraus kiekio duomenų nėra",
+    "@noBloodSugarData": {
+        "description": "Message when no blood sugar data is available"
+    },
+    "bmiLabel": "KMI",
+    "@bmiLabel": {
+        "description": "BMI label for display"
+    },
+    "dataTitle": "Duomenys",
+    "@dataTitle": {
+        "description": "Data title for doctor dashboard"
+    },
+    "filterBy": "Filtruoti pagal",
+    "@filterBy": {
+        "description": "Filter by button text"
+    },
+    "newPatient": "Naujas pacientas",
+    "@newPatient": {
+        "description": "New patient button text"
+    },
+    "searchPlaceholder": "Ieškokite...",
+    "@searchPlaceholder": {
+        "description": "Search placeholder text"
     }
 }

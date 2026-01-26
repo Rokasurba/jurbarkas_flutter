@@ -168,8 +168,9 @@ class _LoginViewState extends State<LoginView> {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  await context.router
-                                      .push(const RegisterRoute());
+                                  await context.router.push(
+                                    const RegisterRoute(),
+                                  );
                                 },
                                 child: Text(
                                   l10n.registerLink,
@@ -246,7 +247,7 @@ extension _LoginViewHelpers on _LoginViewState {
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           child: Image.asset(
-            Assets.logoBanner,
+            Assets.logoBannerPrimary,
             fit: BoxFit.cover,
             width: double.infinity,
           ),
@@ -354,10 +355,12 @@ class _LoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      Assets.logoBanner,
-      fit: BoxFit.cover,
-      width: double.infinity,
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Image.asset(
+        Assets.logoBannerPrimary,
+        fit: BoxFit.contain,
+      ),
     );
   }
 }
