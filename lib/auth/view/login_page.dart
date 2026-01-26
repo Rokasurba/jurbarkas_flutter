@@ -26,9 +26,8 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  // TODO(dev): Remove test credentials before production
-  final _emailController = TextEditingController(text: 'pacientas@test.lt');
-  final _passwordController = TextEditingController(text: 'password123');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -44,6 +43,22 @@ class _LoginViewState extends State<LoginView> {
         password: _passwordController.text,
       );
     }
+  }
+
+  void _showDevLoginSelector() {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => _DevLoginSelector(
+        onUserSelected: (email, password) {
+          Navigator.pop(context);
+          _emailController.text = email;
+          _passwordController.text = password;
+        },
+      ),
+    );
   }
 
   @override
@@ -70,13 +85,12 @@ class _LoginViewState extends State<LoginView> {
         builder: (context, state) {
           return ResponsiveBuilder(
             builder: (context, info) {
-              final content = SafeArea(
-                child: Column(
-                  children: [
-                    // Blue header with logo
-                    const _LoginHeader(),
-                    // Form content
-                    Expanded(
+              final content = Column(
+                children: [
+                  // Blue header with logo (extends into status bar)
+                  const _LoginHeader(),
+                  // Form content
+                  Expanded(
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -145,51 +159,64 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    // Bottom buttons
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          AppPrimaryButton(
-                            onPressed: _handleLogin,
-                            isLoading: state.isLoading,
-                            child: Text(l10n.loginButton),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                l10n.noAccountQuestion,
-                                style: context.bodyMedium?.copyWith(
-                                  color: AppColors.secondaryText,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  await context.router.push(
-                                    const RegisterRoute(),
-                                  );
-                                },
-                                child: Text(
-                                  l10n.registerLink,
+                    // Bottom buttons with safe area for home indicator
+                    SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AppPrimaryButton(
+                              onPressed: _handleLogin,
+                              isLoading: state.isLoading,
+                              child: Text(l10n.loginButton),
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  l10n.noAccountQuestion,
                                   style: context.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
+                                    color: AppColors.secondaryText,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          const _AppVersionText(),
-                        ],
+                                GestureDetector(
+                                  onTap: () async {
+                                    await context.router.push(
+                                      const RegisterRoute(),
+                                    );
+                                  },
+                                  child: Text(
+                                    l10n.registerLink,
+                                    style: context.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const _AppVersionText(),
+                                if (AppConfig.isDevelopment) ...[
+                                  const SizedBox(width: 8),
+                                  _DevLoginButton(
+                                    onPressed: _showDevLoginSelector,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
-                ),
-              );
+                );
 
               // On web/desktop, center in a floating card
               if (info.isDesktop || info.isTablet) {
@@ -247,7 +274,7 @@ extension _LoginViewHelpers on _LoginViewState {
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           child: Image.asset(
-            Assets.logoBannerPrimary,
+            Assets.logoLoginHeader,
             fit: BoxFit.cover,
             width: double.infinity,
           ),
@@ -340,7 +367,16 @@ extension _LoginViewHelpers on _LoginViewState {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const _AppVersionText(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const _AppVersionText(),
+                    if (AppConfig.isDevelopment) ...[
+                      const SizedBox(width: 8),
+                      _DevLoginButton(onPressed: _showDevLoginSelector),
+                    ],
+                  ],
+                ),
               ],
             ),
           ),
@@ -355,12 +391,24 @@ class _LoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Image.asset(
-        Assets.logoBannerPrimary,
-        fit: BoxFit.contain,
-      ),
+    final topPadding = MediaQuery.of(context).padding.top;
+    return Column(
+      children: [
+        // Status bar area with matching color
+        ColoredBox(
+          color: AppColors.secondary,
+          child: SizedBox(
+            height: topPadding,
+            width: double.infinity,
+          ),
+        ),
+        // Logo image - fills width to avoid seams
+        Image.asset(
+          Assets.logoLoginHeader,
+          fit: BoxFit.fitWidth,
+          width: double.infinity,
+        ),
+      ],
     );
   }
 }
@@ -383,6 +431,175 @@ class _AppVersionText extends StatelessWidget {
           textAlign: TextAlign.center,
         );
       },
+    );
+  }
+}
+
+/// Button to open dev login selector (only shown in development).
+class _DevLoginButton extends StatelessWidget {
+  const _DevLoginButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(Icons.developer_mode, size: 16),
+      label: const Text('Dev'),
+      style: TextButton.styleFrom(
+        foregroundColor: AppColors.secondaryText.withValues(alpha: 0.6),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        visualDensity: VisualDensity.compact,
+        textStyle: context.bodySmall,
+      ),
+    );
+  }
+}
+
+/// Bottom sheet selector for dev login users.
+class _DevLoginSelector extends StatelessWidget {
+  const _DevLoginSelector({required this.onUserSelected});
+
+  final void Function(String email, String password) onUserSelected;
+
+  static const _devUsers = [
+    _DevUser(
+      label: 'Admin',
+      email: 'admin@jurbarkas.lt',
+      password: 'password',
+      icon: Icons.admin_panel_settings,
+      color: Colors.red,
+    ),
+    _DevUser(
+      label: 'Doctor',
+      email: 'doctor@jurbarkas.lt',
+      password: 'password',
+      icon: Icons.medical_services,
+      color: Colors.blue,
+    ),
+    _DevUser(
+      label: 'Patient (Petras)',
+      email: 'petras@jurbarkas.lt',
+      password: 'password',
+      icon: Icons.person,
+      color: Colors.green,
+    ),
+    _DevUser(
+      label: 'Patient (Ona)',
+      email: 'ona@jurbarkas.lt',
+      password: 'password',
+      icon: Icons.person,
+      color: Colors.teal,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Dev Login',
+              style: context.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select a test user to auto-fill credentials',
+              style: context.bodySmall?.copyWith(
+                color: AppColors.secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ..._devUsers.map(
+              (user) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: _DevUserTile(
+                  user: user,
+                  onTap: () => onUserSelected(user.email, user.password),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DevUser {
+  const _DevUser({
+    required this.label,
+    required this.email,
+    required this.password,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final String email;
+  final String password;
+  final IconData icon;
+  final Color color;
+}
+
+class _DevUserTile extends StatelessWidget {
+  const _DevUserTile({required this.user, required this.onTap});
+
+  final _DevUser user;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: user.color.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: user.color.withValues(alpha: 0.2),
+                child: Icon(user.icon, color: user.color, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.label,
+                      style: context.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      user.email,
+                      style: context.bodySmall?.copyWith(
+                        color: AppColors.secondaryText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.secondaryText,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

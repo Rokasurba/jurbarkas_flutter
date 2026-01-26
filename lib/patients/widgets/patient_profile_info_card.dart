@@ -68,6 +68,13 @@ class PatientProfileInfoCard extends StatelessWidget {
                       color: AppColors.secondaryText,
                     ),
                   ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${l10n.emailLabel} ${profile.email}',
+                    style: context.bodySmall?.copyWith(
+                      color: AppColors.secondaryText,
+                    ),
+                  ),
                 ],
               ),
             ),

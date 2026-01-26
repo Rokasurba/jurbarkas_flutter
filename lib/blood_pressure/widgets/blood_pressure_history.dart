@@ -10,6 +10,7 @@ class BloodPressureHistory extends StatelessWidget {
     required this.isLoading,
     this.isLoadingMore = false,
     this.onDelete,
+    this.showAddHint = true,
     super.key,
   });
 
@@ -17,6 +18,7 @@ class BloodPressureHistory extends StatelessWidget {
   final bool isLoading;
   final bool isLoadingMore;
   final void Function(BloodPressureReading reading)? onDelete;
+  final bool showAddHint;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class BloodPressureHistory extends StatelessWidget {
             ),
           )
         else if (readings.isEmpty)
-          _EmptyState(l10n: l10n)
+          _EmptyState(l10n: l10n, showAddHint: showAddHint)
         else ...[
           ListView.separated(
             shrinkWrap: true,
@@ -72,9 +74,10 @@ class BloodPressureHistory extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.l10n});
+  const _EmptyState({required this.l10n, this.showAddHint = true});
 
   final AppLocalizations l10n;
+  final bool showAddHint;
 
   @override
   Widget build(BuildContext context) {
@@ -96,13 +99,15 @@ class _EmptyState extends StatelessWidget {
               l10n.noDataYet,
               style: context.titleMedium,
             ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.addFirstReading,
-              style: context.bodyMedium?.copyWith(
-                color: AppColors.secondaryText,
+            if (showAddHint) ...[
+              const SizedBox(height: 4),
+              Text(
+                l10n.addFirstReading,
+                style: context.bodyMedium?.copyWith(
+                  color: AppColors.secondaryText,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

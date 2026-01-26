@@ -7,6 +7,7 @@ import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/patients/cubit/patient_health_data_cubit.dart';
+import 'package:frontend/patients/cubit/patient_metric_view_cubit.dart';
 import 'package:frontend/patients/cubit/patient_profile_cubit.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:frontend/patients/widgets/health_indicator_card.dart';
@@ -193,43 +194,26 @@ class _PatientProfileView extends StatelessWidget {
   }
 
   void _onBloodPressureTap(BuildContext context) {
-    final state = context.read<PatientProfileCubit>().state;
-    final profile = state.profileOrNull;
-    if (profile != null) {
-      unawaited(
-        context.router.push(
-          PatientBloodPressureViewRoute(
-            patientId: profile.id,
-            patientName: profile.fullName,
-          ),
-        ),
-      );
-    }
+    _navigateToMetric(context, HealthMetricType.bloodPressure);
   }
 
   void _onBloodSugarTap(BuildContext context) {
-    final state = context.read<PatientProfileCubit>().state;
-    final profile = state.profileOrNull;
-    if (profile != null) {
-      unawaited(
-        context.router.push(
-          PatientBloodSugarViewRoute(
-            patientId: profile.id,
-            patientName: profile.fullName,
-          ),
-        ),
-      );
-    }
+    _navigateToMetric(context, HealthMetricType.bloodSugar);
   }
 
   void _onBmiTap(BuildContext context) {
+    _navigateToMetric(context, HealthMetricType.bmi);
+  }
+
+  void _navigateToMetric(BuildContext context, HealthMetricType metricType) {
     final state = context.read<PatientProfileCubit>().state;
     final profile = state.profileOrNull;
     if (profile != null) {
       unawaited(
         context.router.push(
-          PatientBmiViewRoute(
+          PatientMetricViewRoute(
             patientId: profile.id,
+            metricType: metricType,
             patientName: profile.fullName,
           ),
         ),

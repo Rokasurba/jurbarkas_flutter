@@ -16,10 +16,8 @@ import 'package:frontend/password_reset/view/forgot_password_page.dart';
 import 'package:frontend/password_reset/view/new_password_page.dart';
 import 'package:frontend/password_reset/view/otp_verification_page.dart';
 import 'package:frontend/patient/view/patient_dashboard_page.dart';
-import 'package:frontend/patients/view/patient_blood_pressure_view_page.dart';
-import 'package:frontend/patients/view/patient_blood_sugar_view_page.dart';
-import 'package:frontend/patients/view/patient_bmi_view_page.dart';
-import 'package:frontend/patients/view/patient_health_data_page.dart';
+import 'package:frontend/patients/cubit/patient_metric_view_cubit.dart';
+import 'package:frontend/patients/view/patient_metric_view_page.dart';
 import 'package:frontend/patients/view/patient_profile_page.dart';
 import 'package:frontend/patients/view/patients_page.dart';
 
@@ -98,23 +96,8 @@ class AppRouter extends RootStackRouter {
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(
-      path: '/patients/:id/health-data',
-      page: PatientHealthDataRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/patients/:id/blood-pressure',
-      page: PatientBloodPressureViewRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/patients/:id/blood-sugar',
-      page: PatientBloodSugarViewRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/patients/:id/bmi',
-      page: PatientBmiViewRoute.page,
+      path: '/patients/:id/metric',
+      page: PatientMetricViewRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     RedirectRoute(path: '/', redirectTo: '/splash'),

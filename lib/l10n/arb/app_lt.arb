@@ -230,7 +230,7 @@
     "@bloodPressureTitle": {
         "description": "Blood pressure page title"
     },
-    "bloodPressureHistorySection": "Fiksavimo istorija",
+    "bloodPressureHistorySection": "Senesni duomenys",
     "@bloodPressureHistorySection": {
         "description": "Blood pressure history section header"
     },

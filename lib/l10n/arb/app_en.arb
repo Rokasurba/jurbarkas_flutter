@@ -230,7 +230,7 @@
     "@bloodPressureTitle": {
         "description": "Blood pressure page title"
     },
-    "bloodPressureHistorySection": "Recording history",
+    "bloodPressureHistorySection": "Previous data",
     "@bloodPressureHistorySection": {
         "description": "Blood pressure history section header"
     },
