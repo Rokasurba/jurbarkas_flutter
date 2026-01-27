@@ -16,6 +16,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
+  flutter_chat_types: ^3.6.2
+  flutter_chat_ui: ^1.6.15
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^9.2.4

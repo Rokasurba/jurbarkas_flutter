@@ -10,6 +10,9 @@ import 'package:frontend/auth/view/register_page.dart';
 import 'package:frontend/blood_pressure/view/blood_pressure_page.dart';
 import 'package:frontend/blood_sugar/view/blood_sugar_page.dart';
 import 'package:frontend/bmi/view/bmi_page.dart';
+import 'package:frontend/chat/data/models/user_brief.dart';
+import 'package:frontend/chat/view/chat_page.dart';
+import 'package:frontend/chat/view/conversations_page.dart';
 import 'package:frontend/doctor/view/doctor_dashboard_page.dart';
 import 'package:frontend/password_reset/cubit/password_reset_cubit.dart';
 import 'package:frontend/password_reset/view/forgot_password_page.dart';
@@ -20,6 +23,8 @@ import 'package:frontend/patients/cubit/patient_metric_view_cubit.dart';
 import 'package:frontend/patients/view/patient_metric_view_page.dart';
 import 'package:frontend/patients/view/patient_profile_page.dart';
 import 'package:frontend/patients/view/patients_page.dart';
+import 'package:frontend/reminders/view/reminders_page.dart';
+import 'package:frontend/reminders/view/send_reminder_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -98,6 +103,26 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       path: '/patients/:id/metric',
       page: PatientMetricViewRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/reminders',
+      page: RemindersRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/send-reminder',
+      page: SendReminderRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/conversations',
+      page: ConversationsRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/chat/:conversationId',
+      page: ChatRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     RedirectRoute(path: '/', redirectTo: '/splash'),

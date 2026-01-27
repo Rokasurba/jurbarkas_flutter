@@ -50,4 +50,11 @@ class ApiClient {
   Future<Response<T>> delete<T>(String path) async {
     return _dio.delete<T>(path);
   }
+
+  Future<Response<T>> patch<T>(
+    String path, {
+    dynamic data,
+  }) async {
+    return _dio.patch<T>(path, data: data);
+  }
 }

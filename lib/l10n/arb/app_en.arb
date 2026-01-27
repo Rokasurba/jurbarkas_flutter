@@ -641,5 +641,105 @@
     "searchPlaceholder": "Search...",
     "@searchPlaceholder": {
         "description": "Search placeholder text"
+    },
+    "chatSendPlaceholder": "Type a message...",
+    "@chatSendPlaceholder": {
+        "description": "Chat input placeholder text"
+    },
+    "chatNoMessages": "No messages",
+    "@chatNoMessages": {
+        "description": "Empty chat placeholder"
+    },
+    "chatMessageFailed": "Failed to send. Try again.",
+    "@chatMessageFailed": {
+        "description": "Message send failure notification"
+    },
+    "chatToday": "Today",
+    "@chatToday": {
+        "description": "Today date header in chat"
+    },
+    "chatYesterday": "Yesterday",
+    "@chatYesterday": {
+        "description": "Yesterday date header in chat"
+    },
+    "chatStartConversation": "Start a conversation...",
+    "@chatStartConversation": {
+        "description": "Prompt to start conversation"
+    },
+    "conversationsTitle": "Messages",
+    "@conversationsTitle": {
+        "description": "Conversations page title"
+    },
+    "conversationsSearch": "Search...",
+    "@conversationsSearch": {
+        "description": "Search conversations placeholder"
+    },
+    "conversationsEmpty": "No messages",
+    "@conversationsEmpty": {
+        "description": "No conversations empty state"
+    },
+    "conversationsNewMessage": "New message",
+    "@conversationsNewMessage": {
+        "description": "New message FAB label"
+    },
+    "conversationsYesterday": "Yesterday",
+    "@conversationsYesterday": {
+        "description": "Yesterday label for conversation timestamp"
+    },
+    "conversationsSelectPatient": "Select patient",
+    "@conversationsSelectPatient": {
+        "description": "Patient selector dialog title"
+    },
+    "conversationsSearchPatients": "Search patients...",
+    "@conversationsSearchPatients": {
+        "description": "Search patients placeholder in selector"
+    },
+    "remindersTitle": "Reminders",
+    "@remindersTitle": {
+        "description": "Reminders page title"
+    },
+    "remindersEmpty": "No reminders",
+    "@remindersEmpty": {
+        "description": "Empty state message when no reminders exist"
+    },
+    "remindersLabel": "Reminders",
+    "@remindersLabel": {
+        "description": "Reminders navigation label in drawer"
+    },
+    "sendReminderButton": "Send reminder",
+    "@sendReminderButton": {
+        "description": "Send reminder button label"
+    },
+    "sendReminderTitle": "Send reminder",
+    "@sendReminderTitle": {
+        "description": "Send reminder page title"
+    },
+    "reminderTitleLabel": "Title",
+    "@reminderTitleLabel": {
+        "description": "Reminder title input label"
+    },
+    "reminderMessageLabel": "Message",
+    "@reminderMessageLabel": {
+        "description": "Reminder message input label"
+    },
+    "sendButton": "Send",
+    "@sendButton": {
+        "description": "Send button label"
+    },
+    "reminderSentSuccess": "Reminder sent",
+    "@reminderSentSuccess": {
+        "description": "Reminder sent success message"
+    },
+    "reminderPatientLabel": "Patient",
+    "@reminderPatientLabel": {
+        "description": "Patient label in send reminder form"
+    },
+    "fillAllFieldsError": "Please fill in all fields",
+    "@fillAllFieldsError": {
+        "description": "Fill all fields validation error"
+    },
+    "titleMaxLengthError": "Title too long (max 100 characters)",
+    "@titleMaxLengthError": {
+        "description": "Title max length validation error"
     }
 }

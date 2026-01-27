@@ -273,6 +273,22 @@ class PatientDashboardView extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.message),
+            title: Text(l10n.messagesLabel),
+            onTap: () {
+              Navigator.of(context).pop();
+              context.router.push(const ConversationsRoute());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications),
+            title: Text(l10n.remindersLabel),
+            onTap: () {
+              Navigator.of(context).pop();
+              context.router.push(const RemindersRoute());
+            },
+          ),
           const Spacer(),
           const Divider(),
           ListTile(

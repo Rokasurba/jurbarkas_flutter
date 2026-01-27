@@ -641,5 +641,105 @@
     "searchPlaceholder": "Ieškokite...",
     "@searchPlaceholder": {
         "description": "Search placeholder text"
+    },
+    "chatSendPlaceholder": "Rašykite žinutę...",
+    "@chatSendPlaceholder": {
+        "description": "Chat input placeholder text"
+    },
+    "chatNoMessages": "Nėra žinučių",
+    "@chatNoMessages": {
+        "description": "Empty chat placeholder"
+    },
+    "chatMessageFailed": "Nepavyko išsiųsti. Pabandykite dar kartą.",
+    "@chatMessageFailed": {
+        "description": "Message send failure notification"
+    },
+    "chatToday": "Šiandien",
+    "@chatToday": {
+        "description": "Today date header in chat"
+    },
+    "chatYesterday": "Vakar",
+    "@chatYesterday": {
+        "description": "Yesterday date header in chat"
+    },
+    "chatStartConversation": "Pradėkite pokalbį...",
+    "@chatStartConversation": {
+        "description": "Prompt to start conversation"
+    },
+    "conversationsTitle": "Pranešimai",
+    "@conversationsTitle": {
+        "description": "Conversations page title"
+    },
+    "conversationsSearch": "Ieškokite...",
+    "@conversationsSearch": {
+        "description": "Search conversations placeholder"
+    },
+    "conversationsEmpty": "Nėra pranešimų",
+    "@conversationsEmpty": {
+        "description": "No conversations empty state"
+    },
+    "conversationsNewMessage": "Naujas pranešimas",
+    "@conversationsNewMessage": {
+        "description": "New message FAB label"
+    },
+    "conversationsYesterday": "Vakar",
+    "@conversationsYesterday": {
+        "description": "Yesterday label for conversation timestamp"
+    },
+    "conversationsSelectPatient": "Pasirinkite pacientą",
+    "@conversationsSelectPatient": {
+        "description": "Patient selector dialog title"
+    },
+    "conversationsSearchPatients": "Ieškoti pacientų...",
+    "@conversationsSearchPatients": {
+        "description": "Search patients placeholder in selector"
+    },
+    "remindersTitle": "Priminimai",
+    "@remindersTitle": {
+        "description": "Reminders page title"
+    },
+    "remindersEmpty": "Nėra priminimų",
+    "@remindersEmpty": {
+        "description": "Empty state message when no reminders exist"
+    },
+    "remindersLabel": "Priminimai",
+    "@remindersLabel": {
+        "description": "Reminders navigation label in drawer"
+    },
+    "sendReminderButton": "Siųsti priminimą",
+    "@sendReminderButton": {
+        "description": "Send reminder button label"
+    },
+    "sendReminderTitle": "Siųsti priminimą",
+    "@sendReminderTitle": {
+        "description": "Send reminder page title"
+    },
+    "reminderTitleLabel": "Pavadinimas",
+    "@reminderTitleLabel": {
+        "description": "Reminder title input label"
+    },
+    "reminderMessageLabel": "Žinutė",
+    "@reminderMessageLabel": {
+        "description": "Reminder message input label"
+    },
+    "sendButton": "Siųsti",
+    "@sendButton": {
+        "description": "Send button label"
+    },
+    "reminderSentSuccess": "Priminimas išsiųstas",
+    "@reminderSentSuccess": {
+        "description": "Reminder sent success message"
+    },
+    "reminderPatientLabel": "Pacientas",
+    "@reminderPatientLabel": {
+        "description": "Patient label in send reminder form"
+    },
+    "fillAllFieldsError": "Užpildykite visus laukus",
+    "@fillAllFieldsError": {
+        "description": "Fill all fields validation error"
+    },
+    "titleMaxLengthError": "Pavadinimas per ilgas (maks. 100 simbolių)",
+    "@titleMaxLengthError": {
+        "description": "Title max length validation error"
     }
 }

@@ -256,6 +256,14 @@ class _DoctorDashboardView extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.message),
+            title: Text(l10n.messagesLabel),
+            onTap: () {
+              Navigator.of(context).pop();
+              context.router.push(const ConversationsRoute());
+            },
+          ),
           const Spacer(),
           const Divider(),
           ListTile(

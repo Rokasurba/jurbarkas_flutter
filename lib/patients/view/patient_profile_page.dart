@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -61,7 +62,7 @@ class _PatientProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Scaffold(
+    return ResponsiveScaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: AppColors.secondary,
@@ -173,6 +174,55 @@ class _PatientProfileView extends StatelessWidget {
                               style: context.bodyMedium?.copyWith(
                                 color: AppColors.error,
                               ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  // Send reminder button (doctor/admin only)
+                  Builder(
+                    builder: (context) {
+                      final user =
+                          context.read<AuthCubit>().state.user;
+                      if (user == null ||
+                          (!user.isDoctor && !user.isAdmin)) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              unawaited(
+                                context.router.push(
+                                  SendReminderRoute(
+                                    patientId: profile.id,
+                                    patientName: profile.fullName,
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.notifications_active),
+                            label: Text(
+                              l10n.sendReminderButton,
+                              style: context.titleMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.secondary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              elevation: 0,
                             ),
                           ),
                         ),

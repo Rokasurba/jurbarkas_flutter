@@ -26,4 +26,20 @@ abstract class ApiConstants {
 
   // Patients endpoint (doctor/admin only)
   static const String patients = '/patients';
+
+  // Conversations/Chat endpoints
+  static const String conversations = '/conversations';
+
+  /// Get messages for a conversation: /conversations/{id}/messages
+  static String conversationMessages(int conversationId) =>
+      '/conversations/$conversationId/messages';
+
+  /// Mark conversation as read: /conversations/{id}/read
+  static String conversationRead(int conversationId) =>
+      '/conversations/$conversationId/read';
+
+  // Reminders endpoints
+  static const String reminders = '/reminders';
+  /// Mark reminder as read: /reminders/{id}/read
+  static String reminderRead(int id) => '/reminders/$id/read';
 }
