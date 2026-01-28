@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/core/core.dart';
-import 'package:frontend/reminders/data/models/reminder.dart';
+import 'package:frontend/reminders/data/models/reminders_response.dart';
 import 'package:frontend/reminders/data/models/send_reminder_request.dart';
 
 class RemindersRepository {
@@ -11,7 +11,7 @@ class RemindersRepository {
   final ApiClient _apiClient;
 
   /// Gets all reminders for the authenticated patient.
-  Future<ApiResponse<List<Reminder>>> getReminders() async {
+  Future<ApiResponse<RemindersResponse>> getReminders() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
         ApiConstants.reminders,
@@ -19,14 +19,7 @@ class RemindersRepository {
 
       return ApiResponse.fromJson(
         response.data!,
-        (json) {
-          final list = json! as List<dynamic>;
-          return list
-              .map(
-                (item) => Reminder.fromJson(item as Map<String, dynamic>),
-              )
-              .toList();
-        },
+        (json) => RemindersResponse.fromJson(json! as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       return ApiResponse.error(message: extractDioErrorMessage(e));

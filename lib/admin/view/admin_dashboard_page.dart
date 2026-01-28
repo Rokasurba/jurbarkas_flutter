@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +37,7 @@ class AdminDashboardView extends StatelessWidget {
         final isMobile = info.isMobile;
 
         return ResponsiveScaffold(
-          drawer: isMobile ? _buildDrawer(context, l10n) : null,
+          drawer: _buildDrawer(context, l10n, isMobile: isMobile),
           appBar: AppBar(
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
@@ -46,58 +48,11 @@ class AdminDashboardView extends StatelessWidget {
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                   )
-                : null,
+                : const SizedBox.shrink(),
             title: Text(
               l10n.appTitle,
               style: context.appBarTitle,
             ),
-            actions: isMobile
-                ? null
-                : [
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return PopupMenuButton<String>(
-                          icon: const Icon(Icons.account_circle),
-                          onSelected: (value) async {
-                            if (value == 'logout') {
-                              await _handleLogout(context);
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    state.user?.fullName ?? '',
-                                    style: context.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    state.user?.email ?? '',
-                                    style: context.bodySmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuDivider(),
-                            PopupMenuItem(
-                              value: 'logout',
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.logout),
-                                  const SizedBox(width: 8),
-                                  Text(l10n.logoutButton),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
           ),
           body: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
@@ -119,8 +74,8 @@ class AdminDashboardView extends StatelessWidget {
                     Text(
                       l10n.roleAdmin,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.grey,
-                          ),
+                        color: Colors.grey,
+                      ),
                     ),
                     const SizedBox(height: 32),
                     Text(
@@ -137,8 +92,19 @@ class AdminDashboardView extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawer(BuildContext context, AppLocalizations l10n) {
+  Widget _buildDrawer(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isMobile,
+  }) {
+    void closeDrawerIfMobile() {
+      if (isMobile) {
+        Navigator.of(context).pop();
+      }
+    }
+
     return Drawer(
+      backgroundColor: Colors.white,
       child: Column(
         children: [
           BlocBuilder<AuthCubit, AuthState>(
@@ -185,13 +151,25 @@ class AdminDashboardView extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            tileColor: Colors.white,
+            leading: const Icon(Icons.dashboard),
+            title: Text(l10n.appTitle),
+            onTap: () {
+              closeDrawerIfMobile();
+              unawaited(
+                context.router.replaceAll([const AdminDashboardRoute()]),
+              );
+            },
+          ),
           const Spacer(),
           const Divider(),
           ListTile(
+            tileColor: Colors.white,
             leading: const Icon(Icons.logout),
             title: Text(l10n.logoutButton),
             onTap: () async {
-              Navigator.of(context).pop();
+              closeDrawerIfMobile();
               await _handleLogout(context);
             },
           ),

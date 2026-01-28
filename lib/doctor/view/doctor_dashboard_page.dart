@@ -78,7 +78,7 @@ class _DoctorDashboardView extends StatelessWidget {
 
         return ResponsiveScaffold(
           backgroundColor: Colors.white,
-          drawer: isMobile ? _buildDrawer(context, l10n) : null,
+          drawer: _buildDrawer(context, l10n, isMobile: isMobile),
           appBar: AppBar(
             backgroundColor: AppColors.secondary,
             elevation: 0,
@@ -91,7 +91,7 @@ class _DoctorDashboardView extends StatelessWidget {
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                   )
-                : null,
+                : const SizedBox.shrink(),
             title: Text(
               l10n.dataTitle,
               style: context.headlineSmall?.copyWith(
@@ -99,56 +99,6 @@ class _DoctorDashboardView extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            actions: isMobile
-                ? null
-                : [
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return PopupMenuButton<String>(
-                          icon: const Icon(
-                            Icons.account_circle,
-                            color: Colors.white,
-                          ),
-                          onSelected: (value) async {
-                            if (value == 'logout') {
-                              await _handleLogout(context);
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    state.user?.fullName ?? '',
-                                    style: context.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    state.user?.email ?? '',
-                                    style: context.bodySmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuDivider(),
-                            PopupMenuItem(
-                              value: 'logout',
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.logout),
-                                  const SizedBox(width: 8),
-                                  Text(l10n.logoutButton),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
           ),
           body: Column(
             children: [
@@ -169,7 +119,8 @@ class _DoctorDashboardView extends StatelessWidget {
               ),
               Expanded(
                 child: PatientListView(
-                  onPatientTap: (patientId) => _onPatientTap(context, patientId),
+                  onPatientTap: (patientId) =>
+                      _onPatientTap(context, patientId),
                 ),
               ),
               // New patient button
@@ -208,8 +159,19 @@ class _DoctorDashboardView extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawer(BuildContext context, AppLocalizations l10n) {
+  Widget _buildDrawer(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isMobile,
+  }) {
+    void closeDrawerIfMobile() {
+      if (isMobile) {
+        Navigator.of(context).pop();
+      }
+    }
+
     return Drawer(
+      backgroundColor: Colors.white,
       child: Column(
         children: [
           BlocBuilder<AuthCubit, AuthState>(
@@ -257,20 +219,33 @@ class _DoctorDashboardView extends StatelessWidget {
             },
           ),
           ListTile(
+            tileColor: Colors.white,
+            leading: const Icon(Icons.dashboard),
+            title: Text(l10n.dataTitle),
+            onTap: () {
+              closeDrawerIfMobile();
+              unawaited(
+                context.router.replaceAll([const DoctorDashboardRoute()]),
+              );
+            },
+          ),
+          ListTile(
+            tileColor: Colors.white,
             leading: const Icon(Icons.message),
             title: Text(l10n.messagesLabel),
             onTap: () {
-              Navigator.of(context).pop();
+              closeDrawerIfMobile();
               context.router.push(const ConversationsRoute());
             },
           ),
           const Spacer(),
           const Divider(),
           ListTile(
+            tileColor: Colors.white,
             leading: const Icon(Icons.logout),
             title: Text(l10n.logoutButton),
             onTap: () async {
-              Navigator.of(context).pop();
+              closeDrawerIfMobile();
               await _handleLogout(context);
             },
           ),

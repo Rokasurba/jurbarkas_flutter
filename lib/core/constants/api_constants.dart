@@ -10,6 +10,7 @@ abstract class ApiConstants {
   static const String logout = '/auth/logout';
   static const String refresh = '/auth/refresh';
   static const String user = '/auth/user';
+  static const String deviceToken = '/auth/device-token';
 
   // Password reset endpoints
   static const String forgotPassword = '/auth/forgot-password';

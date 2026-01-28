@@ -7,7 +7,6 @@ part 'patient_profile.g.dart';
 /// Contains all fields needed for the profile page including optional fields.
 @freezed
 class PatientProfile with _$PatientProfile {
-  const PatientProfile._();
 
   const factory PatientProfile({
     required int id,
@@ -20,6 +19,7 @@ class PatientProfile with _$PatientProfile {
     @JsonKey(name: 'is_active') required bool isActive,
     @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _PatientProfile;
+  const PatientProfile._();
 
   factory PatientProfile.fromJson(Map<String, dynamic> json) =>
       _$PatientProfileFromJson(json);

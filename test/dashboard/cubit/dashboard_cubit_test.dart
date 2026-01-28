@@ -35,7 +35,7 @@ void main() {
   final mockBmi = BmiMeasurement(
     id: 1,
     heightCm: 180,
-    weightKg: 75.0,
+    weightKg: 75,
     bmiValue: 23.15,
     measuredAt: DateTime(2026, 1, 19, 14),
   );
@@ -88,14 +88,14 @@ void main() {
       build: () {
         when(() => mockRepository.getDashboard()).thenAnswer(
           (_) async =>
-              ApiResponse.success(data: mockDashboardResponseNoReadings),
+              const ApiResponse.success(data: mockDashboardResponseNoReadings),
         );
         return DashboardCubit(dashboardRepository: mockRepository);
       },
       act: (cubit) => cubit.loadDashboard(),
       expect: () => [
         const DashboardState.loading(),
-        DashboardState.loaded(mockDashboardResponseNoReadings),
+        const DashboardState.loaded(mockDashboardResponseNoReadings),
       ],
     );
 
@@ -122,7 +122,7 @@ void main() {
         );
         return DashboardCubit(dashboardRepository: mockRepository);
       },
-      seed: () => DashboardState.loaded(mockDashboardResponseNoReadings),
+      seed: () => const DashboardState.loaded(mockDashboardResponseNoReadings),
       act: (cubit) => cubit.refresh(),
       expect: () => [
         DashboardState.loaded(mockDashboardResponse),

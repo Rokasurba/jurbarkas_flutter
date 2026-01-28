@@ -40,7 +40,6 @@ void main() {
   final mockMessagesResponse = MessagesResponse(
     messages: mockMessages,
     myLastReadId: 1,
-    hasMore: false,
   );
 
   final mockMessagesResponseWithMore = MessagesResponse(
@@ -92,7 +91,7 @@ void main() {
             (_) async => const ApiResponse.success(data: null),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) => cubit.loadMessages(),
         expect: () => [
           const ChatState.loading(),
@@ -115,7 +114,7 @@ void main() {
                 const ApiResponse.error(message: 'Connection failed'),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) => cubit.loadMessages(),
         expect: () => [
           const ChatState.loading(),
@@ -129,7 +128,6 @@ void main() {
         final unreadResponse = MessagesResponse(
           messages: mockMessages,
           myLastReadId: 0,
-          hasMore: false,
         );
         when(() => mockRepository.getMessages(
               any(),
@@ -143,7 +141,7 @@ void main() {
           (_) async => const ApiResponse.success(data: null),
         );
 
-        final cubit = buildCubit(initialLastReadId: 0);
+        final cubit = buildCubit();
         await cubit.loadMessages();
         // Wait for the unawaited markAsRead to complete
         await Future<void>.delayed(Duration.zero);
@@ -200,7 +198,6 @@ void main() {
               data: MessagesResponse(
                 messages: olderMessages,
                 myLastReadId: 1,
-                hasMore: false,
               ),
             ),
           );
@@ -208,7 +205,7 @@ void main() {
             (_) async => const ApiResponse.success(data: null),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadMessages();
           await cubit.loadMoreMessages();
@@ -226,7 +223,7 @@ void main() {
 
       blocTest<ChatCubit, ChatState>(
         'does nothing when not in loaded state',
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) => cubit.loadMoreMessages(),
         expect: () => [],
       );
@@ -240,8 +237,8 @@ void main() {
                 10,
                 limit: 20,
               )).thenAnswer(
-            (_) async => ApiResponse.success(
-              data: const MessagesResponse(
+            (_) async => const ApiResponse.success(
+              data: MessagesResponse(
                 messages: [],
                 myLastReadId: 0,
               ),
@@ -260,7 +257,7 @@ void main() {
             ),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadMessages();
           await cubit.sendMessage('Hello');
@@ -290,8 +287,8 @@ void main() {
                 10,
                 limit: 20,
               )).thenAnswer(
-            (_) async => ApiResponse.success(
-              data: const MessagesResponse(
+            (_) async => const ApiResponse.success(
+              data: MessagesResponse(
                 messages: [],
                 myLastReadId: 0,
               ),
@@ -303,7 +300,7 @@ void main() {
                 const ApiResponse.error(message: 'Send failed'),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadMessages();
           await cubit.sendMessage('Hello');
@@ -327,15 +324,15 @@ void main() {
                 10,
                 limit: 20,
               )).thenAnswer(
-            (_) async => ApiResponse.success(
-              data: const MessagesResponse(
+            (_) async => const ApiResponse.success(
+              data: MessagesResponse(
                 messages: [],
                 myLastReadId: 0,
               ),
             ),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadMessages();
           await cubit.sendMessage('   ');
@@ -410,8 +407,8 @@ void main() {
                 10,
                 limit: 20,
               )).thenAnswer(
-            (_) async => ApiResponse.success(
-              data: const MessagesResponse(
+            (_) async => const ApiResponse.success(
+              data: MessagesResponse(
                 messages: [],
                 myLastReadId: 0,
               ),
@@ -422,7 +419,7 @@ void main() {
                 const ApiResponse.error(message: 'Failed'),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadMessages();
           await cubit.sendMessage('Hi');

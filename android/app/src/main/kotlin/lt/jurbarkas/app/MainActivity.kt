@@ -1,4 +1,4 @@
-package com.example.verygoodcore.frontend
+package lt.jurbarkas.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -37,13 +37,13 @@ void main() {
     email: 'ona@example.com',
   );
 
-  final mockPatientsResponse = PatientsResponse(
+  const mockPatientsResponse = PatientsResponse(
     patients: [mockPatient1, mockPatient2],
     total: 5,
     hasMore: true,
   );
 
-  final mockPatientsResponsePage2 = PatientsResponse(
+  const mockPatientsResponsePage2 = PatientsResponse(
     patients: [mockPatient3],
     total: 5,
     hasMore: false,
@@ -94,7 +94,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.getPatients(params: any(named: 'params')),
-        ).thenAnswer((_) async => ApiResponse.success(data: mockEmptyResponse));
+        ).thenAnswer((_) async => const ApiResponse.success(data: mockEmptyResponse));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       act: (cubit) => cubit.loadPatients(),
@@ -245,7 +245,7 @@ void main() {
       expect(const PatientsState.initial().patients, isEmpty);
       expect(const PatientsState.loading().patients, isEmpty);
       expect(
-        PatientsState.loaded(
+        const PatientsState.loaded(
           patients: [mockPatient1],
           total: 1,
           hasMore: false,

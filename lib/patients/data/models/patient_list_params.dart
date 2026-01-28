@@ -32,7 +32,7 @@ class PatientListParams extends QueryParams {
         filter = PatientFilter.all;
 
   /// Creates params for the next page based on current item count.
-  PatientListParams.nextPage(
+  const PatientListParams.nextPage(
     int currentCount, {
     this.search,
     this.filter = PatientFilter.all,

@@ -86,7 +86,8 @@ class _ChatViewState extends State<_ChatView> {
   }
 
   types.TextMessage _mapToFlutterChatMessage(ChatMessage message) {
-    final isMine = message.senderId == _currentUser.id.hashCode ||
+    final isMine =
+        message.senderId == _currentUser.id.hashCode ||
         message.senderId.toString() == _currentUser.id;
 
     return types.TextMessage(
@@ -161,87 +162,76 @@ class _ChatViewState extends State<_ChatView> {
             ),
           ),
           body: SafeArea(
+            bottom: false,
             child: state.when(
               initial: () => const SizedBox.shrink(),
               loading: () => const Center(
                 child: CircularProgressIndicator(),
               ),
-              loaded: (
-                List<ChatMessage> messages,
-                int myLastReadId,
-                bool hasMore,
-                bool isLoadingMore,
-                String? sendingError,
-                Set<int> pendingIds,
-              ) {
-                if (messages.isEmpty) {
-                  return _EmptyChatView(
-                    onSendPressed: _handleSendPressed,
-                    placeholder: l10n.chatSendPlaceholder,
-                  );
-                }
+              loaded:
+                  (
+                    List<ChatMessage> messages,
+                    int myLastReadId,
+                    bool hasMore,
+                    bool isLoadingMore,
+                    String? sendingError,
+                    Set<int> pendingIds,
+                  ) {
+                    if (messages.isEmpty) {
+                      return _EmptyChatView(
+                        onSendPressed: _handleSendPressed,
+                        placeholder: l10n.chatSendPlaceholder,
+                      );
+                    }
 
-                // Convert and reverse messages
-                // (flutter_chat_ui expects newest first)
-                final chatMessages = messages
-                    .map(_mapToFlutterChatMessage)
-                    .toList()
-                    .reversed
-                    .toList();
+                    // Convert and reverse messages
+                    // (flutter_chat_ui expects newest first)
+                    final chatMessages = messages
+                        .map(_mapToFlutterChatMessage)
+                        .toList()
+                        .reversed
+                        .toList();
 
-                return Chat(
-                  messages: chatMessages,
-                  onSendPressed: _handleSendPressed,
-                  onEndReached: hasMore ? _handleEndReached : null,
-                  user: _currentUser,
-                  customDateHeaderText: _formatDateHeader,
-                  theme: DefaultChatTheme(
-                    primaryColor: AppColors.primary,
-                    secondaryColor: Colors.grey.shade200,
-                    backgroundColor: AppColors.background,
-                    inputBackgroundColor: Colors.white,
-                    inputTextColor: AppColors.mainText,
-                    inputBorderRadius: BorderRadius.circular(24),
-                    inputMargin: const EdgeInsets.all(12),
-                    inputPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    sentMessageBodyTextStyle: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                    receivedMessageBodyTextStyle: const TextStyle(
-                      color: AppColors.mainText,
-                      fontSize: 16,
-                    ),
-                    messageBorderRadius: 16,
-                    messageInsetsHorizontal: 12,
-                    messageInsetsVertical: 8,
-                    sendButtonIcon: const Icon(
-                      Icons.send,
-                      color: AppColors.primary,
-                    ),
-                    inputTextStyle: const TextStyle(
-                      color: AppColors.mainText,
-                      fontSize: 16,
-                    ),
-                    inputTextCursorColor: AppColors.primary,
-                  ),
-                  l10n: ChatL10nLt(
-                    inputPlaceholder: l10n.chatSendPlaceholder,
-                  ),
-                  emptyState: Center(
-                    child: Text(
-                      l10n.chatNoMessages,
-                      style: const TextStyle(
-                        color: AppColors.secondaryText,
-                        fontSize: 16,
+                    return Chat(
+                      messages: chatMessages,
+                      onSendPressed: _handleSendPressed,
+                      onEndReached: hasMore ? _handleEndReached : null,
+                      user: _currentUser,
+                      customDateHeaderText: _formatDateHeader,
+                      customBottomWidget: _ChatInput(
+                        onSendPressed: _handleSendPressed,
+                        placeholder: l10n.chatSendPlaceholder,
                       ),
-                    ),
-                  ),
-                );
-              },
+                      theme: const DefaultChatTheme(
+                        primaryColor: AppColors.secondary,
+                        secondaryColor: AppColors.secondaryLight,
+                        backgroundColor: AppColors.background,
+                        sentMessageBodyTextStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                        receivedMessageBodyTextStyle: TextStyle(
+                          color: AppColors.mainText,
+                          fontSize: 16,
+                        ),
+                        messageBorderRadius: 16,
+                        messageInsetsHorizontal: 12,
+                        messageInsetsVertical: 8,
+                      ),
+                      l10n: ChatL10nLt(
+                        inputPlaceholder: l10n.chatSendPlaceholder,
+                      ),
+                      emptyState: Center(
+                        child: Text(
+                          l10n.chatNoMessages,
+                          style: const TextStyle(
+                            color: AppColors.secondaryText,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
               error: (String message) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -367,15 +357,22 @@ class _ChatInputState extends State<_ChatInput> {
     }
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.only(
+        left: 12,
+        right: 12,
+        top: 12,
+        bottom: 12 + bottomPadding,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -394,7 +391,7 @@ class _ChatInputState extends State<_ChatInput> {
                 filled: true,
                 fillColor: AppColors.inputFill,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(
@@ -402,8 +399,9 @@ class _ChatInputState extends State<_ChatInput> {
                   vertical: 12,
                 ),
               ),
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => _handleSend(),
+              minLines: 1,
+              maxLines: 5,
+              textInputAction: TextInputAction.newline,
             ),
           ),
           const SizedBox(width: 8),

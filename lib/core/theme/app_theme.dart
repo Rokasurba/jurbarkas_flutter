@@ -22,8 +22,10 @@ class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.black,
+        backgroundColor: AppColors.secondary,
+        surfaceTintColor: Colors.transparent,
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
@@ -48,8 +50,10 @@ class AppTheme {
         ),
         filled: true,
         fillColor: AppColors.inputFill,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         suffixStyle: const TextStyle(color: AppColors.secondary),
         suffixIconColor: AppColors.secondary,
       ),
@@ -74,6 +78,67 @@ class AppTheme {
             fontWeight: FontWeight.w600,
           ),
         ),
+      ),
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      cardTheme: const CardThemeData(
+        color: AppColors.background,
+      ),
+      popupMenuTheme: const PopupMenuThemeData(
+        color: AppColors.background,
+      ),
+      navigationBarTheme: const NavigationBarThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      navigationRailTheme: const NavigationRailThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      navigationDrawerTheme: const NavigationDrawerThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      datePickerTheme: const DatePickerThemeData(
+        backgroundColor: AppColors.background,
+        surfaceTintColor: Colors.transparent,
+      ),
+      timePickerTheme: const TimePickerThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      dropdownMenuTheme: const DropdownMenuThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          fillColor: AppColors.background,
+        ),
+      ),
+      searchBarTheme: const SearchBarThemeData(
+        backgroundColor: WidgetStatePropertyAll(AppColors.background),
+      ),
+      chipTheme: const ChipThemeData(
+        backgroundColor: AppColors.background,
+      ),
+      expansionTileTheme: const ExpansionTileThemeData(
+        backgroundColor: AppColors.background,
+        collapsedBackgroundColor: AppColors.background,
+      ),
+      listTileTheme: const ListTileThemeData(
+        tileColor: AppColors.background,
+      ),
+      tooltipTheme: const TooltipThemeData(
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+        ),
+      ),
+      bannerTheme: const MaterialBannerThemeData(
+        backgroundColor: AppColors.background,
       ),
     );
   }
@@ -143,14 +208,14 @@ extension AppTextStyles on BuildContext {
   /// Custom app styles
   /// Section header style - size 20, semibold, primary color
   TextStyle get sectionHeader => const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: AppColors.primary,
-      );
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: AppColors.primary,
+  );
 
   /// App bar title style - size 20, bold
   TextStyle get appBarTitle => const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      );
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
 }

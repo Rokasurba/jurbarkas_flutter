@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:frontend/core/api/auth_interceptor.dart';
 import 'package:frontend/core/constants/api_constants.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 export 'auth_event_controller.dart';
 
@@ -21,6 +23,16 @@ class ApiClient {
       secureStorage: _secureStorage,
       dio: _dio,
     ));
+
+    if (kDebugMode) {
+      _dio.interceptors.add(
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: true,
+        ),
+      );
+    }
   }
 
   final Dio _dio;

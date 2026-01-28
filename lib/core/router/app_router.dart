@@ -142,9 +142,15 @@ class AuthGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (authCubit.state.isAuthenticated) {
+    final state = authCubit.state;
+
+    if (state.isAuthenticated) {
       resolver.next();
+    } else if (state is AuthInitial || state.isLoading) {
+      // Auth state not yet determined, redirect to splash to wait
+      unawaited(resolver.redirect(const SplashRoute()));
     } else {
+      // Unauthenticated or error
       unawaited(resolver.redirect(const LoginRoute()));
     }
   }

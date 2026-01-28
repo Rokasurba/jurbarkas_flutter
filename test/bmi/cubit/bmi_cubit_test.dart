@@ -21,7 +21,7 @@ void main() {
   final mockMeasurement = BmiMeasurement(
     id: 1,
     heightCm: 175,
-    weightKg: 70.0,
+    weightKg: 70,
     bmiValue: 22.86,
     measuredAt: DateTime(2026, 1, 19, 14, 30),
   );
@@ -31,7 +31,7 @@ void main() {
     BmiMeasurement(
       id: 2,
       heightCm: 175,
-      weightKg: 72.0,
+      weightKg: 72,
       bmiValue: 23.51,
       measuredAt: DateTime(2026, 1, 18, 10),
     ),
@@ -157,7 +157,7 @@ void main() {
             data: BmiMeasurement(
               id: 3,
               heightCm: 175,
-              weightKg: 71.0,
+              weightKg: 71,
               bmiValue: 23.18,
               measuredAt: DateTime(2026, 1, 19, 15),
             ),
@@ -188,7 +188,7 @@ void main() {
               BmiMeasurement(
                 id: 3,
                 heightCm: 175,
-                weightKg: 68.0,
+                weightKg: 68,
                 bmiValue: 22.20,
                 measuredAt: DateTime(2026, 1, 17, 10),
               ),
@@ -226,7 +226,7 @@ void main() {
           return BmiCubit(bmiRepository: mockRepository);
         },
         act: (cubit) async {
-          final fromDate = DateTime(2026, 1, 1);
+          final fromDate = DateTime(2026, 1);
           await cubit.loadHistory(fromDate: fromDate);
           // Verify the cubit tracks the filter
           expect(cubit.currentFromDate, fromDate);
@@ -249,7 +249,7 @@ void main() {
         },
         act: (cubit) async {
           // First load with filter
-          await cubit.loadHistory(fromDate: DateTime(2026, 1, 1));
+          await cubit.loadHistory(fromDate: DateTime(2026, 1));
           // Then load without filter
           await cubit.loadHistory();
           expect(cubit.currentFromDate, isNull);
@@ -274,7 +274,7 @@ void main() {
         },
         act: (cubit) async {
           // Load with date filter
-          await cubit.loadHistory(fromDate: DateTime(2026, 1, 1));
+          await cubit.loadHistory(fromDate: DateTime(2026, 1));
           // Try to load more - should do nothing
           await cubit.loadMore();
         },

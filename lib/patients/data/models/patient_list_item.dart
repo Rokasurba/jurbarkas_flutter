@@ -5,7 +5,6 @@ part 'patient_list_item.g.dart';
 
 @freezed
 class PatientListItem with _$PatientListItem {
-  const PatientListItem._();
 
   const factory PatientListItem({
     required int id,
@@ -14,6 +13,7 @@ class PatientListItem with _$PatientListItem {
     required String email,
     @JsonKey(name: 'patient_code') String? patientCode,
   }) = _PatientListItem;
+  const PatientListItem._();
 
   factory PatientListItem.fromJson(Map<String, dynamic> json) =>
       _$PatientListItemFromJson(json);

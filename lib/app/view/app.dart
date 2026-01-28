@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/auth/auth.dart';
@@ -39,6 +41,8 @@ class _AppProvidersState extends State<_AppProviders> {
   late final PatientsRepository _patientsRepository;
   late final AuthCubit _authCubit;
   StreamSubscription<AuthEvent>? _authEventSubscription;
+  StreamSubscription<AuthState>? _authStateSubscription;
+  bool _pushNotificationsInitialized = false;
 
   @override
   void initState() {
@@ -59,7 +63,38 @@ class _AppProvidersState extends State<_AppProviders> {
     _authEventSubscription =
         AuthEventController.instance.stream.listen(_onAuthEvent);
 
+    // Listen to auth state to initialize push notifications after login
+    _authStateSubscription = _authCubit.stream.listen(_onAuthStateChanged);
+
     unawaited(_authCubit.checkAuthStatus());
+  }
+
+  Future<void> _onAuthStateChanged(AuthState state) async {
+    state.whenOrNull(
+      authenticated: (_) => _initializePushNotifications(),
+      unauthenticated: () {
+        _pushNotificationsInitialized = false;
+        PushNotificationService.instance.dispose();
+      },
+    );
+  }
+
+  Future<void> _initializePushNotifications() async {
+    if (_pushNotificationsInitialized || kIsWeb) return;
+    _pushNotificationsInitialized = true;
+
+    PushNotificationService.instance.onTokenRefresh = _onDeviceTokenReceived;
+    await PushNotificationService.instance.initialize();
+  }
+
+  Future<void> _onDeviceTokenReceived(String token) async {
+    log('Registering device token with backend');
+    final result = await _authRepository.registerDeviceToken(token);
+    result.when(
+      success: (data, message) => log('Device token registered successfully'),
+      error: (message, errors) =>
+          log('Failed to register device token: $message'),
+    );
   }
 
   void _onAuthEvent(AuthEvent event) {
@@ -72,6 +107,8 @@ class _AppProvidersState extends State<_AppProviders> {
   @override
   void dispose() {
     unawaited(_authEventSubscription?.cancel());
+    unawaited(_authStateSubscription?.cancel());
+    PushNotificationService.instance.dispose();
     unawaited(_authCubit.close());
     super.dispose();
   }

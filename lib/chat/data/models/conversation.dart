@@ -10,8 +10,8 @@ class Conversation with _$Conversation {
   const factory Conversation({
     required int id,
     @JsonKey(name: 'other_user') required UserBrief otherUser,
-    @JsonKey(name: 'unread_count') required int unreadCount,
-    @JsonKey(name: 'my_last_read_id') required int myLastReadId,
+    @JsonKey(name: 'unread_count') @Default(0) int unreadCount,
+    @JsonKey(name: 'my_last_read_id') @Default(0) int myLastReadId,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
     @JsonKey(name: 'last_message') ChatMessage? lastMessage,
   }) = _Conversation;

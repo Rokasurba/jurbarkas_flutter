@@ -87,7 +87,7 @@ void main() {
             (_) async => ApiResponse.success(data: conversations),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) => cubit.loadConversations(),
         expect: () => [
           const ConversationsState.loading(),
@@ -113,7 +113,7 @@ void main() {
                 const ApiResponse.error(message: 'Connection failed'),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) => cubit.loadConversations(),
         expect: () => [
           const ConversationsState.loading(),
@@ -128,7 +128,7 @@ void main() {
             (_) async => const ApiResponse.success(data: []),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) => cubit.loadConversations(),
         expect: () => [
           const ConversationsState.loading(),
@@ -146,7 +146,7 @@ void main() {
             (_) async => ApiResponse.success(data: conversations),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadConversations();
           cubit.search('Jonas');
@@ -173,7 +173,7 @@ void main() {
             (_) async => ApiResponse.success(data: conversations),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadConversations();
           cubit.search('Jonas');
@@ -199,7 +199,7 @@ void main() {
             (_) async => ApiResponse.success(data: conversations),
           );
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadConversations();
           cubit.search('Jonas');
@@ -255,7 +255,7 @@ void main() {
             return const ApiResponse.error(message: 'Network error');
           });
         },
-        build: () => buildCubit(),
+        build: buildCubit,
         act: (cubit) async {
           await cubit.loadConversations();
           await cubit.refresh();

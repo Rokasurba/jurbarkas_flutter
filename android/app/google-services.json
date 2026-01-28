@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650390436255",
+    "project_id": "jurbarkas-3d4bc",
+    "storage_bucket": "jurbarkas-3d4bc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650390436255:android:b59e94ea6d6be903f8e5aa",
+        "android_client_info": {
+          "package_name": "lt.jurbarkas.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB76_R44sczPMPZVw5ES-17hP-aTc6W774"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

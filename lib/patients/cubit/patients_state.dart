@@ -23,31 +23,31 @@ sealed class PatientsState with _$PatientsState {
   bool get isLoading => this is PatientsLoading;
 
   List<PatientListItem> get patients => maybeWhen(
-        loaded: (patients, _, __, ___, ____) => patients,
-        orElse: () => [],
-      );
+    loaded: (patients, _, __, ___, ____) => patients,
+    orElse: () => [],
+  );
 
   int get total => maybeWhen(
-        loaded: (_, total, __, ___, ____) => total,
-        orElse: () => 0,
-      );
+    loaded: (_, total, __, ___, ____) => total,
+    orElse: () => 0,
+  );
 
   bool get hasMore => maybeWhen(
-        loaded: (_, __, hasMore, ___, ____) => hasMore,
-        orElse: () => false,
-      );
+    loaded: (_, __, hasMore, ___, ____) => hasMore,
+    orElse: () => false,
+  );
 
   bool get isLoadingMore => maybeWhen(
-        loaded: (_, __, ___, isLoadingMore, ____) => isLoadingMore,
-        orElse: () => false,
-      );
+    loaded: (_, __, ___, isLoadingMore, ____) => isLoadingMore,
+    orElse: () => false,
+  );
 
   PatientListParams get params => maybeWhen(
-        loading: (params) => params,
-        loaded: (_, __, ___, ____, params) => params,
-        error: (_, params) => params,
-        orElse: PatientListParams.firstPage,
-      );
+    loading: (params) => params,
+    loaded: (_, __, ___, ____, params) => params,
+    error: (_, params) => params,
+    orElse: PatientListParams.firstPage,
+  );
 
   /// Returns true if search/filter is active.
   bool get hasActiveFilters => params.hasActiveFilters;

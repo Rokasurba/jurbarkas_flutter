@@ -16,8 +16,8 @@ class RemindersCubit extends Cubit<RemindersState> {
     final response = await _remindersRepository.getReminders();
 
     response.when(
-      success: (reminders, _) {
-        final sorted = List.of(reminders)
+      success: (data, _) {
+        final sorted = List.of(data.reminders)
           ..sort((a, b) => b.sentAt.compareTo(a.sentAt));
         emit(RemindersState.loaded(sorted));
       },

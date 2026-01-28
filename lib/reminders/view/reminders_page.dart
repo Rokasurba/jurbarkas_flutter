@@ -39,37 +39,50 @@ class RemindersView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return ResponsiveScaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
-        title: Text(
-          l10n.remindersTitle,
-          style: context.appBarTitle,
-        ),
-        actions: [
-          BlocBuilder<RemindersCubit, RemindersState>(
-            builder: (context, state) {
-              final unreadCount = state.maybeWhen(
-                loaded: (reminders) =>
-                    reminders.where((r) => r.readAt == null).length,
-                orElse: () => 0,
-              );
-              if (unreadCount == 0) return const SizedBox.shrink();
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Badge(
-                    label: Text('$unreadCount'),
-                    child: const Icon(Icons.notifications),
-                  ),
-                ),
-              );
-            },
+    return ResponsiveBuilder(
+      builder: (context, info) {
+        final isMobile = info.isMobile;
+
+        return ResponsiveScaffold(
+          drawer: buildPatientDrawer(context, isMobile: isMobile),
+          appBar: AppBar(
+            backgroundColor: AppColors.secondary,
+            foregroundColor: Colors.white,
+            leading: isMobile
+                ? Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            title: Text(
+              l10n.remindersTitle,
+              style: context.appBarTitle,
+            ),
+            actions: [
+              BlocBuilder<RemindersCubit, RemindersState>(
+                builder: (context, state) {
+                  final unreadCount = state.maybeWhen(
+                    loaded: (reminders) =>
+                        reminders.where((r) => r.readAt == null).length,
+                    orElse: () => 0,
+                  );
+                  if (unreadCount == 0) return const SizedBox.shrink();
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Badge(
+                        label: Text('$unreadCount'),
+                        child: const Icon(Icons.notifications),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: BlocBuilder<RemindersCubit, RemindersState>(
+          body: BlocBuilder<RemindersCubit, RemindersState>(
         builder: (context, state) {
           return state.when(
             initial: () => const SizedBox.shrink(),
@@ -121,6 +134,8 @@ class RemindersView extends StatelessWidget {
           );
         },
       ),
+    );
+      },
     );
   }
 }

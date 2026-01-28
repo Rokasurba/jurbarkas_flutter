@@ -232,13 +232,11 @@ class _LoginViewState extends State<LoginView> {
                           BoxShadow(
                             color: AppColors.primary.withValues(alpha: 0.08),
                             blurRadius: 40,
-                            spreadRadius: 0,
                             offset: const Offset(0, 8),
                           ),
                           BoxShadow(
                             color: AppColors.primary.withValues(alpha: 0.12),
                             blurRadius: 16,
-                            spreadRadius: 0,
                             offset: const Offset(0, 4),
                           ),
                         ],
@@ -591,7 +589,7 @@ class _DevUserTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
                 color: AppColors.secondaryText,

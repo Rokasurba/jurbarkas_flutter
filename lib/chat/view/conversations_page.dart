@@ -45,17 +45,45 @@ class _ConversationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final cubit = context.read<ConversationsCubit>();
+    final userRole = context.read<AuthCubit>().state.user?.role ?? '';
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
-        title: Text(
-          l10n.conversationsTitle,
-          style: context.appBarTitle,
-        ),
-      ),
-      body: Column(
+    return ResponsiveBuilder(
+      builder: (context, info) {
+        final isMobile = info.isMobile;
+        final drawer = userRole == 'doctor'
+            ? buildDoctorDrawer(context, isMobile: isMobile)
+            : buildPatientDrawer(context, isMobile: isMobile);
+
+        return ResponsiveScaffold(
+          drawer: drawer,
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.secondary,
+            foregroundColor: Colors.white,
+            elevation: 3,
+            leading: isMobile
+                ? Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            title: Text(
+              l10n.conversationsTitle,
+              style: context.appBarTitle,
+            ),
+          ),
+          floatingActionButton: cubit.isDoctor
+              ? FloatingActionButton.extended(
+                  onPressed: () => _showPatientSelector(context),
+                  icon: const Icon(Icons.edit),
+                  label: Text(l10n.conversationsNewMessage),
+                  backgroundColor: AppColors.secondary,
+                  foregroundColor: Colors.white,
+                )
+              : null,
+          body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -141,15 +169,8 @@ class _ConversationsView extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: cubit.isDoctor
-          ? FloatingActionButton.extended(
-              onPressed: () => _showPatientSelector(context),
-              icon: const Icon(Icons.edit),
-              label: Text(l10n.conversationsNewMessage),
-              backgroundColor: AppColors.secondary,
-              foregroundColor: Colors.white,
-            )
-          : null,
+    );
+      },
     );
   }
 
@@ -182,6 +203,7 @@ class _ConversationsView extends StatelessWidget {
     final result = await showModalBottomSheet<Conversation>(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.background,
       builder: (_) => _PatientSelectorSheet(
         patientsRepository: patientsRepository,
         conversationsCubit: cubit,
@@ -372,9 +394,9 @@ class _PatientSelectorSheetState extends State<_PatientSelectorSheet> {
       } else {
         _filtered = _patients
             .where(
-              (p) => '${p.name} ${p.surname}'
-                  .toLowerCase()
-                  .contains(query.toLowerCase()),
+              (p) => '${p.name} ${p.surname}'.toLowerCase().contains(
+                query.toLowerCase(),
+              ),
             )
             .toList();
       }
@@ -384,8 +406,9 @@ class _PatientSelectorSheetState extends State<_PatientSelectorSheet> {
   Future<void> _selectPatient(PatientListItem patient) async {
     setState(() => _isCreating = true);
 
-    final conversation =
-        await widget.conversationsCubit.createConversation(patient.id);
+    final conversation = await widget.conversationsCubit.createConversation(
+      patient.id,
+    );
 
     if (!mounted) return;
 
@@ -443,32 +466,32 @@ class _PatientSelectorSheetState extends State<_PatientSelectorSheet> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _error.isNotEmpty
-                      ? Center(child: Text(_error))
-                      : _isCreating
-                          ? const Center(child: CircularProgressIndicator())
-                          : ListView.builder(
-                              controller: scrollController,
-                              itemCount: _filtered.length,
-                              itemBuilder: (context, index) {
-                                final patient = _filtered[index];
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: AppColors.secondary,
-                                    child: Text(
-                                      patient.initials,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    '${patient.name} ${patient.surname}',
-                                  ),
-                                  onTap: () => _selectPatient(patient),
-                                );
-                              },
+                  ? Center(child: Text(_error))
+                  : _isCreating
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      controller: scrollController,
+                      itemCount: _filtered.length,
+                      itemBuilder: (context, index) {
+                        final patient = _filtered[index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: AppColors.secondary,
+                            child: Text(
+                              patient.initials,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                          ),
+                          title: Text(
+                            '${patient.name} ${patient.surname}',
+                          ),
+                          onTap: () => _selectPatient(patient),
+                        );
+                      },
+                    ),
             ),
           ],
         );

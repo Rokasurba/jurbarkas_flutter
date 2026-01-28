@@ -52,7 +52,7 @@ class PatientDashboardView extends StatelessWidget {
         final isMobile = info.isMobile;
 
         return ResponsiveScaffold(
-          drawer: isMobile ? _buildDrawer(context, l10n) : null,
+          drawer: _buildDrawer(context, l10n, isMobile: isMobile),
           appBar: AppBar(
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
@@ -67,166 +67,132 @@ class PatientDashboardView extends StatelessWidget {
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                   )
-                : null,
-            actions: isMobile
-                ? null
-                : [
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return PopupMenuButton<String>(
-                          icon: const Icon(Icons.account_circle),
-                          onSelected: (value) async {
-                            if (value == 'logout') {
-                              await _handleLogout(context);
+                : const SizedBox.shrink(),
+          ),
+          body: BlocBuilder<DashboardCubit, DashboardState>(
+            builder: (context, state) {
+              return state.when(
+                initial: () => const SizedBox.shrink(),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                loaded: (data) => RefreshIndicator(
+                  onRefresh: () => context.read<DashboardCubit>().refresh(),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PatientProfileCard(profile: data.user),
+                        const SizedBox(height: 24),
+                        Text(
+                          l10n.mainIndicators,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.mainText,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        MetricCard(
+                          title: l10n.bloodPressureTitle,
+                          value: data.latestBloodPressure != null
+                              ? '${data.latestBloodPressure!.systolic}/${data.latestBloodPressure!.diastolic}'
+                              : null,
+                          unit: data.latestBloodPressure != null
+                              ? l10n.mmHgUnit
+                              : null,
+                          icon: Icons.favorite,
+                          measuredAt: data.latestBloodPressure?.measuredAt,
+                          onTap: () async {
+                            await context.router.push(
+                              const BloodPressureRoute(),
+                            );
+                            if (context.mounted) {
+                              unawaited(
+                                context.read<DashboardCubit>().refresh(),
+                              );
                             }
                           },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    state.user?.fullName ?? '',
-                                    style: context.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    state.user?.email ?? '',
-                                    style: context.bodySmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuDivider(),
-                            PopupMenuItem(
-                              value: 'logout',
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.logout),
-                                  const SizedBox(width: 8),
-                                  Text(l10n.logoutButton),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                        ),
+                        const SizedBox(height: 8),
+                        MetricCard(
+                          title: l10n.bloodSugarTitle,
+                          value: data.latestBloodSugar?.glucoseLevel
+                              .toStringAsFixed(2),
+                          unit: data.latestBloodSugar != null
+                              ? l10n.mmolLUnit
+                              : null,
+                          icon: Icons.water_drop,
+                          measuredAt: data.latestBloodSugar?.measuredAt,
+                          onTap: () async {
+                            await context.router.push(const BloodSugarRoute());
+                            if (context.mounted) {
+                              unawaited(
+                                context.read<DashboardCubit>().refresh(),
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        MetricCard(
+                          title: l10n.bmiTitle,
+                          value: data.latestBmi?.bmiValue.toStringAsFixed(1),
+                          icon: Icons.monitor_weight,
+                          measuredAt: data.latestBmi?.measuredAt,
+                          onTap: () async {
+                            await context.router.push(const BmiRoute());
+                            if (context.mounted) {
+                              unawaited(
+                                context.read<DashboardCubit>().refresh(),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-          ),
-      body: BlocBuilder<DashboardCubit, DashboardState>(
-        builder: (context, state) {
-          return state.when(
-            initial: () => const SizedBox.shrink(),
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            loaded: (data) => RefreshIndicator(
-              onRefresh: () => context.read<DashboardCubit>().refresh(),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PatientProfileCard(profile: data.user),
-                    const SizedBox(height: 24),
-                    Text(
-                      l10n.mainIndicators,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.mainText,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    MetricCard(
-                      title: l10n.bloodPressureTitle,
-                      value: data.latestBloodPressure != null
-                          ? '${data.latestBloodPressure!.systolic}/${data.latestBloodPressure!.diastolic}'
-                          : null,
-                      unit: data.latestBloodPressure != null
-                          ? l10n.mmHgUnit
-                          : null,
-                      icon: Icons.favorite,
-                      measuredAt: data.latestBloodPressure?.measuredAt,
-                      onTap: () async {
-                        await context.router.push(const BloodPressureRoute());
-                        if (context.mounted) {
-                          unawaited(
-                            context.read<DashboardCubit>().refresh(),
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    MetricCard(
-                      title: l10n.bloodSugarTitle,
-                      value: data.latestBloodSugar?.glucoseLevel
-                          .toStringAsFixed(2),
-                      unit: data.latestBloodSugar != null
-                          ? l10n.mmolLUnit
-                          : null,
-                      icon: Icons.water_drop,
-                      measuredAt: data.latestBloodSugar?.measuredAt,
-                      onTap: () async {
-                        await context.router.push(const BloodSugarRoute());
-                        if (context.mounted) {
-                          unawaited(
-                            context.read<DashboardCubit>().refresh(),
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    MetricCard(
-                      title: l10n.bmiTitle,
-                      value: data.latestBmi?.bmiValue.toStringAsFixed(1),
-                      icon: Icons.monitor_weight,
-                      measuredAt: data.latestBmi?.measuredAt,
-                      onTap: () async {
-                        await context.router.push(const BmiRoute());
-                        if (context.mounted) {
-                          unawaited(
-                            context.read<DashboardCubit>().refresh(),
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            failure: (message) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    message,
-                    style: TextStyle(color: context.errorColor),
-                    textAlign: TextAlign.center,
+                failure: (message) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        message,
+                        style: TextStyle(color: context.errorColor),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () =>
+                            context.read<DashboardCubit>().loadDashboard(),
+                        child: Text(l10n.retryButton),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () =>
-                        context.read<DashboardCubit>().loadDashboard(),
-                    child: Text(l10n.retryButton),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+                ),
+              );
+            },
+          ),
         );
       },
     );
   }
 
-  Widget _buildDrawer(BuildContext context, AppLocalizations l10n) {
+  Widget _buildDrawer(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isMobile,
+  }) {
+    void closeDrawerIfMobile() {
+      if (isMobile) {
+        Navigator.of(context).pop();
+      }
+    }
+
     return Drawer(
+      backgroundColor: Colors.white,
       child: Column(
         children: [
           BlocBuilder<AuthCubit, AuthState>(
@@ -274,28 +240,42 @@ class PatientDashboardView extends StatelessWidget {
             },
           ),
           ListTile(
+            tileColor: Colors.white,
+            leading: const Icon(Icons.dashboard),
+            title: Text(l10n.dashboardTitle),
+            onTap: () {
+              closeDrawerIfMobile();
+              unawaited(
+                context.router.replaceAll([const PatientDashboardRoute()]),
+              );
+            },
+          ),
+          ListTile(
+            tileColor: Colors.white,
             leading: const Icon(Icons.message),
             title: Text(l10n.messagesLabel),
             onTap: () {
-              Navigator.of(context).pop();
+              closeDrawerIfMobile();
               context.router.push(const ConversationsRoute());
             },
           ),
           ListTile(
+            tileColor: Colors.white,
             leading: const Icon(Icons.notifications),
             title: Text(l10n.remindersLabel),
             onTap: () {
-              Navigator.of(context).pop();
+              closeDrawerIfMobile();
               context.router.push(const RemindersRoute());
             },
           ),
           const Spacer(),
           const Divider(),
           ListTile(
+            tileColor: Colors.white,
             leading: const Icon(Icons.logout),
             title: Text(l10n.logoutButton),
             onTap: () async {
-              Navigator.of(context).pop();
+              closeDrawerIfMobile();
               await _handleLogout(context);
             },
           ),

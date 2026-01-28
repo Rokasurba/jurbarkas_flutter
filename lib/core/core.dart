@@ -4,6 +4,7 @@ export 'constants/api_constants.dart';
 export 'constants/asset_constants.dart';
 export 'data/data.dart';
 export 'responsive/responsive.dart';
+export 'services/push_notification_service.dart';
 export 'storage/secure_storage.dart';
 export 'theme/theme.dart';
 export 'utils/utils.dart';

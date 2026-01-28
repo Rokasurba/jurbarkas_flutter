@@ -126,4 +126,24 @@ class AuthRepository {
   Future<bool> hasToken() async {
     return _secureStorage.hasToken();
   }
+
+  /// Registers the device's FCM token for push notifications.
+  Future<ApiResponse<void>> registerDeviceToken(String deviceToken) async {
+    try {
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        ApiConstants.deviceToken,
+        data: {'device_token': deviceToken},
+      );
+
+      final data = response.data;
+      if (data != null && data['success'] == true) {
+        return const ApiResponse.success(data: null);
+      }
+      return ApiResponse.error(
+        message: data?['message'] as String? ?? 'Failed to register device',
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
 }
