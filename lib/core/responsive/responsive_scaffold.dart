@@ -14,6 +14,7 @@ class ResponsiveScaffold extends StatelessWidget {
     this.backgroundColor,
     this.maxContentWidth = 1200,
     this.padding,
+    this.sideNavigationWidth = 280,
     super.key,
   });
 
@@ -27,6 +28,8 @@ class ResponsiveScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
 
   /// A drawer to show on the side.
+  /// On mobile: shown as overlay drawer with hamburger menu.
+  /// On tablet/desktop: shown as permanent side navigation.
   final Widget? drawer;
 
   /// A bottom navigation bar.
@@ -41,34 +44,69 @@ class ResponsiveScaffold extends StatelessWidget {
   /// Padding around the content.
   final EdgeInsets? padding;
 
+  /// Width of the side navigation on tablet/desktop.
+  final double sideNavigationWidth;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar,
-      floatingActionButton: floatingActionButton,
-      drawer: drawer,
-      bottomNavigationBar: bottomNavigationBar,
-      backgroundColor: backgroundColor,
-      body: ResponsiveBuilder(
-        builder: (context, info) {
-          final content = padding != null
-              ? Padding(padding: padding!, child: body)
-              : body;
+    return ResponsiveBuilder(
+      builder: (context, info) {
+        final content = padding != null
+            ? Padding(padding: padding!, child: body)
+            : body;
 
-          // On desktop/tablet, constrain the content width
-          if (info.isDesktop || info.isTablet) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxContentWidth),
-                child: content,
+        // On mobile, use standard scaffold with overlay drawer
+        if (info.isMobile) {
+          return Scaffold(
+            appBar: appBar,
+            floatingActionButton: floatingActionButton,
+            drawer: drawer,
+            bottomNavigationBar: bottomNavigationBar,
+            backgroundColor: backgroundColor,
+            body: content,
+          );
+        }
+
+        // On tablet/desktop, show permanent side navigation with full-height
+        // sidebar. The AppBar only covers the content area, not the sidebar.
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          floatingActionButton: floatingActionButton,
+          bottomNavigationBar: bottomNavigationBar,
+          body: Row(
+            children: [
+              if (drawer != null)
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    drawerTheme: const DrawerThemeData(
+                      shape: RoundedRectangleBorder(),
+                    ),
+                  ),
+                  child: SizedBox(
+                    width: sideNavigationWidth,
+                    child: drawer,
+                  ),
+                ),
+              Expanded(
+                child: Column(
+                  children: [
+                    if (appBar case final appBar?) appBar,
+                    Expanded(
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(maxWidth: maxContentWidth),
+                          child: content,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            );
-          }
-
-          // On mobile, use full width
-          return content;
-        },
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
