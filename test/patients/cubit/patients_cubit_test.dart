@@ -75,7 +75,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.getPatients(params: any(named: 'params')),
-        ).thenAnswer((_) async => ApiResponse.success(data: mockPatientsResponse));
+        ).thenAnswer((_) async => const ApiResponse.success(data: mockPatientsResponse));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       act: (cubit) => cubit.loadPatients(),
@@ -128,7 +128,7 @@ void main() {
       build: () {
         when(
           () => mockRepository.getPatients(params: any(named: 'params')),
-        ).thenAnswer((_) async => ApiResponse.success(data: mockPatientsResponsePage2));
+        ).thenAnswer((_) async => const ApiResponse.success(data: mockPatientsResponsePage2));
         return PatientsCubit(patientsRepository: mockRepository);
       },
       seed: () => PatientsState.loaded(

@@ -268,6 +268,15 @@ class PatientDashboardView extends StatelessWidget {
               context.router.push(const RemindersRoute());
             },
           ),
+          ListTile(
+            tileColor: Colors.white,
+            leading: const Icon(Icons.assignment),
+            title: Text(l10n.surveyListTitle),
+            onTap: () {
+              closeDrawerIfMobile();
+              context.router.push(const MySurveysRoute());
+            },
+          ),
           const Spacer(),
           const Divider(),
           ListTile(

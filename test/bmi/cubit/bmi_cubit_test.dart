@@ -226,7 +226,7 @@ void main() {
           return BmiCubit(bmiRepository: mockRepository);
         },
         act: (cubit) async {
-          final fromDate = DateTime(2026, 1);
+          final fromDate = DateTime(2026);
           await cubit.loadHistory(fromDate: fromDate);
           // Verify the cubit tracks the filter
           expect(cubit.currentFromDate, fromDate);
@@ -249,7 +249,7 @@ void main() {
         },
         act: (cubit) async {
           // First load with filter
-          await cubit.loadHistory(fromDate: DateTime(2026, 1));
+          await cubit.loadHistory(fromDate: DateTime(2026));
           // Then load without filter
           await cubit.loadHistory();
           expect(cubit.currentFromDate, isNull);
@@ -274,7 +274,7 @@ void main() {
         },
         act: (cubit) async {
           // Load with date filter
-          await cubit.loadHistory(fromDate: DateTime(2026, 1));
+          await cubit.loadHistory(fromDate: DateTime(2026));
           // Try to load more - should do nothing
           await cubit.loadMore();
         },

@@ -7,10 +7,7 @@ part 'chat_message.g.dart';
 class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
     required int id,
-    @JsonKey(name: 'conversation_id') @Default(0) int conversationId,
-    @JsonKey(name: 'sender_id') required int senderId,
-    required String content,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'sender_id') required int senderId, required String content, @JsonKey(name: 'created_at') required DateTime createdAt, @JsonKey(name: 'conversation_id') @Default(0) int conversationId,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) =>

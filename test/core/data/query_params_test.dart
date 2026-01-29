@@ -23,7 +23,7 @@ void main() {
     });
 
     test('withDateFilter creates params with date filter and higher limit', () {
-      final date = DateTime(2026, 1);
+      final date = DateTime(2026);
       final params = HealthDataParams.withDateFilter(date);
 
       expect(params.limit, 500);

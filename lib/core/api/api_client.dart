@@ -41,8 +41,9 @@ class ApiClient {
   Future<Response<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) async {
-    return _dio.get<T>(path, queryParameters: queryParameters);
+    return _dio.get<T>(path, queryParameters: queryParameters, options: options);
   }
 
   Future<Response<T>> post<T>(

@@ -13,11 +13,9 @@ class PatientProfile with _$PatientProfile {
     required String name,
     required String surname,
     required String email,
-    String? phone,
+    @JsonKey(name: 'is_active') required bool isActive, @JsonKey(name: 'created_at') required DateTime createdAt, String? phone,
     @JsonKey(name: 'date_of_birth') DateTime? dateOfBirth,
     @JsonKey(name: 'patient_code') String? patientCode,
-    @JsonKey(name: 'is_active') required bool isActive,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _PatientProfile;
   const PatientProfile._();
 

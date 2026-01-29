@@ -10,6 +10,7 @@ import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/password_reset/password_reset.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
+import 'package:frontend/survey/data/survey_repository.dart';
 
 /// Root application widget that sets up dependency injection and routing.
 class App extends StatelessWidget {
@@ -39,6 +40,7 @@ class _AppProvidersState extends State<_AppProviders> {
   late final AuthRepository _authRepository;
   late final PasswordResetRepository _passwordResetRepository;
   late final PatientsRepository _patientsRepository;
+  late final SurveyRepository _surveyRepository;
   late final AuthCubit _authCubit;
   StreamSubscription<AuthEvent>? _authEventSubscription;
   StreamSubscription<AuthState>? _authStateSubscription;
@@ -57,6 +59,7 @@ class _AppProvidersState extends State<_AppProviders> {
       secureStorage: _secureStorage,
     );
     _patientsRepository = PatientsRepository(apiClient: _apiClient);
+    _surveyRepository = SurveyRepository(apiClient: _apiClient);
     _authCubit = AuthCubit(authRepository: _authRepository);
 
     // Listen to auth events from the API layer
@@ -121,6 +124,7 @@ class _AppProvidersState extends State<_AppProviders> {
         RepositoryProvider.value(value: _authRepository),
         RepositoryProvider.value(value: _passwordResetRepository),
         RepositoryProvider.value(value: _patientsRepository),
+        RepositoryProvider.value(value: _surveyRepository),
       ],
       child: BlocProvider.value(
         value: _authCubit,

@@ -42,7 +42,6 @@ void main() {
       surname: 'Petraitis',
       role: 'doctor',
     ),
-    unreadCount: 0,
     myLastReadId: 20,
     updatedAt: DateTime(2026, 1, 21, 14),
   );

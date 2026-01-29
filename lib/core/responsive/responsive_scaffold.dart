@@ -90,7 +90,7 @@ class ResponsiveScaffold extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    if (appBar case final appBar?) appBar,
+                    ?appBar,
                     Expanded(
                       child: Center(
                         child: ConstrainedBox(
