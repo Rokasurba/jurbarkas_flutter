@@ -181,7 +181,7 @@ class _PatientProfileView extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 24),
-                  // Send reminder button (doctor/admin only)
+                  // Action buttons (doctor/admin only)
                   Builder(
                     builder: (context) {
                       final user =
@@ -194,37 +194,76 @@ class _PatientProfileView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                         ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              unawaited(
-                                context.router.push(
-                                  SendReminderRoute(
-                                    patientId: profile.id,
-                                    patientName: profile.fullName,
+                        child: Column(
+                          children: [
+                            // Surveys button
+                            SizedBox(
+                              width: double.infinity,
+                              height: 56,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  unawaited(
+                                    context.router.push(
+                                      PatientSurveysRoute(
+                                        patientId: profile.id,
+                                        patientName: profile.fullName,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.assignment),
+                                label: Text(
+                                  l10n.surveyListTitle,
+                                  style: context.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              );
-                            },
-                            icon: const Icon(Icons.notifications_active),
-                            label: Text(
-                              l10n.sendReminderButton,
-                              style: context.titleMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  elevation: 0,
+                                ),
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.secondary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(22),
+                            const SizedBox(height: 12),
+                            // Send reminder button
+                            SizedBox(
+                              width: double.infinity,
+                              height: 56,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  unawaited(
+                                    context.router.push(
+                                      SendReminderRoute(
+                                        patientId: profile.id,
+                                        patientName: profile.fullName,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.notifications_active),
+                                label: Text(
+                                  l10n.sendReminderButton,
+                                  style: context.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  elevation: 0,
+                                ),
                               ),
-                              elevation: 0,
                             ),
-                          ),
+                          ],
                         ),
                       );
                     },

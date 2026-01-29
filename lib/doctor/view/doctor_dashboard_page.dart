@@ -238,6 +238,15 @@ class _DoctorDashboardView extends StatelessWidget {
               context.router.push(const ConversationsRoute());
             },
           ),
+          ListTile(
+            tileColor: Colors.white,
+            leading: const Icon(Icons.assignment),
+            title: Text(l10n.surveyListTitle),
+            onTap: () {
+              closeDrawerIfMobile();
+              context.router.push(const SurveyManagementRoute());
+            },
+          ),
           const Spacer(),
           const Divider(),
           ListTile(

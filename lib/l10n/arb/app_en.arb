@@ -8,6 +8,10 @@
     "@appTitle": {
         "description": "The application title"
     },
+    "ok": "OK",
+    "@ok": {
+        "description": "OK button text"
+    },
     "loginTitle": "Login",
     "@loginTitle": {
         "description": "Login page title"
@@ -741,5 +745,125 @@
     "titleMaxLengthError": "Title too long (max 100 characters)",
     "@titleMaxLengthError": {
         "description": "Title max length validation error"
+    },
+    "surveyListTitle": "Surveys",
+    "@surveyListTitle": {
+        "description": "Survey list page title"
+    },
+    "surveysEmpty": "No surveys assigned",
+    "@surveysEmpty": {
+        "description": "Empty state message when no surveys assigned"
+    },
+    "surveyCompleted": "Completed",
+    "@surveyCompleted": {
+        "description": "Survey completed status badge"
+    },
+    "surveyNotStarted": "Not started",
+    "@surveyNotStarted": {
+        "description": "Survey not started status badge"
+    },
+    "surveySelectOne": "Select one answer",
+    "@surveySelectOne": {
+        "description": "Instruction for single choice question"
+    },
+    "surveySelectMultiple": "Select one or more answers",
+    "@surveySelectMultiple": {
+        "description": "Instruction for multiple choice question"
+    },
+    "surveyEnterText": "Enter your answer",
+    "@surveyEnterText": {
+        "description": "Instruction for text input question"
+    },
+    "surveyEnterTextHint": "Type here...",
+    "@surveyEnterTextHint": {
+        "description": "Placeholder for text input question"
+    },
+    "surveyRequiredQuestion": "Required question",
+    "@surveyRequiredQuestion": {
+        "description": "Required question indicator"
+    },
+    "nextQuestion": "Next",
+    "@nextQuestion": {
+        "description": "Next question button"
+    },
+    "previousQuestion": "Back",
+    "@previousQuestion": {
+        "description": "Previous question button"
+    },
+    "finishSurvey": "Finish",
+    "@finishSurvey": {
+        "description": "Finish survey button"
+    },
+    "surveyCompletedSuccess": "Survey completed!",
+    "@surveyCompletedSuccess": {
+        "description": "Survey completion success dialog title"
+    },
+    "surveyResults": "Survey results",
+    "@surveyResults": {
+        "description": "Survey results page title"
+    },
+    "surveyCompletedOn": "Completed on",
+    "@surveyCompletedOn": {
+        "description": "Label for completion date"
+    },
+    "surveyNoAnswer": "No answer",
+    "@surveyNoAnswer": {
+        "description": "No answer provided indicator"
+    },
+    "surveyResponsesEmpty": "No one has completed this survey yet",
+    "@surveyResponsesEmpty": {
+        "description": "Empty state when no survey responses"
+    },
+    "aggregatedResults": "Aggregated results",
+    "@aggregatedResults": {
+        "description": "Aggregated results title"
+    },
+    "individualResults": "Individual results",
+    "@individualResults": {
+        "description": "Individual results title"
+    },
+    "completionRate": "Completion rate",
+    "@completionRate": {
+        "description": "Completion rate label"
+    },
+    "responsesCount": "{count, plural, =0{0 responses} =1{1 response} other{{count} responses}}",
+    "@responsesCount": {
+        "description": "Number of responses",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "patientsCount": "{count, plural, =0{0 patients} =1{1 patient} other{{count} patients}}",
+    "@patientsCount": {
+        "description": "Number of patients",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportResults": "Export",
+    "@exportResults": {
+        "description": "Export results button"
+    },
+    "exportSuccess": "File downloaded successfully",
+    "@exportSuccess": {
+        "description": "Export success message"
+    },
+    "exportNotSupported": "Export not supported on this platform",
+    "@exportNotSupported": {
+        "description": "Export not supported message for mobile platforms"
+    },
+    "patientsWhoSelected": "Patients who selected this option",
+    "@patientsWhoSelected": {
+        "description": "Patients who selected this option dialog title"
+    },
+    "viewSurveyResponse": "View",
+    "@viewSurveyResponse": {
+        "description": "View survey response button"
     }
 }

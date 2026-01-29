@@ -8,6 +8,10 @@
     "@appTitle": {
         "description": "The application title"
     },
+    "ok": "Gerai",
+    "@ok": {
+        "description": "OK button text"
+    },
     "loginTitle": "Prisijungimas",
     "@loginTitle": {
         "description": "Login page title"
@@ -741,5 +745,125 @@
     "titleMaxLengthError": "Pavadinimas per ilgas (maks. 100 simbolių)",
     "@titleMaxLengthError": {
         "description": "Title max length validation error"
+    },
+    "surveyListTitle": "Apklausos",
+    "@surveyListTitle": {
+        "description": "Survey list page title"
+    },
+    "surveysEmpty": "Nėra priskirtų apklausų",
+    "@surveysEmpty": {
+        "description": "Empty state message when no surveys assigned"
+    },
+    "surveyCompleted": "Užpildyta",
+    "@surveyCompleted": {
+        "description": "Survey completed status badge"
+    },
+    "surveyNotStarted": "Nepradėta",
+    "@surveyNotStarted": {
+        "description": "Survey not started status badge"
+    },
+    "surveySelectOne": "Pasirinkite vieną atsakymą",
+    "@surveySelectOne": {
+        "description": "Instruction for single choice question"
+    },
+    "surveySelectMultiple": "Pasirinkite vieną ar daugiau atsakymų",
+    "@surveySelectMultiple": {
+        "description": "Instruction for multiple choice question"
+    },
+    "surveyEnterText": "Įveskite savo atsakymą",
+    "@surveyEnterText": {
+        "description": "Instruction for text input question"
+    },
+    "surveyEnterTextHint": "Rašykite čia...",
+    "@surveyEnterTextHint": {
+        "description": "Placeholder for text input question"
+    },
+    "surveyRequiredQuestion": "Privalomas klausimas",
+    "@surveyRequiredQuestion": {
+        "description": "Required question indicator"
+    },
+    "nextQuestion": "Toliau",
+    "@nextQuestion": {
+        "description": "Next question button"
+    },
+    "previousQuestion": "Atgal",
+    "@previousQuestion": {
+        "description": "Previous question button"
+    },
+    "finishSurvey": "Baigti",
+    "@finishSurvey": {
+        "description": "Finish survey button"
+    },
+    "surveyCompletedSuccess": "Apklausa užpildyta!",
+    "@surveyCompletedSuccess": {
+        "description": "Survey completion success dialog title"
+    },
+    "surveyResults": "Apklausos rezultatai",
+    "@surveyResults": {
+        "description": "Survey results page title"
+    },
+    "surveyCompletedOn": "Užpildyta",
+    "@surveyCompletedOn": {
+        "description": "Label for completion date"
+    },
+    "surveyNoAnswer": "Neatsakyta",
+    "@surveyNoAnswer": {
+        "description": "No answer provided indicator"
+    },
+    "surveyResponsesEmpty": "Dar niekas neužpildė šios apklausos",
+    "@surveyResponsesEmpty": {
+        "description": "Empty state when no survey responses"
+    },
+    "aggregatedResults": "Apibendrinti rezultatai",
+    "@aggregatedResults": {
+        "description": "Aggregated results title"
+    },
+    "individualResults": "Individualūs rezultatai",
+    "@individualResults": {
+        "description": "Individual results title"
+    },
+    "completionRate": "Užpildymo rodiklis",
+    "@completionRate": {
+        "description": "Completion rate label"
+    },
+    "responsesCount": "{count, plural, =0{0 atsakymų} =1{1 atsakymas} few{{count} atsakymai} many{{count} atsakymų} other{{count} atsakymų}}",
+    "@responsesCount": {
+        "description": "Number of responses",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "patientsCount": "{count, plural, =0{0 pacientų} =1{1 pacientas} few{{count} pacientai} many{{count} pacientų} other{{count} pacientų}}",
+    "@patientsCount": {
+        "description": "Number of patients",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportResults": "Eksportuoti",
+    "@exportResults": {
+        "description": "Export results button"
+    },
+    "exportSuccess": "Failas sėkmingai atsisiųstas",
+    "@exportSuccess": {
+        "description": "Export success message"
+    },
+    "exportNotSupported": "Eksportavimas šioje platformoje nepalaikomas",
+    "@exportNotSupported": {
+        "description": "Export not supported message for mobile platforms"
+    },
+    "patientsWhoSelected": "Pacientai, pasirinkę šį atsakymą",
+    "@patientsWhoSelected": {
+        "description": "Patients who selected this option dialog title"
+    },
+    "viewSurveyResponse": "Peržiūrėti",
+    "@viewSurveyResponse": {
+        "description": "View survey response button"
     }
 }

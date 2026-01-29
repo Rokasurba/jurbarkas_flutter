@@ -157,6 +157,11 @@ Widget buildPatientDrawer(BuildContext context, {required bool isMobile}) {
         label: l10n.remindersLabel,
         onTap: () => router.push(const RemindersRoute()),
       ),
+      DrawerNavItem(
+        icon: Icons.assignment,
+        label: l10n.surveyListTitle,
+        onTap: () => router.push(const MySurveysRoute()),
+      ),
     ],
   );
 }
@@ -180,6 +185,11 @@ Widget buildDoctorDrawer(BuildContext context, {required bool isMobile}) {
         icon: Icons.message,
         label: l10n.messagesLabel,
         onTap: () => router.push(const ConversationsRoute()),
+      ),
+      DrawerNavItem(
+        icon: Icons.assignment,
+        label: l10n.surveyListTitle,
+        onTap: () => router.push(const SurveyManagementRoute()),
       ),
     ],
   );

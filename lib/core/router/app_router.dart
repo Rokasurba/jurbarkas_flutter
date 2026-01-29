@@ -25,6 +25,13 @@ import 'package:frontend/patients/view/patient_profile_page.dart';
 import 'package:frontend/patients/view/patients_page.dart';
 import 'package:frontend/reminders/view/reminders_page.dart';
 import 'package:frontend/reminders/view/send_reminder_page.dart';
+import 'package:frontend/survey/view/aggregated_results_page.dart';
+import 'package:frontend/survey/view/doctor_survey_results_page.dart';
+import 'package:frontend/survey/view/my_surveys_page.dart';
+import 'package:frontend/survey/view/patient_surveys_page.dart';
+import 'package:frontend/survey/view/survey_completion_page.dart';
+import 'package:frontend/survey/view/survey_management_page.dart';
+import 'package:frontend/survey/view/survey_results_overview_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -123,6 +130,41 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       path: '/chat/:conversationId',
       page: ChatRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/surveys',
+      page: MySurveysRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/doctor/surveys',
+      page: SurveyManagementRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/surveys/:assignmentId',
+      page: SurveyCompletionRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/surveys/:surveyId/results',
+      page: SurveyResultsOverviewRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/surveys/:surveyId/results/aggregated',
+      page: AggregatedResultsRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/surveys/:surveyId/results/:patientId',
+      page: DoctorSurveyResultsRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/patients/:patientId/surveys',
+      page: PatientSurveysRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     RedirectRoute(path: '/', redirectTo: '/splash'),
