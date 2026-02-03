@@ -28,19 +28,19 @@ sealed class PatientHealthDataState with _$PatientHealthDataState {
 
   /// Returns blood pressure readings if loaded, empty list otherwise.
   List<BloodPressureReading> get bloodPressureOrEmpty => maybeWhen(
-        loaded: (bp, _, __) => bp,
+        loaded: (bp, bmi, bloodSugar) => bp,
         orElse: () => [],
       );
 
   /// Returns BMI measurements if loaded, empty list otherwise.
   List<BmiMeasurement> get bmiOrEmpty => maybeWhen(
-        loaded: (_, bmi, __) => bmi,
+        loaded: (bp, bmi, bloodSugar) => bmi,
         orElse: () => [],
       );
 
   /// Returns blood sugar readings if loaded, empty list otherwise.
   List<BloodSugarReading> get bloodSugarOrEmpty => maybeWhen(
-        loaded: (_, __, bs) => bs,
+        loaded: (bp, bmi, bs) => bs,
         orElse: () => [],
       );
 

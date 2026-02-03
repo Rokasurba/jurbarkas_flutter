@@ -72,7 +72,9 @@ class PatientProfileCard extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: ' ${profile.dateOfBirth}',
+                            text: ' ${AppDateFormats.formatDateString(
+                              profile.dateOfBirth,
+                            )}',
                             style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.secondaryText,

@@ -630,9 +630,9 @@
     "@bmiLabel": {
         "description": "BMI label for display"
     },
-    "dataTitle": "Duomenys",
+    "dataTitle": "Pacientai",
     "@dataTitle": {
-        "description": "Data title for doctor dashboard"
+        "description": "Patients title for doctor dashboard"
     },
     "filterBy": "Filtruoti pagal",
     "@filterBy": {
@@ -1458,5 +1458,57 @@
     "eventReminderRead": "Priminimas perskaitytas",
     "@eventReminderRead": {
         "description": "Reminder read event type"
+    },
+    "profileTitle": "Profilis",
+    "@profileTitle": {
+        "description": "Profile page title"
+    },
+    "profileInfo": "Asmeninė informacija",
+    "@profileInfo": {
+        "description": "Personal information section header"
+    },
+    "changePassword": "Keisti slaptažodį",
+    "@changePassword": {
+        "description": "Change password menu item"
+    },
+    "privacyPolicy": "Privatumo politika",
+    "@privacyPolicy": {
+        "description": "Privacy policy menu item"
+    },
+    "termsAndConditions": "Taisyklės ir sąlygos",
+    "@termsAndConditions": {
+        "description": "Terms and conditions menu item"
+    },
+    "currentPassword": "Dabartinis slaptažodis",
+    "@currentPassword": {
+        "description": "Current password field label"
+    },
+    "currentPasswordRequired": "Įveskite dabartinį slaptažodį",
+    "@currentPasswordRequired": {
+        "description": "Current password required error"
+    },
+    "incorrectCurrentPassword": "Neteisingas dabartinis slaptažodis",
+    "@incorrectCurrentPassword": {
+        "description": "Incorrect current password error"
+    },
+    "passwordChanged": "Slaptažodis pakeistas",
+    "@passwordChanged": {
+        "description": "Password changed success message"
+    },
+    "settings": "Nustatymai",
+    "@settings": {
+        "description": "Settings section header"
+    },
+    "changePasswordSubtitle": "Jūsų naujas slaptažodis turi skirtis nuo anksčiau naudoto slaptažodžio.",
+    "@changePasswordSubtitle": {
+        "description": "Change password page subtitle"
+    },
+    "passwordRequirementsHint": "Užtikrinkite, kad slaptažodį sudarytų:\n• Bent 8 simboliai",
+    "@passwordRequirementsHint": {
+        "description": "Password requirements hint text"
+    },
+    "repeatNewPassword": "Pakartoti naują slaptažodį",
+    "@repeatNewPassword": {
+        "description": "Repeat new password field label"
     }
 }

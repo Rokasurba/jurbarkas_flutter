@@ -7,6 +7,7 @@ import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/survey_builder_cubit.dart';
 import 'package:frontend/survey/cubit/survey_builder_state.dart';
 import 'package:frontend/survey/data/models/question_form_data.dart';
+import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
 
 /// Translates error codes to localized messages.
@@ -60,21 +61,13 @@ class _SurveyBuilderView extends StatelessWidget {
     return BlocConsumer<SurveyBuilderCubit, SurveyBuilderState>(
       listener: (context, state) {
         if (state is SurveyBuilderSaved) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                isEditMode ? l10n.surveyUpdated : l10n.surveyCreated,
-              ),
-            ),
+          AppSnackbar.showSuccess(
+            context,
+            isEditMode ? l10n.surveyUpdated : l10n.surveyCreated,
           );
-          context.router.maybePop(true);
+          unawaited(context.router.maybePop(true));
         } else if (state is SurveyBuilderError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          AppSnackbar.showError(context, state.message);
         }
       },
       builder: (context, state) {
@@ -104,7 +97,8 @@ class _SurveyBuilderView extends StatelessWidget {
               titleError: titleError,
               questionsError: questionsError,
             ),
-            saving: (_, __, ___, ____, _____) => const Center(
+            saving: (title, description, questions, isEditMode, surveyId) =>
+                const Center(
               child: CircularProgressIndicator(),
             ),
             saved: (_) => const SizedBox.shrink(),
@@ -131,6 +125,7 @@ class _SurveyBuilderView extends StatelessWidget {
           ),
           floatingActionButton: state is SurveyBuilderEditing && !state.hasResponses
               ? FloatingActionButton.extended(
+                  heroTag: 'addQuestionFab',
                   onPressed: () => _showAddQuestionSheet(context),
                   icon: const Icon(Icons.add),
                   label: Text(l10n.addQuestion),
@@ -147,7 +142,7 @@ class _SurveyBuilderView extends StatelessWidget {
   }
 
   void _showAddQuestionSheet(BuildContext context) {
-    showModalBottomSheet<QuestionFormData>(
+    unawaited(showModalBottomSheet<QuestionFormData>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -156,7 +151,7 @@ class _SurveyBuilderView extends StatelessWidget {
       if (question != null) {
         context.read<SurveyBuilderCubit>().addQuestion(question);
       }
-    });
+    }));
   }
 }
 
@@ -407,22 +402,25 @@ class _SurveyBuilderFormState extends State<_SurveyBuilderForm> {
     int index,
     QuestionFormData question,
   ) {
-    showModalBottomSheet<QuestionFormData>(
+    unawaited(showModalBottomSheet<QuestionFormData>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => _QuestionEditorSheet(existingQuestion: question),
     ).then((updatedQuestion) {
       if (updatedQuestion != null) {
-        context.read<SurveyBuilderCubit>().updateQuestion(index, updatedQuestion);
+        context.read<SurveyBuilderCubit>().updateQuestion(
+              index,
+              updatedQuestion,
+            );
       }
-    });
+    }));
   }
 
   void _confirmDeleteQuestion(BuildContext context, int index) {
     final l10n = context.l10n;
 
-    showDialog<bool>(
+    unawaited(showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.deleteConfirmTitle),
@@ -442,7 +440,7 @@ class _SurveyBuilderFormState extends State<_SurveyBuilderForm> {
       if (confirmed ?? false) {
         context.read<SurveyBuilderCubit>().removeQuestion(index);
       }
-    });
+    }));
   }
 }
 
@@ -902,16 +900,12 @@ class _QuestionEditorSheetState extends State<_QuestionEditorSheet> {
   void _saveQuestion() {
     final questionText = _questionTextController.text.trim();
     if (questionText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.questionText)),
-      );
+      AppSnackbar.showWarning(context, context.l10n.questionText);
       return;
     }
 
     if (_questionType != 'text' && _optionControllers.length < 2) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.addAtLeastTwoOptions)),
-      );
+      AppSnackbar.showWarning(context, context.l10n.addAtLeastTwoOptions);
       return;
     }
 

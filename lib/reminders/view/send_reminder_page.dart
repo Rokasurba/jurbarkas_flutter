@@ -81,20 +81,13 @@ class _SendReminderViewState extends State<SendReminderView> {
       listener: (context, state) {
         state.whenOrNull(
           success: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.reminderSentSuccess),
-                backgroundColor: Colors.green,
-              ),
-            );
+            AppSnackbar.showSuccess(context, l10n.reminderSentSuccess);
             unawaited(context.router.maybePop());
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(_resolveErrorMessage(context, message)),
-                backgroundColor: AppColors.error,
-              ),
+            AppSnackbar.showError(
+              context,
+              _resolveErrorMessage(context, message),
             );
           },
         );

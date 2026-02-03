@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/admin/view/widgets/doctor_detail/info_row.dart';
 import 'package:frontend/admin/view/widgets/doctor_detail/status_badge.dart';

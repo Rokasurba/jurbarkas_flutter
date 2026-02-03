@@ -136,21 +136,11 @@ class _AdminPatientEditViewState extends State<AdminPatientEditView> {
         listener: (context, state) {
           state.whenOrNull(
             updateSuccess: (_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.pacientasAtnaujintas),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              AppSnackbar.showSuccess(context, l10n.pacientasAtnaujintas);
               unawaited(context.router.maybePop(true));
             },
             error: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(message),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                ),
-              );
+              AppSnackbar.showError(context, message);
             },
           );
         },

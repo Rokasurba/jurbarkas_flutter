@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,13 +25,6 @@ class _AdminShellView extends StatelessWidget {
 
   final Widget child;
 
-  Future<void> _handleLogout(BuildContext context) async {
-    await context.read<AuthCubit>().logout();
-    if (context.mounted) {
-      await context.router.replaceAll([const LoginRoute()]);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -59,6 +50,9 @@ class _AdminShellView extends StatelessWidget {
   }
 
   Widget _buildSideNavigation(BuildContext context, AppLocalizations l10n) {
+    final currentPath = context.router.currentPath;
+    final isProfileSelected = currentPath.contains('/profile');
+
     return Theme(
       data: Theme.of(context).copyWith(
         drawerTheme: const DrawerThemeData(
@@ -118,17 +112,16 @@ class _AdminShellView extends StatelessWidget {
               _NavTile(
                 icon: Icons.admin_panel_settings,
                 label: l10n.administravimas,
-                selected: true,
-                onTap: () {},
+                selected: !isProfileSelected,
+                onTap: () => context.router.replace(const AdminMenuRoute()),
+              ),
+              _NavTile(
+                icon: Icons.person,
+                label: l10n.profileTitle,
+                selected: isProfileSelected,
+                onTap: () => context.router.replace(const ProfileRoute()),
               ),
               const Spacer(),
-              const Divider(),
-              ListTile(
-                tileColor: Colors.white,
-                leading: const Icon(Icons.logout),
-                title: Text(l10n.logoutButton),
-                onTap: () => unawaited(_handleLogout(context)),
-              ),
               const SafeArea(
                 top: false,
                 child: SizedBox(height: 8),

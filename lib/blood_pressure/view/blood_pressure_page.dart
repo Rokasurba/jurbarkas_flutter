@@ -77,7 +77,7 @@ class _BloodPressureViewState extends State<_BloodPressureView>
   }
 
   void _onDelete(BloodPressureReading reading) {
-    DeleteConfirmationDialog.show(
+    unawaited(DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
         Navigator.of(context).pop();
@@ -85,7 +85,7 @@ class _BloodPressureViewState extends State<_BloodPressureView>
           context.read<BloodPressureCubit>().deleteReading(id: reading.id),
         );
       },
-    );
+    ));
   }
 
   @override

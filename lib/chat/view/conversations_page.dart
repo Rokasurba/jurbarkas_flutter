@@ -59,6 +59,7 @@ class _ConversationsView extends StatelessWidget {
       ),
       floatingActionButton: cubit.isDoctor
           ? FloatingActionButton.extended(
+              heroTag: 'newConversationFab',
               onPressed: () => _showPatientSelector(context),
               icon: const Icon(Icons.edit),
               label: Text(l10n.conversationsNewMessage),

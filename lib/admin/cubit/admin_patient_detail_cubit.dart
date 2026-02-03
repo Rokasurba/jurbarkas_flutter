@@ -30,7 +30,9 @@ class AdminPatientDetailCubit extends Cubit<AdminPatientDetailState> {
     final response = await _adminRepository.deactivatePatient(id);
 
     response.when(
-      success: (_, __) => emit(const AdminPatientDetailState.deactivated()),
+      success: (data, message) {
+        emit(const AdminPatientDetailState.deactivated());
+      },
       error: (message, _) => emit(AdminPatientDetailState.error(message)),
     );
   }

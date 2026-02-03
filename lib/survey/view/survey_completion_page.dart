@@ -10,6 +10,7 @@ import 'package:frontend/survey/data/models/survey_answer.dart';
 import 'package:frontend/survey/data/models/survey_for_completion.dart';
 import 'package:frontend/survey/data/models/survey_question.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
+import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/view/survey_result_page.dart';
 
 @RoutePage()
@@ -47,9 +48,7 @@ class _SurveyCompletionView extends StatelessWidget {
         if (state is SurveyCompletionCompleted) {
           _showSuccessDialog(context, state.message);
         } else if (state is SurveyCompletionError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          AppSnackbar.showError(context, state.message);
         }
       },
       builder: (context, state) {

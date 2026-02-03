@@ -33,7 +33,7 @@ class PasswordResetRepository {
 
       // Save email to secure storage on success
       await apiResponse.whenOrNull(
-        success: (_, __) async {
+        success: (data, message) async {
           await _secureStorage.savePasswordResetData(email: email);
         },
       );
@@ -103,7 +103,7 @@ class PasswordResetRepository {
 
       // Clear secure storage on success
       await apiResponse.whenOrNull(
-        success: (_, __) async {
+        success: (data, message) async {
           await _secureStorage.clearPasswordResetData();
         },
       );

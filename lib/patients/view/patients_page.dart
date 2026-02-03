@@ -38,7 +38,7 @@ class _PatientsView extends StatelessWidget {
   const _PatientsView();
 
   void _onPatientTap(BuildContext context, int patientId) {
-    context.router.push(PatientProfileRoute(patientId: patientId));
+    unawaited(context.router.push(PatientProfileRoute(patientId: patientId)));
   }
 
   Future<void> _showFilterModal(BuildContext context) async {

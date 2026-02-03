@@ -23,29 +23,29 @@ sealed class PatientsState with _$PatientsState {
   bool get isLoading => this is PatientsLoading;
 
   List<PatientListItem> get patients => maybeWhen(
-    loaded: (patients, _, __, ___, ____) => patients,
+    loaded: (patients, total, hasMore, isLoadingMore, params) => patients,
     orElse: () => [],
   );
 
   int get total => maybeWhen(
-    loaded: (_, total, __, ___, ____) => total,
+    loaded: (patients, total, hasMore, isLoadingMore, params) => total,
     orElse: () => 0,
   );
 
   bool get hasMore => maybeWhen(
-    loaded: (_, __, hasMore, ___, ____) => hasMore,
+    loaded: (patients, total, hasMore, isLoadingMore, params) => hasMore,
     orElse: () => false,
   );
 
   bool get isLoadingMore => maybeWhen(
-    loaded: (_, __, ___, isLoadingMore, ____) => isLoadingMore,
+    loaded: (patients, total, hasMore, isLoadingMore, params) => isLoadingMore,
     orElse: () => false,
   );
 
   PatientListParams get params => maybeWhen(
     loading: (params) => params,
-    loaded: (_, __, ___, ____, params) => params,
-    error: (_, params) => params,
+    loaded: (patients, total, hasMore, isLoadingMore, params) => params,
+    error: (message, params) => params,
     orElse: PatientListParams.firstPage,
   );
 

@@ -54,7 +54,7 @@ class AdminDoctorFormCubit extends Cubit<AdminDoctorFormState> {
     final response = await _adminRepository.deactivateDoctor(id);
 
     response.when(
-      success: (_, __) {
+      success: (data, message) {
         // Return a placeholder user since deactivate returns void
         emit(const AdminDoctorFormState.initial());
       },

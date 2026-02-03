@@ -103,7 +103,7 @@ class BmiCubit extends Cubit<BmiState> {
     final response = await _bmiRepository.deleteMeasurement(id: id);
 
     response.when(
-      success: (_, __) {
+      success: (data, message) {
         final updatedMeasurements = currentMeasurements
             .where((measurement) => measurement.id != id)
             .toList();

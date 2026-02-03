@@ -20,11 +20,15 @@ class ActivityLogListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ActivityLogCubit(
-        adminRepository: AdminRepository(
-          apiClient: context.read<ApiClient>(),
-        ),
-      )..loadLogs(),
+      create: (context) {
+        final cubit = ActivityLogCubit(
+          adminRepository: AdminRepository(
+            apiClient: context.read<ApiClient>(),
+          ),
+        );
+        unawaited(cubit.loadLogs());
+        return cubit;
+      },
       child: const ActivityLogListView(),
     );
   }
@@ -57,7 +61,7 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<ActivityLogCubit>().loadMore();
+      unawaited(context.read<ActivityLogCubit>().loadMore());
     }
   }
 
@@ -106,12 +110,7 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
     if (!mounted) return;
 
     if (csvContent == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.eksportoKlaida),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      AppSnackbar.showError(context, l10n.eksportoKlaida);
       return;
     }
 
@@ -125,12 +124,7 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
     }
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.eksportasSekmingas),
-          backgroundColor: Colors.green,
-        ),
-      );
+      AppSnackbar.showSuccess(context, l10n.eksportasSekmingas);
     }
   }
 

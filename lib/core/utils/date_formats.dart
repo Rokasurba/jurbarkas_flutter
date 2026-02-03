@@ -9,6 +9,9 @@ abstract class AppDateFormats {
   /// Standard date format: 2026-01-23
   static final DateFormat date = DateFormat('yyyy-MM-dd');
 
+  /// Display date format: 2026-01-23
+  static final DateFormat displayDate = DateFormat('yyyy-MM-dd');
+
   /// Standard time format: 14:30
   static final DateFormat time = DateFormat('HH:mm');
 
@@ -21,6 +24,18 @@ abstract class AppDateFormats {
   /// Formats a DateTime to ISO date string (YYYY-MM-DD) for API requests.
   static String toApiDate(DateTime date) =>
       date.toIso8601String().split('T').first;
+
+  /// Parses an ISO date string and formats it for display.
+  /// Returns the original string if parsing fails.
+  static String formatDateString(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '';
+    try {
+      final parsed = DateTime.parse(dateString);
+      return displayDate.format(parsed);
+    } on FormatException {
+      return dateString;
+    }
+  }
 }
 
 /// Extension methods for DateTime formatting.

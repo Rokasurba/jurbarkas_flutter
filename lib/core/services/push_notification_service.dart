@@ -47,7 +47,7 @@ class PushNotificationService {
       }
 
       // Listen for token refresh
-      _tokenRefreshSubscription?.cancel();
+      unawaited(_tokenRefreshSubscription?.cancel());
       _tokenRefreshSubscription =
           _firebaseMessaging.onTokenRefresh.listen((token) {
         log('PushNotificationService: FCM token refreshed');
@@ -70,7 +70,7 @@ class PushNotificationService {
 
   /// Disposes the service and cancels subscriptions.
   void dispose() {
-    _tokenRefreshSubscription?.cancel();
+    unawaited(_tokenRefreshSubscription?.cancel());
     _tokenRefreshSubscription = null;
     onTokenRefresh = null;
     onForegroundMessage = null;

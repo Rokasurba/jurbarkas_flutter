@@ -630,9 +630,9 @@
     "@bmiLabel": {
         "description": "BMI label for display"
     },
-    "dataTitle": "Data",
+    "dataTitle": "Patients",
     "@dataTitle": {
-        "description": "Data title for doctor dashboard"
+        "description": "Patients title for doctor dashboard"
     },
     "filterBy": "Filter by",
     "@filterBy": {
@@ -1450,5 +1450,57 @@
     "eventReminderRead": "Reminder read",
     "@eventReminderRead": {
         "description": "Reminder read event type"
+    },
+    "profileTitle": "Profile",
+    "@profileTitle": {
+        "description": "Profile page title"
+    },
+    "profileInfo": "Personal Information",
+    "@profileInfo": {
+        "description": "Personal information section header"
+    },
+    "changePassword": "Change Password",
+    "@changePassword": {
+        "description": "Change password menu item"
+    },
+    "privacyPolicy": "Privacy Policy",
+    "@privacyPolicy": {
+        "description": "Privacy policy menu item"
+    },
+    "termsAndConditions": "Terms and Conditions",
+    "@termsAndConditions": {
+        "description": "Terms and conditions menu item"
+    },
+    "currentPassword": "Current Password",
+    "@currentPassword": {
+        "description": "Current password field label"
+    },
+    "currentPasswordRequired": "Please enter your current password",
+    "@currentPasswordRequired": {
+        "description": "Current password required error"
+    },
+    "incorrectCurrentPassword": "Incorrect current password",
+    "@incorrectCurrentPassword": {
+        "description": "Incorrect current password error"
+    },
+    "passwordChanged": "Password changed",
+    "@passwordChanged": {
+        "description": "Password changed success message"
+    },
+    "settings": "Settings",
+    "@settings": {
+        "description": "Settings section header"
+    },
+    "changePasswordSubtitle": "Your new password must be different from the previously used password.",
+    "@changePasswordSubtitle": {
+        "description": "Change password page subtitle"
+    },
+    "passwordRequirementsHint": "Ensure that your password contains:\n• At least 8 characters",
+    "@passwordRequirementsHint": {
+        "description": "Password requirements hint text"
+    },
+    "repeatNewPassword": "Repeat new password",
+    "@repeatNewPassword": {
+        "description": "Repeat new password field label"
     }
 }

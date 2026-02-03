@@ -99,7 +99,7 @@ class BloodSugarCubit extends Cubit<BloodSugarState> {
     final response = await _bloodSugarRepository.deleteReading(id: id);
 
     response.when(
-      success: (_, __) {
+      success: (data, message) {
         final updatedReadings =
             currentReadings.where((reading) => reading.id != id).toList();
         final hasMore = _currentFromDate == null &&

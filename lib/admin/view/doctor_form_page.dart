@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,7 +63,7 @@ class _DoctorFormViewState extends State<DoctorFormView> {
           : null,
     );
 
-    context.read<AdminDoctorFormCubit>().createDoctor(request);
+    unawaited(context.read<AdminDoctorFormCubit>().createDoctor(request));
   }
 
   @override
@@ -89,12 +91,7 @@ class _DoctorFormViewState extends State<DoctorFormView> {
               }
             },
             error: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(message),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                ),
-              );
+              AppSnackbar.showError(context, message);
             },
           );
         },
@@ -201,7 +198,7 @@ class _DoctorFormViewState extends State<DoctorFormView> {
   ) {
     final l10n = context.l10n;
 
-    showDialog<void>(
+    unawaited(showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
@@ -228,13 +225,10 @@ class _DoctorFormViewState extends State<DoctorFormView> {
                 IconButton(
                   icon: const Icon(Icons.copy, size: 20),
                   onPressed: () {
-                    Clipboard.setData(ClipboardData(text: tempPassword));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.copiedToClipboard),
-                        duration: const Duration(seconds: 1),
-                      ),
+                    unawaited(
+                      Clipboard.setData(ClipboardData(text: tempPassword)),
                     );
+                    AppSnackbar.showInfo(context, l10n.copiedToClipboard);
                   },
                   tooltip: l10n.copyTooltip,
                 ),
@@ -246,12 +240,12 @@ class _DoctorFormViewState extends State<DoctorFormView> {
           FilledButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              context.router.maybePop(true);
+              unawaited(context.router.maybePop(true));
             },
             child: Text(l10n.ok),
           ),
         ],
       ),
-    );
+    ));
   }
 }

@@ -422,30 +422,15 @@ class _AdminPatientStatusButton extends StatelessWidget {
       listener: (context, state) {
         state.whenOrNull(
           deactivated: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.pacientasDeaktyvuotas),
-                backgroundColor: Colors.orange,
-              ),
-            );
+            AppSnackbar.showWarning(context, l10n.pacientasDeaktyvuotas);
             unawaited(context.read<PatientProfileCubit>().loadProfile());
           },
           reactivated: (_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.pacientasAktyvuotas),
-                backgroundColor: Colors.green,
-              ),
-            );
+            AppSnackbar.showSuccess(context, l10n.pacientasAktyvuotas);
             unawaited(context.read<PatientProfileCubit>().loadProfile());
           },
           error: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
+            AppSnackbar.showError(context, message);
           },
         );
       },

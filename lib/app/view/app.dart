@@ -77,7 +77,7 @@ class _AppProvidersState extends State<_AppProviders> {
   }
 
   Future<void> _onAuthStateChanged(AuthState state) async {
-    state.whenOrNull(
+    await state.whenOrNull(
       authenticated: (_) => _initializePushNotifications(),
       unauthenticated: () {
         _pushNotificationsInitialized = false;

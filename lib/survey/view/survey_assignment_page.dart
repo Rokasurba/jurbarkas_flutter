@@ -7,6 +7,7 @@ import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:frontend/survey/cubit/survey_assignment_cubit.dart';
 import 'package:frontend/survey/cubit/survey_assignment_state.dart';
+import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
 
 @RoutePage()
@@ -44,21 +45,13 @@ class _SurveyAssignmentView extends StatelessWidget {
     return BlocConsumer<SurveyAssignmentCubit, SurveyAssignmentState>(
       listener: (context, state) {
         if (state is SurveyAssignmentAssigned) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.surveyAssigned(state.assignedCount),
-              ),
-            ),
+          AppSnackbar.showSuccess(
+            context,
+            l10n.surveyAssigned(state.assignedCount),
           );
-          context.router.maybePop(true);
+          unawaited(context.router.maybePop(true));
         } else if (state is SurveyAssignmentError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          AppSnackbar.showError(context, state.message);
         }
       },
       builder: (context, state) {
@@ -126,7 +119,7 @@ class _SurveyAssignmentView extends StatelessWidget {
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () {
-                      context.read<SurveyAssignmentCubit>().reload();
+                      unawaited(context.read<SurveyAssignmentCubit>().reload());
                     },
                     icon: const Icon(Icons.refresh),
                     label: Text(l10n.retryButton),

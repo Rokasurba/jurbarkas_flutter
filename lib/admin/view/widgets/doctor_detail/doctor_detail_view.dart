@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/admin/cubit/admin_doctor_detail_cubit.dart';
@@ -31,13 +30,15 @@ class _DoctorDetailViewState extends State<DoctorDetailView> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
-          context.router.maybePop(_hasChanges);
+          unawaited(context.router.maybePop(_hasChanges));
         }
       },
       child: BlocBuilder<AdminDoctorDetailCubit, AdminDoctorDetailState>(
         builder: (context, state) {
-          debugPrint('[DoctorDetailView] BlocBuilder rebuilding, state: '
-              '${state.runtimeType}');
+          debugPrint(
+            '[DoctorDetailView] BlocBuilder rebuilding, state: '
+            '${state.runtimeType}',
+          );
           return state.when(
             initial: () {
               debugPrint('[DoctorDetailView] Rendering initial state');
@@ -50,8 +51,10 @@ class _DoctorDetailViewState extends State<DoctorDetailView> {
               );
             },
             loaded: (doctor, isUpdating) {
-              debugPrint('[DoctorDetailView] Rendering loaded state for: '
-                  '${doctor.fullName}');
+              debugPrint(
+                '[DoctorDetailView] Rendering loaded state for: '
+                '${doctor.fullName}',
+              );
               return _DoctorLoadedView(
                 doctor: doctor,
                 isUpdating: isUpdating,
@@ -119,9 +122,7 @@ class _DoctorDetailViewState extends State<DoctorDetailView> {
           .read<AdminDoctorDetailCubit>()
           .deactivateDoctor();
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.gydytojasDeaktyvuotas)),
-        );
+        AppSnackbar.showSuccess(context, context.l10n.gydytojasDeaktyvuotas);
         setState(() => _hasChanges = true);
       }
     }
@@ -132,9 +133,7 @@ class _DoctorDetailViewState extends State<DoctorDetailView> {
         .read<AdminDoctorDetailCubit>()
         .reactivateDoctor();
     if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.gydytojasAktyvuotas)),
-      );
+      AppSnackbar.showSuccess(context, context.l10n.gydytojasAktyvuotas);
       setState(() => _hasChanges = true);
     }
   }

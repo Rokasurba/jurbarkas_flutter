@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,11 +19,15 @@ class DoctorListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AdminDoctorListCubit(
-        adminRepository: AdminRepository(
-          apiClient: context.read<ApiClient>(),
-        ),
-      )..loadDoctors(),
+      create: (context) {
+        final cubit = AdminDoctorListCubit(
+          adminRepository: AdminRepository(
+            apiClient: context.read<ApiClient>(),
+          ),
+        );
+        unawaited(cubit.loadDoctors());
+        return cubit;
+      },
       child: const DoctorListView(),
     );
   }
@@ -65,7 +71,9 @@ class DoctorListView extends StatelessWidget {
                     if (notification is ScrollEndNotification) {
                       final metrics = notification.metrics;
                       if (metrics.pixels >= metrics.maxScrollExtent - 200) {
-                        context.read<AdminDoctorListCubit>().loadMore();
+                        unawaited(
+                          context.read<AdminDoctorListCubit>().loadMore(),
+                        );
                       }
                     }
                     return false;
@@ -106,12 +114,13 @@ class DoctorListView extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'addDoctorFab',
         backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
         onPressed: () async {
           final result = await context.router.push(const DoctorFormRoute());
           if (result == true && context.mounted) {
-            context.read<AdminDoctorListCubit>().refresh();
+            unawaited(context.read<AdminDoctorListCubit>().refresh());
           }
         },
         icon: const Icon(Icons.add),
@@ -199,7 +208,7 @@ class _DoctorCard extends StatelessWidget {
             DoctorDetailRoute(doctorId: doctor.id),
           );
           if (result == true && context.mounted) {
-            context.read<AdminDoctorListCubit>().refresh();
+            unawaited(context.read<AdminDoctorListCubit>().refresh());
           }
         },
       ),

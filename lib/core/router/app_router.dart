@@ -43,6 +43,9 @@ import 'package:frontend/survey/view/survey_builder_page.dart';
 import 'package:frontend/survey/view/survey_completion_page.dart';
 import 'package:frontend/survey/view/survey_management_page.dart';
 import 'package:frontend/survey/view/survey_results_overview_page.dart';
+import 'package:frontend/profile/view/change_password_page.dart';
+import 'package:frontend/profile/view/legal_document_page.dart';
+import 'package:frontend/profile/view/profile_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -89,6 +92,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: 'messages', page: ConversationsRoute.page),
         AutoRoute(path: 'reminders', page: RemindersRoute.page),
         AutoRoute(path: 'surveys', page: MySurveysRoute.page),
+        AutoRoute(path: 'profile', page: ProfileRoute.page),
         RedirectRoute(path: '', redirectTo: 'dashboard'),
       ],
     ),
@@ -102,6 +106,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: 'dashboard', page: DoctorDashboardRoute.page),
         AutoRoute(path: 'messages', page: ConversationsRoute.page),
         AutoRoute(path: 'surveys', page: SurveyManagementRoute.page),
+        AutoRoute(path: 'profile', page: ProfileRoute.page),
         RedirectRoute(path: '', redirectTo: 'dashboard'),
       ],
     ),
@@ -113,6 +118,7 @@ class AppRouter extends RootStackRouter {
       guards: [AuthGuard(authCubit)],
       children: [
         AutoRoute(path: 'menu', page: AdminMenuRoute.page),
+        AutoRoute(path: 'profile', page: ProfileRoute.page),
         RedirectRoute(path: '', redirectTo: 'menu'),
       ],
     ),
@@ -221,6 +227,16 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       path: '/patients/:patientId/surveys',
       page: PatientSurveysRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/change-password',
+      page: ChangePasswordRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/legal/:documentType',
+      page: LegalDocumentRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     RedirectRoute(path: '/', redirectTo: '/splash'),

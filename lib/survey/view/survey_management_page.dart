@@ -8,6 +8,7 @@ import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/doctor_survey_list_cubit.dart';
 import 'package:frontend/survey/cubit/doctor_survey_list_state.dart';
 import 'package:frontend/survey/data/models/survey.dart';
+import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
 
 @RoutePage()
@@ -73,6 +74,7 @@ class _SurveyManagementView extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'newSurveyFab',
         onPressed: () async {
           final created = await context.router.push<bool>(
             SurveyBuilderRoute(),
@@ -230,19 +232,12 @@ class _SurveyCard extends StatelessWidget {
       if (!context.mounted) return;
 
       response.when(
-        success: (_, __) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.surveyDeleted)),
-          );
-          context.read<DoctorSurveyListCubit>().loadSurveys();
+        success: (data, message) {
+          AppSnackbar.showSuccess(context, l10n.surveyDeleted);
+          unawaited(context.read<DoctorSurveyListCubit>().loadSurveys());
         },
         error: (message, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: theme.colorScheme.error,
-            ),
-          );
+          AppSnackbar.showError(context, message);
         },
       );
     }

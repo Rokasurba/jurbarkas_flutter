@@ -77,7 +77,7 @@ class _BmiViewState extends State<_BmiView>
   }
 
   void _onDelete(BmiMeasurement measurement) {
-    DeleteConfirmationDialog.show(
+    unawaited(DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
         Navigator.of(context).pop();
@@ -85,7 +85,7 @@ class _BmiViewState extends State<_BmiView>
           context.read<BmiCubit>().deleteMeasurement(id: measurement.id),
         );
       },
-    );
+    ));
   }
 
   @override

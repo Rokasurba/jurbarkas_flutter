@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +48,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _showDevLoginSelector() {
-    showModalBottomSheet<void>(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -58,7 +60,7 @@ class _LoginViewState extends State<LoginView> {
           _passwordController.text = password;
         },
       ),
-    );
+    ));
   }
 
   @override

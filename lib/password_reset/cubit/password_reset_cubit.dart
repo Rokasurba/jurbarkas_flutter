@@ -39,7 +39,7 @@ class PasswordResetCubit extends Cubit<PasswordResetState> {
     );
 
     response.when(
-      success: (_, __) => emit(const PasswordResetState.otpVerified()),
+      success: (data, message) => emit(const PasswordResetState.otpVerified()),
       error: (message, _) => emit(PasswordResetState.error(message)),
     );
   }

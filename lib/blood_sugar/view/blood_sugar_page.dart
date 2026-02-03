@@ -77,7 +77,7 @@ class _BloodSugarViewState extends State<_BloodSugarView>
   }
 
   void _onDelete(BloodSugarReading reading) {
-    DeleteConfirmationDialog.show(
+    unawaited(DeleteConfirmationDialog.show(
       context,
       onConfirm: () {
         Navigator.of(context).pop();
@@ -85,7 +85,7 @@ class _BloodSugarViewState extends State<_BloodSugarView>
           context.read<BloodSugarCubit>().deleteReading(id: reading.id),
         );
       },
-    );
+    ));
   }
 
   @override

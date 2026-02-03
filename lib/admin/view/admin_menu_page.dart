@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -11,13 +9,6 @@ import 'package:frontend/l10n/l10n.dart';
 @RoutePage()
 class AdminMenuPage extends StatelessWidget {
   const AdminMenuPage({super.key});
-
-  Future<void> _handleLogout(BuildContext context) async {
-    await context.read<AuthCubit>().logout();
-    if (context.mounted) {
-      await context.router.replaceAll([const LoginRoute()]);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +30,11 @@ class AdminMenuPage extends StatelessWidget {
             actions: info.isMobile
                 ? [
                     IconButton(
-                      icon: const Icon(Icons.logout),
-                      onPressed: () => unawaited(_handleLogout(context)),
-                      tooltip: l10n.logoutButton,
+                      icon: const Icon(Icons.person_outline),
+                      onPressed: () {
+                        unawaited(context.router.push(const ProfileRoute()));
+                      },
+                      tooltip: l10n.profileTitle,
                     ),
                   ]
                 : null,
@@ -53,7 +46,7 @@ class AdminMenuPage extends StatelessWidget {
                 title: l10n.gydytojai,
                 subtitle: l10n.gydytojuValdymas,
                 onTap: () {
-                  context.router.push(const DoctorListRoute());
+                  unawaited(context.router.push(const DoctorListRoute()));
                 },
               ),
               _AdminMenuTile(
@@ -61,7 +54,7 @@ class AdminMenuPage extends StatelessWidget {
                 title: l10n.pacientai,
                 subtitle: l10n.pacientuValdymas,
                 onTap: () {
-                  context.router.push(const PatientsRoute());
+                  unawaited(context.router.push(const PatientsRoute()));
                 },
               ),
               _AdminMenuTile(
@@ -69,7 +62,7 @@ class AdminMenuPage extends StatelessWidget {
                 title: l10n.veiklosZurnalas,
                 subtitle: l10n.gdprVeiklosIrasai,
                 onTap: () {
-                  context.router.push(const ActivityLogListRoute());
+                  unawaited(context.router.push(const ActivityLogListRoute()));
                 },
               ),
             ],

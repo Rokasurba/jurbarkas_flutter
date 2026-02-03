@@ -79,7 +79,7 @@ class AdminDoctorDetailCubit extends Cubit<AdminDoctorDetailState> {
     final response = await _adminRepository.deactivateDoctor(_doctorId);
 
     return response.when(
-      success: (_, __) {
+      success: (data, message) {
         final updatedDoctor = currentState.doctor.copyWith(isActive: false);
         emit(AdminDoctorDetailState.loaded(doctor: updatedDoctor));
         return true;

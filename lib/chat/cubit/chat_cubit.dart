@@ -239,7 +239,7 @@ class ChatCubit extends Cubit<ChatState> {
           }
         }
       },
-      error: (_, __) {},
+      error: (message, errors) {},
     );
   }
 
@@ -269,14 +269,14 @@ class ChatCubit extends Cubit<ChatState> {
     if (isClosed) return;
 
     response.when(
-      success: (_, __) {
+      success: (data, message) {
         _myLastReadId = lastReadId;
         final latestState = state;
         if (latestState is ChatLoaded) {
           emit(latestState.copyWith(myLastReadId: lastReadId));
         }
       },
-      error: (_, __) {},
+      error: (message, errors) {},
     );
   }
 

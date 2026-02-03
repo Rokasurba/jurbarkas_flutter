@@ -109,12 +109,12 @@ class PatientsCubit extends Cubit<PatientsState> {
 
     // Clear search immediately without debounce
     if (query.isEmpty) {
-      _performSearch(query);
+      unawaited(_performSearch(query));
       return;
     }
 
     _debounce = Timer(_debounceDuration, () {
-      _performSearch(query);
+      unawaited(_performSearch(query));
     });
   }
 

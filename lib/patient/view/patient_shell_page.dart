@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +18,9 @@ class PatientShellPage extends StatelessWidget {
         ConversationsRoute(),
         RemindersRoute(),
         MySurveysRoute(),
+        ProfileRoute(),
       ],
+      transitionBuilder: (context, child, animation) => child,
       builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
         return _PatientShellView(
@@ -40,13 +40,6 @@ class _PatientShellView extends StatelessWidget {
 
   final TabsRouter tabsRouter;
   final Widget child;
-
-  Future<void> _handleLogout(BuildContext context) async {
-    await context.read<AuthCubit>().logout();
-    if (context.mounted) {
-      await context.router.replaceAll([const LoginRoute()]);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +73,11 @@ class _PatientShellView extends StatelessWidget {
                   icon: const Icon(Icons.assignment_outlined),
                   selectedIcon: const Icon(Icons.assignment),
                   label: l10n.surveyListTitle,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.person_outlined),
+                  selectedIcon: const Icon(Icons.person),
+                  label: l10n.profileTitle,
                 ),
               ],
             ),
@@ -180,14 +178,13 @@ class _PatientShellView extends StatelessWidget {
                 selected: tabsRouter.activeIndex == 3,
                 onTap: () => tabsRouter.setActiveIndex(3),
               ),
-              const Spacer(),
-              const Divider(),
-              ListTile(
-                tileColor: Colors.white,
-                leading: const Icon(Icons.logout),
-                title: Text(l10n.logoutButton),
-                onTap: () => unawaited(_handleLogout(context)),
+              _NavTile(
+                icon: Icons.person,
+                label: l10n.profileTitle,
+                selected: tabsRouter.activeIndex == 4,
+                onTap: () => tabsRouter.setActiveIndex(4),
               ),
+              const Spacer(),
               const SafeArea(
                 top: false,
                 child: SizedBox(height: 8),
