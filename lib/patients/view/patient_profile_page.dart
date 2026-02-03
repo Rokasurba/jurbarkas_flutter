@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/admin/admin.dart';
 import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
@@ -49,14 +50,23 @@ class PatientProfilePage extends StatelessWidget {
             return cubit;
           },
         ),
+        BlocProvider(
+          create: (context) => AdminPatientDetailCubit(
+            adminRepository: AdminRepository(
+              apiClient: context.read<ApiClient>(),
+            ),
+          ),
+        ),
       ],
-      child: const _PatientProfileView(),
+      child: _PatientProfileView(patientId: patientId),
     );
   }
 }
 
 class _PatientProfileView extends StatelessWidget {
-  const _PatientProfileView();
+  const _PatientProfileView({required this.patientId});
+
+  final int patientId;
 
   @override
   Widget build(BuildContext context) {
@@ -263,6 +273,60 @@ class _PatientProfileView extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            // Admin-only buttons
+                            if (user.isAdmin) ...[
+                              const SizedBox(height: 24),
+                              const Divider(),
+                              const SizedBox(height: 12),
+                              Text(
+                                l10n.pacientuValdymas,
+                                style: context.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.secondaryText,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              // Edit patient button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 56,
+                                child: OutlinedButton.icon(
+                                  onPressed: () async {
+                                    final result = await context.router.push(
+                                      AdminPatientEditRoute(
+                                        patientId: patientId,
+                                        patient: profile,
+                                      ),
+                                    );
+                                    if (result == true && context.mounted) {
+                                      unawaited(
+                                        context
+                                            .read<PatientProfileCubit>()
+                                            .loadProfile(),
+                                      );
+                                    }
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                  label: Text(
+                                    l10n.redaguotiPacienta,
+                                    style: context.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(22),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              // Deactivate/Activate button
+                              _AdminPatientStatusButton(
+                                patientId: patientId,
+                                isActive: profile.isActive,
+                              ),
+                            ],
                           ],
                         ),
                       );
@@ -308,6 +372,157 @@ class _PatientProfileView extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class _AdminPatientStatusButton extends StatelessWidget {
+  const _AdminPatientStatusButton({
+    required this.patientId,
+    required this.isActive,
+  });
+
+  final int patientId;
+  final bool isActive;
+
+  Future<void> _showDeactivateConfirmation(BuildContext context) async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.deaktyvuotiPacienta),
+        content: Text(l10n.arTikraiDeaktyvuotiPacienta),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancelButton),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            child: Text(l10n.deaktyvuotiPacienta),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      unawaited(
+        context.read<AdminPatientDetailCubit>().deactivatePatient(patientId),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return BlocListener<AdminPatientDetailCubit, AdminPatientDetailState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          deactivated: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.pacientasDeaktyvuotas),
+                backgroundColor: Colors.orange,
+              ),
+            );
+            unawaited(context.read<PatientProfileCubit>().loadProfile());
+          },
+          reactivated: (_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.pacientasAktyvuotas),
+                backgroundColor: Colors.green,
+              ),
+            );
+            unawaited(context.read<PatientProfileCubit>().loadProfile());
+          },
+          error: (message) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          },
+        );
+      },
+      child: BlocBuilder<AdminPatientDetailCubit, AdminPatientDetailState>(
+        builder: (context, state) {
+          final isLoading = state is AdminPatientDetailUpdating;
+
+          if (isActive) {
+            // Show deactivate button
+            return SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: OutlinedButton.icon(
+                onPressed:
+                    isLoading ? null : () => _showDeactivateConfirmation(context),
+                icon: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.block, color: AppColors.error),
+                label: Text(
+                  l10n.deaktyvuotiPacienta,
+                  style: context.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isLoading ? null : AppColors.error,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.error),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            // Show activate button
+            return SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: FilledButton.icon(
+                onPressed: isLoading
+                    ? null
+                    : () => context
+                        .read<AdminPatientDetailCubit>()
+                        .reactivatePatient(patientId),
+                icon: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.check_circle),
+                label: Text(
+                  l10n.aktivuotiPacienta,
+                  style: context.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
   }
 }
 

@@ -162,6 +162,15 @@ class AdminDashboardView extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            tileColor: Colors.white,
+            leading: const Icon(Icons.admin_panel_settings),
+            title: Text(l10n.administravimas),
+            onTap: () {
+              closeDrawerIfMobile();
+              unawaited(context.router.push(const AdminMenuRoute()));
+            },
+          ),
           const Spacer(),
           const Divider(),
           ListTile(

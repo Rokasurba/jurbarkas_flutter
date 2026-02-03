@@ -865,5 +865,442 @@
     "viewSurveyResponse": "Peržiūrėti",
     "@viewSurveyResponse": {
         "description": "View survey response button"
+    },
+    "newSurvey": "Nauja apklausa",
+    "@newSurvey": {
+        "description": "New survey FAB label"
+    },
+    "editSurvey": "Redaguoti",
+    "@editSurvey": {
+        "description": "Edit survey menu option"
+    },
+    "assignSurvey": "Priskirti",
+    "@assignSurvey": {
+        "description": "Assign survey menu option"
+    },
+    "deleteSurvey": "Ištrinti",
+    "@deleteSurvey": {
+        "description": "Delete survey menu option"
+    },
+    "deleteSurveyTitle": "Ištrinti apklausą?",
+    "@deleteSurveyTitle": {
+        "description": "Delete survey confirmation dialog title"
+    },
+    "deleteSurveyConfirmation": "Ar tikrai norite ištrinti apklausą \"{title}\"? Šio veiksmo negalima atšaukti.",
+    "@deleteSurveyConfirmation": {
+        "description": "Delete survey confirmation message",
+        "placeholders": {
+            "title": {
+                "type": "String",
+                "example": "Savaitinis klausimynas"
+            }
+        }
+    },
+    "surveyDeleted": "Apklausa ištrinta",
+    "@surveyDeleted": {
+        "description": "Survey deleted success message"
+    },
+    "createSurvey": "Kurti apklausą",
+    "@createSurvey": {
+        "description": "Create survey page title"
+    },
+    "editSurveyTitle": "Redaguoti apklausą",
+    "@editSurveyTitle": {
+        "description": "Edit survey page title"
+    },
+    "surveyTitleLabel": "Pavadinimas",
+    "@surveyTitleLabel": {
+        "description": "Survey title field label"
+    },
+    "surveyTitleHint": "Įveskite apklausos pavadinimą",
+    "@surveyTitleHint": {
+        "description": "Survey title field hint"
+    },
+    "surveyDescriptionLabel": "Aprašymas (neprivaloma)",
+    "@surveyDescriptionLabel": {
+        "description": "Survey description field label"
+    },
+    "surveyDescriptionHint": "Įveskite apklausos aprašymą",
+    "@surveyDescriptionHint": {
+        "description": "Survey description field hint"
+    },
+    "questionsSection": "Klausimai",
+    "@questionsSection": {
+        "description": "Questions section header"
+    },
+    "addQuestion": "Pridėti klausimą",
+    "@addQuestion": {
+        "description": "Add question button"
+    },
+    "noQuestionsYet": "Nėra klausimų. Pridėkite pirmą klausimą.",
+    "@noQuestionsYet": {
+        "description": "Empty state when no questions added"
+    },
+    "questionTypeSingle": "Vienas atsakymas",
+    "@questionTypeSingle": {
+        "description": "Single choice question type"
+    },
+    "questionTypeMulti": "Keli atsakymai",
+    "@questionTypeMulti": {
+        "description": "Multiple choice question type"
+    },
+    "questionTypeText": "Tekstas",
+    "@questionTypeText": {
+        "description": "Text question type"
+    },
+    "questionTextLabel": "Klausimo tekstas",
+    "@questionTextLabel": {
+        "description": "Question text field label"
+    },
+    "questionTextHint": "Įveskite klausimą",
+    "@questionTextHint": {
+        "description": "Question text field hint"
+    },
+    "requiredQuestion": "Privalomas",
+    "@requiredQuestion": {
+        "description": "Required question checkbox label"
+    },
+    "optionsSection": "Atsakymo variantai",
+    "@optionsSection": {
+        "description": "Options section header"
+    },
+    "addOption": "Pridėti variantą",
+    "@addOption": {
+        "description": "Add option button"
+    },
+    "optionHint": "Atsakymo variantas",
+    "@optionHint": {
+        "description": "Option text field hint"
+    },
+    "newQuestion": "Naujas klausimas",
+    "@newQuestion": {
+        "description": "New question sheet title"
+    },
+    "editQuestion": "Redaguoti klausimą",
+    "@editQuestion": {
+        "description": "Edit question sheet title"
+    },
+    "surveyTitleRequired": "Įveskite apklausos pavadinimą",
+    "@surveyTitleRequired": {
+        "description": "Survey title required error"
+    },
+    "questionsRequired": "Pridėkite bent vieną klausimą",
+    "@questionsRequired": {
+        "description": "Questions required error"
+    },
+    "questionTextRequired": "Įveskite klausimo tekstą",
+    "@questionTextRequired": {
+        "description": "Question text required error"
+    },
+    "optionsRequired": "Pridėkite bent du atsakymo variantus",
+    "@optionsRequired": {
+        "description": "Options required error"
+    },
+    "optionTextRequired": "Įveskite atsakymo variantą",
+    "@optionTextRequired": {
+        "description": "Option text required error"
+    },
+    "surveySaved": "Apklausa išsaugota",
+    "@surveySaved": {
+        "description": "Survey saved success message"
+    },
+    "surveyAssigned": "{count, plural, =0{Niekas nepriskirtas} =1{Priskirta 1 pacientui} few{Priskirta {count} pacientams} many{Priskirta {count} pacientų} other{Priskirta {count} pacientams}}",
+    "@surveyAssigned": {
+        "description": "Survey assigned success message",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "surveyUpdated": "Apklausa atnaujinta",
+    "@surveyUpdated": {
+        "description": "Survey updated success message"
+    },
+    "surveyCreated": "Apklausa sukurta",
+    "@surveyCreated": {
+        "description": "Survey created success message"
+    },
+    "surveyTitle": "Pavadinimas",
+    "@surveyTitle": {
+        "description": "Survey title field label"
+    },
+    "surveyDescription": "Aprašymas (neprivaloma)",
+    "@surveyDescription": {
+        "description": "Survey description field label"
+    },
+    "enterTitle": "Įveskite pavadinimą",
+    "@enterTitle": {
+        "description": "Enter title error message"
+    },
+    "saveSurvey": "Išsaugoti apklausą",
+    "@saveSurvey": {
+        "description": "Save survey button label"
+    },
+    "cannotEditSurveyWithResponses": "Negalima redaguoti apklausos, kuri jau turi atsakymų",
+    "@cannotEditSurveyWithResponses": {
+        "description": "Cannot edit survey with responses message"
+    },
+    "addAtLeastOneQuestion": "Pridėkite bent vieną klausimą",
+    "@addAtLeastOneQuestion": {
+        "description": "Add at least one question error"
+    },
+    "addAtLeastTwoOptions": "Pridėkite bent du atsakymo variantus",
+    "@addAtLeastTwoOptions": {
+        "description": "Add at least two options error"
+    },
+    "questionText": "Klausimo tekstas",
+    "@questionText": {
+        "description": "Question text field label"
+    },
+    "optionText": "Atsakymo variantas",
+    "@optionText": {
+        "description": "Option text field label"
+    },
+    "questionRequired": "Privalomas klausimas",
+    "@questionRequired": {
+        "description": "Required question toggle label"
+    },
+    "questionsSection": "Klausimai",
+    "@questionsSection": {
+        "description": "Questions section header"
+    },
+    "questionTypeLabel": "Klausimo tipas",
+    "@questionTypeLabel": {
+        "description": "Question type selector label"
+    },
+    "optionsSection": "Pasirinkimai",
+    "@optionsSection": {
+        "description": "Options section header"
+    },
+    "selectAll": "Visi",
+    "@selectAll": {
+        "description": "Select all button"
+    },
+    "selectNone": "Nieko",
+    "@selectNone": {
+        "description": "Deselect all button"
+    },
+    "selectedCount": "{count} pasirinkta",
+    "@selectedCount": {
+        "description": "Selected count indicator",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "alreadyAssigned": "Priskirta",
+    "@alreadyAssigned": {
+        "description": "Already assigned badge"
+    },
+    "questionTextRequired": "Klausimo tekstas negali būti tuščias",
+    "@questionTextRequired": {
+        "description": "Question text required error"
+    },
+    "optionTextRequired": "Pasirinkimo tekstas negali būti tuščias",
+    "@optionTextRequired": {
+        "description": "Option text required error"
+    },
+    "administravimas": "Administravimas",
+    "@administravimas": {
+        "description": "Administration menu item"
+    },
+    "gydytojai": "Gydytojai",
+    "@gydytojai": {
+        "description": "Doctors menu item"
+    },
+    "pacientai": "Pacientai",
+    "@pacientai": {
+        "description": "Patients menu item"
+    },
+    "veiklosZurnalas": "Veiklos žurnalas",
+    "@veiklosZurnalas": {
+        "description": "Activity log menu item"
+    },
+    "naujasGydytojas": "Naujas gydytojas",
+    "@naujasGydytojas": {
+        "description": "New doctor button"
+    },
+    "gydytojuSarasas": "Gydytojų sąrašas",
+    "@gydytojuSarasas": {
+        "description": "Doctors list title"
+    },
+    "gydytojasSukurtas": "Gydytojas sukurtas",
+    "@gydytojasSukurtas": {
+        "description": "Doctor created success message"
+    },
+    "gydytojasAtnaujintas": "Gydytojo duomenys atnaujinti",
+    "@gydytojasAtnaujintas": {
+        "description": "Doctor updated success message"
+    },
+    "gydytojasDeaktyvuotas": "Gydytojas deaktyvuotas",
+    "@gydytojasDeaktyvuotas": {
+        "description": "Doctor deactivated success message"
+    },
+    "pacientasAtnaujintas": "Paciento duomenys atnaujinti",
+    "@pacientasAtnaujintas": {
+        "description": "Patient updated success message"
+    },
+    "pacientasDeaktyvuotas": "Pacientas deaktyvuotas",
+    "@pacientasDeaktyvuotas": {
+        "description": "Patient deactivated success message"
+    },
+    "pacientasAktyvuotas": "Pacientas aktyvuotas",
+    "@pacientasAktyvuotas": {
+        "description": "Patient reactivated success message"
+    },
+    "administravimoMeniu": "Administravimo meniu",
+    "@administravimoMeniu": {
+        "description": "Admin menu title"
+    },
+    "gydytojuValdymas": "Gydytojų valdymas",
+    "@gydytojuValdymas": {
+        "description": "Doctor management subtitle"
+    },
+    "pacientuValdymas": "Pacientų valdymas",
+    "@pacientuValdymas": {
+        "description": "Patient management subtitle"
+    },
+    "gdprVeiklosIrasai": "GDPR veiklos įrašai",
+    "@gdprVeiklosIrasai": {
+        "description": "GDPR activity records subtitle"
+    },
+    "laikinasSlaptazodis": "Laikinas slaptažodis",
+    "@laikinasSlaptazodis": {
+        "description": "Temporary password label"
+    },
+    "gydytojasNerastas": "Gydytojas nerastas",
+    "@gydytojasNerastas": {
+        "description": "Doctor not found error"
+    },
+    "arTikraiDeaktyvuoti": "Ar tikrai norite deaktyvuoti šį gydytoją?",
+    "@arTikraiDeaktyvuoti": {
+        "description": "Deactivate doctor confirmation"
+    },
+    "gydytojasAktyvuotas": "Gydytojas aktyvuotas",
+    "@gydytojasAktyvuotas": {
+        "description": "Doctor reactivated success message"
+    },
+    "prisijungimoDuomenysIssiusti": "Prisijungimo duomenys išsiųsti el. paštu",
+    "@prisijungimoDuomenysIssiusti": {
+        "description": "Credentials sent by email message"
+    },
+    "copiedToClipboard": "Nukopijuota",
+    "@copiedToClipboard": {
+        "description": "Copied to clipboard message"
+    },
+    "copyTooltip": "Kopijuoti",
+    "@copyTooltip": {
+        "description": "Copy button tooltip"
+    },
+    "redaguotiPacienta": "Redaguoti pacientą",
+    "@redaguotiPacienta": {
+        "description": "Edit patient button"
+    },
+    "arTikraiDeaktyvuotiPacienta": "Ar tikrai norite deaktyvuoti šį pacientą?",
+    "@arTikraiDeaktyvuotiPacienta": {
+        "description": "Deactivate patient confirmation"
+    },
+    "aktivuotiPacienta": "Aktyvuoti",
+    "@aktivuotiPacienta": {
+        "description": "Activate patient button"
+    },
+    "deaktyvuotiPacienta": "Deaktyvuoti",
+    "@deaktyvuotiPacienta": {
+        "description": "Deactivate patient button"
+    },
+    "patientCodeLabel": "Paciento kodas",
+    "@patientCodeLabel": {
+        "description": "Patient code form field label"
+    },
+    "pacientasNerastas": "Pacientas nerastas",
+    "@pacientasNerastas": {
+        "description": "Patient not found error message"
+    },
+    "veiklosZurnaloFiltrai": "Filtrai",
+    "@veiklosZurnaloFiltrai": {
+        "description": "Activity log filters title"
+    },
+    "filtruotiPagalData": "Filtruoti pagal datą",
+    "@filtruotiPagalData": {
+        "description": "Filter by date label"
+    },
+    "nuo": "Nuo",
+    "@nuo": {
+        "description": "From date label"
+    },
+    "iki": "Iki",
+    "@iki": {
+        "description": "To date label"
+    },
+    "filtruotiPagalVartotoja": "Vartotojas",
+    "@filtruotiPagalVartotoja": {
+        "description": "Filter by user label"
+    },
+    "filtruotiPagalVeiksma": "Veiksmo tipas",
+    "@filtruotiPagalVeiksma": {
+        "description": "Filter by action type label"
+    },
+    "taikyti": "Taikyti",
+    "@taikyti": {
+        "description": "Apply button"
+    },
+    "isvalyti": "Išvalyti",
+    "@isvalyti": {
+        "description": "Clear button"
+    },
+    "eksportuotiCsv": "Eksportuoti CSV",
+    "@eksportuotiCsv": {
+        "description": "Export CSV button tooltip"
+    },
+    "eksportasSekmingas": "Eksportas sėkmingas",
+    "@eksportasSekmingas": {
+        "description": "Export success message"
+    },
+    "neraVeiklosIrasu": "Nėra veiklos įrašų",
+    "@neraVeiklosIrasu": {
+        "description": "No activity logs message"
+    },
+    "sukurta": "Sukurta",
+    "@sukurta": {
+        "description": "Created event type"
+    },
+    "atnaujinta": "Atnaujinta",
+    "@atnaujinta": {
+        "description": "Updated event type"
+    },
+    "istrinta": "Ištrinta",
+    "@istrinta": {
+        "description": "Deleted event type"
+    },
+    "perziureta": "Peržiūrėta",
+    "@perziureta": {
+        "description": "Viewed event type"
+    },
+    "visiVeiksmai": "Visi veiksmai",
+    "@visiVeiksmai": {
+        "description": "All actions filter option"
+    },
+    "visiVartotojai": "Visi vartotojai",
+    "@visiVartotojai": {
+        "description": "All users filter option"
+    },
+    "eksportoKlaida": "Nepavyko eksportuoti",
+    "@eksportoKlaida": {
+        "description": "Export error message"
+    },
+    "bandytiDarKarta": "Bandyti dar kartą",
+    "@bandytiDarKarta": {
+        "description": "Try again button"
+    },
+    "gydytojas": "Gydytojas",
+    "@gydytojas": {
+        "description": "Doctor role label"
+    },
+    "pacientas": "Pacientas",
+    "@pacientas": {
+        "description": "Patient role label"
     }
 }

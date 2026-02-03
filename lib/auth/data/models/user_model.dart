@@ -16,6 +16,7 @@ class User with _$User {
     @JsonKey(name: 'date_of_birth') String? dateOfBirth,
     @JsonKey(name: 'patient_code') String? patientCode,
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _User;
   const User._();
 

@@ -865,5 +865,434 @@
     "viewSurveyResponse": "View",
     "@viewSurveyResponse": {
         "description": "View survey response button"
+    },
+    "newSurvey": "New survey",
+    "@newSurvey": {
+        "description": "New survey FAB label"
+    },
+    "editSurvey": "Edit",
+    "@editSurvey": {
+        "description": "Edit survey menu option"
+    },
+    "assignSurvey": "Assign",
+    "@assignSurvey": {
+        "description": "Assign survey menu option"
+    },
+    "deleteSurvey": "Delete",
+    "@deleteSurvey": {
+        "description": "Delete survey menu option"
+    },
+    "deleteSurveyTitle": "Delete survey?",
+    "@deleteSurveyTitle": {
+        "description": "Delete survey confirmation dialog title"
+    },
+    "deleteSurveyConfirmation": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+    "@deleteSurveyConfirmation": {
+        "description": "Delete survey confirmation message",
+        "placeholders": {
+            "title": {
+                "type": "String",
+                "example": "Weekly Questionnaire"
+            }
+        }
+    },
+    "surveyDeleted": "Survey deleted",
+    "@surveyDeleted": {
+        "description": "Survey deleted success message"
+    },
+    "createSurvey": "Create survey",
+    "@createSurvey": {
+        "description": "Create survey page title"
+    },
+    "editSurveyTitle": "Edit survey",
+    "@editSurveyTitle": {
+        "description": "Edit survey page title"
+    },
+    "surveyTitleLabel": "Title",
+    "@surveyTitleLabel": {
+        "description": "Survey title field label"
+    },
+    "surveyTitleHint": "Enter survey title",
+    "@surveyTitleHint": {
+        "description": "Survey title field hint"
+    },
+    "surveyDescriptionLabel": "Description (optional)",
+    "@surveyDescriptionLabel": {
+        "description": "Survey description field label"
+    },
+    "surveyDescriptionHint": "Enter survey description",
+    "@surveyDescriptionHint": {
+        "description": "Survey description field hint"
+    },
+    "questionsSection": "Questions",
+    "@questionsSection": {
+        "description": "Questions section header"
+    },
+    "addQuestion": "Add question",
+    "@addQuestion": {
+        "description": "Add question button"
+    },
+    "noQuestionsYet": "No questions yet. Add your first question.",
+    "@noQuestionsYet": {
+        "description": "Empty state when no questions added"
+    },
+    "questionTypeSingle": "Single choice",
+    "@questionTypeSingle": {
+        "description": "Single choice question type"
+    },
+    "questionTypeMulti": "Multiple choice",
+    "@questionTypeMulti": {
+        "description": "Multiple choice question type"
+    },
+    "questionTypeText": "Text",
+    "@questionTypeText": {
+        "description": "Text question type"
+    },
+    "questionTextLabel": "Question text",
+    "@questionTextLabel": {
+        "description": "Question text field label"
+    },
+    "questionTextHint": "Enter question",
+    "@questionTextHint": {
+        "description": "Question text field hint"
+    },
+    "requiredQuestion": "Required",
+    "@requiredQuestion": {
+        "description": "Required question checkbox label"
+    },
+    "optionsSection": "Answer options",
+    "@optionsSection": {
+        "description": "Options section header"
+    },
+    "addOption": "Add option",
+    "@addOption": {
+        "description": "Add option button"
+    },
+    "optionHint": "Answer option",
+    "@optionHint": {
+        "description": "Option text field hint"
+    },
+    "newQuestion": "New question",
+    "@newQuestion": {
+        "description": "New question sheet title"
+    },
+    "editQuestion": "Edit question",
+    "@editQuestion": {
+        "description": "Edit question sheet title"
+    },
+    "surveyTitleRequired": "Please enter survey title",
+    "@surveyTitleRequired": {
+        "description": "Survey title required error"
+    },
+    "questionsRequired": "Please add at least one question",
+    "@questionsRequired": {
+        "description": "Questions required error"
+    },
+    "questionTextRequired": "Please enter question text",
+    "@questionTextRequired": {
+        "description": "Question text required error"
+    },
+    "optionsRequired": "Please add at least two answer options",
+    "@optionsRequired": {
+        "description": "Options required error"
+    },
+    "optionTextRequired": "Please enter answer option",
+    "@optionTextRequired": {
+        "description": "Option text required error"
+    },
+    "surveySaved": "Survey saved",
+    "@surveySaved": {
+        "description": "Survey saved success message"
+    },
+    "surveyAssigned": "{count, plural, =0{No one assigned} =1{Assigned to 1 patient} other{Assigned to {count} patients}}",
+    "@surveyAssigned": {
+        "description": "Survey assigned success message",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "surveyUpdated": "Survey updated",
+    "@surveyUpdated": {
+        "description": "Survey updated success message"
+    },
+    "surveyCreated": "Survey created",
+    "@surveyCreated": {
+        "description": "Survey created success message"
+    },
+    "surveyTitle": "Title",
+    "@surveyTitle": {
+        "description": "Survey title field label"
+    },
+    "surveyDescription": "Description (optional)",
+    "@surveyDescription": {
+        "description": "Survey description field label"
+    },
+    "enterTitle": "Please enter a title",
+    "@enterTitle": {
+        "description": "Enter title error message"
+    },
+    "saveSurvey": "Save survey",
+    "@saveSurvey": {
+        "description": "Save survey button label"
+    },
+    "cannotEditSurveyWithResponses": "Cannot edit a survey that already has responses",
+    "@cannotEditSurveyWithResponses": {
+        "description": "Cannot edit survey with responses message"
+    },
+    "addAtLeastOneQuestion": "Please add at least one question",
+    "@addAtLeastOneQuestion": {
+        "description": "Add at least one question error"
+    },
+    "addAtLeastTwoOptions": "Please add at least two answer options",
+    "@addAtLeastTwoOptions": {
+        "description": "Add at least two options error"
+    },
+    "questionText": "Question text",
+    "@questionText": {
+        "description": "Question text field label"
+    },
+    "optionText": "Answer option",
+    "@optionText": {
+        "description": "Option text field label"
+    },
+    "questionRequired": "Required question",
+    "@questionRequired": {
+        "description": "Required question toggle label"
+    },
+    "questionsSection": "Questions",
+    "@questionsSection": {
+        "description": "Questions section header"
+    },
+    "questionTypeLabel": "Question type",
+    "@questionTypeLabel": {
+        "description": "Question type selector label"
+    },
+    "optionsSection": "Options",
+    "@optionsSection": {
+        "description": "Options section header"
+    },
+    "selectAll": "All",
+    "@selectAll": {
+        "description": "Select all button"
+    },
+    "selectNone": "None",
+    "@selectNone": {
+        "description": "Deselect all button"
+    },
+    "selectedCount": "{count} selected",
+    "@selectedCount": {
+        "description": "Selected count indicator",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "alreadyAssigned": "Assigned",
+    "@alreadyAssigned": {
+        "description": "Already assigned badge"
+    },
+    "questionTextRequired": "Question text cannot be empty",
+    "@questionTextRequired": {
+        "description": "Question text required error"
+    },
+    "optionTextRequired": "Option text cannot be empty",
+    "@optionTextRequired": {
+        "description": "Option text required error"
+    },
+    "administravimas": "Administration",
+    "@administravimas": {
+        "description": "Administration menu item"
+    },
+    "gydytojai": "Doctors",
+    "@gydytojai": {
+        "description": "Doctors menu item"
+    },
+    "pacientai": "Patients",
+    "@pacientai": {
+        "description": "Patients menu item"
+    },
+    "veiklosZurnalas": "Activity Log",
+    "@veiklosZurnalas": {
+        "description": "Activity log menu item"
+    },
+    "naujasGydytojas": "New Doctor",
+    "@naujasGydytojas": {
+        "description": "New doctor button"
+    },
+    "gydytojuSarasas": "Doctors List",
+    "@gydytojuSarasas": {
+        "description": "Doctors list title"
+    },
+    "gydytojasSukurtas": "Doctor created",
+    "@gydytojasSukurtas": {
+        "description": "Doctor created success message"
+    },
+    "gydytojasAtnaujintas": "Doctor updated",
+    "@gydytojasAtnaujintas": {
+        "description": "Doctor updated success message"
+    },
+    "gydytojasDeaktyvuotas": "Doctor deactivated",
+    "@gydytojasDeaktyvuotas": {
+        "description": "Doctor deactivated success message"
+    },
+    "pacientasAtnaujintas": "Patient updated",
+    "@pacientasAtnaujintas": {
+        "description": "Patient updated success message"
+    },
+    "pacientasDeaktyvuotas": "Patient deactivated",
+    "@pacientasDeaktyvuotas": {
+        "description": "Patient deactivated success message"
+    },
+    "pacientasAktyvuotas": "Patient reactivated",
+    "@pacientasAktyvuotas": {
+        "description": "Patient reactivated success message"
+    },
+    "administravimoMeniu": "Admin Menu",
+    "@administravimoMeniu": {
+        "description": "Admin menu title"
+    },
+    "gydytojuValdymas": "Doctor management",
+    "@gydytojuValdymas": {
+        "description": "Doctor management subtitle"
+    },
+    "pacientuValdymas": "Patient management",
+    "@pacientuValdymas": {
+        "description": "Patient management subtitle"
+    },
+    "gdprVeiklosIrasai": "GDPR activity records",
+    "@gdprVeiklosIrasai": {
+        "description": "GDPR activity records subtitle"
+    },
+    "laikinasSlaptazodis": "Temporary password",
+    "@laikinasSlaptazodis": {
+        "description": "Temporary password label"
+    },
+    "gydytojasNerastas": "Doctor not found",
+    "@gydytojasNerastas": {
+        "description": "Doctor not found error message"
+    },
+    "arTikraiDeaktyvuoti": "Are you sure you want to deactivate this doctor?",
+    "@arTikraiDeaktyvuoti": {
+        "description": "Deactivate doctor confirmation dialog title"
+    },
+    "gydytojasAktyvuotas": "Doctor activated",
+    "@gydytojasAktyvuotas": {
+        "description": "Doctor activated success message"
+    },
+    "prisijungimoDuomenysIssiusti": "Login credentials sent by email",
+    "@prisijungimoDuomenysIssiusti": {
+        "description": "Login credentials sent success message"
+    },
+    "copiedToClipboard": "Copied to clipboard",
+    "@copiedToClipboard": {
+        "description": "Copied to clipboard message"
+    },
+    "copyTooltip": "Copy",
+    "@copyTooltip": {
+        "description": "Copy button tooltip"
+    },
+    "redaguotiPacienta": "Edit patient",
+    "@redaguotiPacienta": {
+        "description": "Edit patient button"
+    },
+    "arTikraiDeaktyvuotiPacienta": "Are you sure you want to deactivate this patient?",
+    "@arTikraiDeaktyvuotiPacienta": {
+        "description": "Deactivate patient confirmation"
+    },
+    "aktivuotiPacienta": "Activate",
+    "@aktivuotiPacienta": {
+        "description": "Activate patient button"
+    },
+    "deaktyvuotiPacienta": "Deactivate",
+    "@deaktyvuotiPacienta": {
+        "description": "Deactivate patient button"
+    },
+    "patientCodeLabel": "Patient code",
+    "@patientCodeLabel": {
+        "description": "Patient code form field label"
+    },
+    "pacientasNerastas": "Patient not found",
+    "@pacientasNerastas": {
+        "description": "Patient not found error message"
+    },
+    "veiklosZurnalas": "Activity Log",
+    "@veiklosZurnalas": {
+        "description": "Activity log page title"
+    },
+    "veiklosZurnaloFiltrai": "Activity Log Filters",
+    "@veiklosZurnaloFiltrai": {
+        "description": "Activity log filters title"
+    },
+    "filtruotiPagalData": "Filter by date",
+    "@filtruotiPagalData": {
+        "description": "Filter by date label"
+    },
+    "filtruotiPagalVeiksma": "Filter by action",
+    "@filtruotiPagalVeiksma": {
+        "description": "Filter by action label"
+    },
+    "nuo": "From",
+    "@nuo": {
+        "description": "From date label"
+    },
+    "iki": "To",
+    "@iki": {
+        "description": "To date label"
+    },
+    "visiVeiksmai": "All actions",
+    "@visiVeiksmai": {
+        "description": "All actions filter option"
+    },
+    "sukurta": "Created",
+    "@sukurta": {
+        "description": "Created event label"
+    },
+    "atnaujinta": "Updated",
+    "@atnaujinta": {
+        "description": "Updated event label"
+    },
+    "istrinta": "Deleted",
+    "@istrinta": {
+        "description": "Deleted event label"
+    },
+    "isvalyti": "Clear",
+    "@isvalyti": {
+        "description": "Clear filters button"
+    },
+    "taikyti": "Apply",
+    "@taikyti": {
+        "description": "Apply filters button"
+    },
+    "eksportuotiCsv": "Export CSV",
+    "@eksportuotiCsv": {
+        "description": "Export CSV button tooltip"
+    },
+    "eksportoKlaida": "Export failed",
+    "@eksportoKlaida": {
+        "description": "Export error message"
+    },
+    "eksportasSekmingas": "Export successful",
+    "@eksportasSekmingas": {
+        "description": "Export success message"
+    },
+    "neraVeiklosIrasu": "No activity records",
+    "@neraVeiklosIrasu": {
+        "description": "Empty activity log message"
+    },
+    "bandytiDarKarta": "Try again",
+    "@bandytiDarKarta": {
+        "description": "Try again button"
+    },
+    "gydytojas": "Doctor",
+    "@gydytojas": {
+        "description": "Doctor role label"
+    },
+    "pacientas": "Patient",
+    "@pacientas": {
+        "description": "Patient role label"
     }
 }

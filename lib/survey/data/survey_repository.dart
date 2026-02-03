@@ -7,9 +7,12 @@ import 'package:frontend/core/utils/dio_utils.dart';
 import 'package:frontend/survey/data/models/aggregated_survey_results.dart';
 import 'package:frontend/survey/data/models/assigned_survey.dart';
 import 'package:frontend/survey/data/models/completed_survey.dart';
+import 'package:frontend/survey/data/models/create_survey_request.dart';
 import 'package:frontend/survey/data/models/doctor_survey_results.dart';
 import 'package:frontend/survey/data/models/survey.dart';
 import 'package:frontend/survey/data/models/survey_answer.dart';
+import 'package:frontend/survey/data/models/assignment_result.dart';
+import 'package:frontend/survey/data/models/survey_details.dart';
 import 'package:frontend/survey/data/models/survey_for_completion.dart';
 
 class SurveyRepository {
@@ -186,6 +189,95 @@ class SurveyRepository {
 
       return ApiResponse.success(
         data: Uint8List.fromList(response.data!),
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
+  /// Doctor/Admin: Create a new survey
+  Future<ApiResponse<Survey>> createSurvey(CreateSurveyRequest request) async {
+    try {
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        '/surveys',
+        data: request.toJson(),
+      );
+
+      return ApiResponse.fromJson(
+        response.data!,
+        (json) => Survey.fromJson(json! as Map<String, dynamic>),
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
+  /// Doctor/Admin: Get survey details with questions
+  Future<ApiResponse<SurveyDetails>> getSurveyDetails(int surveyId) async {
+    try {
+      final response = await _apiClient.get<Map<String, dynamic>>(
+        '/surveys/$surveyId',
+      );
+
+      return ApiResponse.fromJson(
+        response.data!,
+        (json) => SurveyDetails.fromJson(json! as Map<String, dynamic>),
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
+  /// Doctor/Admin: Update an existing survey
+  Future<ApiResponse<Survey>> updateSurvey(
+    int surveyId,
+    CreateSurveyRequest request,
+  ) async {
+    try {
+      final response = await _apiClient.put<Map<String, dynamic>>(
+        '/surveys/$surveyId',
+        data: request.toJson(),
+      );
+
+      return ApiResponse.fromJson(
+        response.data!,
+        (json) => Survey.fromJson(json! as Map<String, dynamic>),
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
+  /// Doctor/Admin: Delete (soft delete) a survey
+  Future<ApiResponse<void>> deleteSurvey(int surveyId) async {
+    try {
+      final response = await _apiClient.delete<Map<String, dynamic>>(
+        '/surveys/$surveyId',
+      );
+
+      return ApiResponse.fromJson(
+        response.data!,
+        (_) {},
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
+  /// Doctor/Admin: Assign a survey to patients
+  Future<ApiResponse<AssignmentResult>> assignSurvey({
+    required int surveyId,
+    required List<int> patientIds,
+  }) async {
+    try {
+      final response = await _apiClient.post<Map<String, dynamic>>(
+        '/surveys/$surveyId/assign',
+        data: {'patient_ids': patientIds},
+      );
+
+      return ApiResponse.fromJson(
+        response.data!,
+        (json) => AssignmentResult.fromJson(json! as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       return ApiResponse.error(message: extractDioErrorMessage(e));

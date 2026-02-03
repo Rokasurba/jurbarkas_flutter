@@ -2,7 +2,13 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/admin/view/activity_log_list_page.dart';
 import 'package:frontend/admin/view/admin_dashboard_page.dart';
+import 'package:frontend/admin/view/admin_menu_page.dart';
+import 'package:frontend/admin/view/admin_patient_edit_page.dart';
+import 'package:frontend/admin/view/doctor_detail_page.dart';
+import 'package:frontend/admin/view/doctor_form_page.dart';
+import 'package:frontend/admin/view/doctor_list_page.dart';
 import 'package:frontend/app/view/splash_page.dart';
 import 'package:frontend/auth/cubit/auth_cubit.dart';
 import 'package:frontend/auth/view/login_page.dart';
@@ -20,6 +26,7 @@ import 'package:frontend/password_reset/view/new_password_page.dart';
 import 'package:frontend/password_reset/view/otp_verification_page.dart';
 import 'package:frontend/patient/view/patient_dashboard_page.dart';
 import 'package:frontend/patients/cubit/patient_metric_view_cubit.dart';
+import 'package:frontend/patients/data/models/patient_profile.dart';
 import 'package:frontend/patients/view/patient_metric_view_page.dart';
 import 'package:frontend/patients/view/patient_profile_page.dart';
 import 'package:frontend/patients/view/patients_page.dart';
@@ -29,6 +36,8 @@ import 'package:frontend/survey/view/aggregated_results_page.dart';
 import 'package:frontend/survey/view/doctor_survey_results_page.dart';
 import 'package:frontend/survey/view/my_surveys_page.dart';
 import 'package:frontend/survey/view/patient_surveys_page.dart';
+import 'package:frontend/survey/view/survey_assignment_page.dart';
+import 'package:frontend/survey/view/survey_builder_page.dart';
 import 'package:frontend/survey/view/survey_completion_page.dart';
 import 'package:frontend/survey/view/survey_management_page.dart';
 import 'package:frontend/survey/view/survey_results_overview_page.dart';
@@ -98,6 +107,36 @@ class AppRouter extends RootStackRouter {
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(
+      path: '/admin/menu',
+      page: AdminMenuRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/admin/doctors',
+      page: DoctorListRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/admin/doctors/new',
+      page: DoctorFormRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/admin/doctors/:doctorId',
+      page: DoctorDetailRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/admin/patients/:patientId/edit',
+      page: AdminPatientEditRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/admin/activity-logs',
+      page: ActivityLogListRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
       path: '/patients',
       page: PatientsRoute.page,
       guards: [AuthGuard(authCubit)],
@@ -140,6 +179,21 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       path: '/doctor/surveys',
       page: SurveyManagementRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/doctor/surveys/new',
+      page: SurveyBuilderRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/doctor/surveys/:surveyId/edit',
+      page: SurveyBuilderRoute.page,
+      guards: [AuthGuard(authCubit)],
+    ),
+    AutoRoute(
+      path: '/doctor/surveys/:surveyId/assign',
+      page: SurveyAssignmentRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(

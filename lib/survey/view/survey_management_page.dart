@@ -72,6 +72,18 @@ class _SurveyManagementView extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final created = await context.router.push<bool>(
+            SurveyBuilderRoute(),
+          );
+          if (created == true && context.mounted) {
+            await context.read<DoctorSurveyListCubit>().loadSurveys();
+          }
+        },
+        icon: const Icon(Icons.add),
+        label: Text(l10n.newSurvey),
+      ),
     );
   }
 }
@@ -110,6 +122,132 @@ class _SurveyCard extends StatelessWidget {
 
   final Survey survey;
 
+  Future<void> _showActionMenu(BuildContext context) async {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+
+    final action = await showModalBottomSheet<_SurveyAction>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                survey.title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: Text(l10n.surveyResults),
+              onTap: () => Navigator.pop(context, _SurveyAction.results),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: Text(l10n.editSurvey),
+              onTap: () => Navigator.pop(context, _SurveyAction.edit),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_add),
+              title: Text(l10n.assignSurvey),
+              onTap: () => Navigator.pop(context, _SurveyAction.assign),
+            ),
+            ListTile(
+              leading: Icon(Icons.delete, color: theme.colorScheme.error),
+              title: Text(
+                l10n.deleteSurvey,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+              onTap: () => Navigator.pop(context, _SurveyAction.delete),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (action == null || !context.mounted) return;
+
+    switch (action) {
+      case _SurveyAction.results:
+        await context.router.push(
+          SurveyResultsOverviewRoute(surveyId: survey.id),
+        );
+      case _SurveyAction.edit:
+        final updated = await context.router.push<bool>(
+          SurveyBuilderRoute(surveyId: survey.id),
+        );
+        if (updated == true && context.mounted) {
+          await context.read<DoctorSurveyListCubit>().loadSurveys();
+        }
+      case _SurveyAction.assign:
+        final assigned = await context.router.push<bool>(
+          SurveyAssignmentRoute(surveyId: survey.id),
+        );
+        if (assigned == true && context.mounted) {
+          await context.read<DoctorSurveyListCubit>().loadSurveys();
+        }
+      case _SurveyAction.delete:
+        await _confirmDelete(context);
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteSurveyTitle),
+        content: Text(l10n.deleteSurveyConfirmation(survey.title)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancelButton),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: theme.colorScheme.error,
+            ),
+            child: Text(l10n.deleteButton),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final repository = context.read<SurveyRepository>();
+      final response = await repository.deleteSurvey(survey.id);
+
+      if (!context.mounted) return;
+
+      response.when(
+        success: (_, __) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.surveyDeleted)),
+          );
+          context.read<DoctorSurveyListCubit>().loadSurveys();
+        },
+        error: (message, _) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: theme.colorScheme.error,
+            ),
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -117,79 +255,85 @@ class _SurveyCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    survey.title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                if (!survey.isActive)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.errorContainer,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+      child: InkWell(
+        onTap: () => _showActionMenu(context),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
                     child: Text(
-                      'Neaktyvus',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onErrorContainer,
+                      survey.title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-              ],
-            ),
-            if (survey.description != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                survey.description!,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  if (!survey.isActive)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'Neaktyvus',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onErrorContainer,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (survey.description != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  survey.description!,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              ],
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  _StatChip(
+                    icon: Icons.help_outline,
+                    label: '${survey.questionCount}',
+                  ),
+                  const SizedBox(width: 12),
+                  _StatChip(
+                    icon: Icons.people_outline,
+                    label: '${survey.assignmentCount}',
+                  ),
+                  const Spacer(),
+                  FilledButton.icon(
+                    onPressed: () => context.router.push(
+                      SurveyResultsOverviewRoute(surveyId: survey.id),
+                    ),
+                    icon: const Icon(Icons.bar_chart, size: 18),
+                    label: Text(l10n.surveyResults),
+                  ),
+                ],
               ),
             ],
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _StatChip(
-                  icon: Icons.help_outline,
-                  label: '${survey.questionCount}',
-                ),
-                const SizedBox(width: 12),
-                _StatChip(
-                  icon: Icons.people_outline,
-                  label: '${survey.assignmentCount}',
-                ),
-                const Spacer(),
-                FilledButton.icon(
-                  onPressed: () => context.router.push(
-                    SurveyResultsOverviewRoute(surveyId: survey.id),
-                  ),
-                  icon: const Icon(Icons.bar_chart, size: 18),
-                  label: Text(l10n.surveyResults),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
+
+enum _SurveyAction { results, edit, assign, delete }
 
 class _StatChip extends StatelessWidget {
   const _StatChip({
