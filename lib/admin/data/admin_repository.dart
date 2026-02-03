@@ -55,6 +55,22 @@ class AdminRepository {
     }
   }
 
+  /// Fetch a single doctor by ID.
+  Future<ApiResponse<User>> getDoctor(int id) async {
+    try {
+      final response = await _apiClient.get<Map<String, dynamic>>(
+        _AdminDoctorEndpoints.doctor(id),
+      );
+
+      return ApiResponse.fromJson(
+        response.data!,
+        (json) => User.fromJson(json! as Map<String, dynamic>),
+      );
+    } on DioException catch (e) {
+      return ApiResponse.error(message: extractDioErrorMessage(e));
+    }
+  }
+
   /// Create a new doctor account.
   Future<ApiResponse<CreateDoctorResponse>> createDoctor(
     CreateDoctorRequest request,

@@ -1,6 +1,8 @@
 // Cubits
 export 'cubit/activity_log_cubit.dart';
 export 'cubit/activity_log_state.dart';
+export 'cubit/admin_doctor_detail_cubit.dart';
+export 'cubit/admin_doctor_detail_state.dart';
 export 'cubit/admin_doctor_form_cubit.dart';
 export 'cubit/admin_doctor_form_state.dart';
 export 'cubit/admin_doctor_list_cubit.dart';
@@ -19,7 +21,6 @@ export 'data/models/update_patient_request.dart';
 
 // Views
 export 'view/activity_log_list_page.dart';
-export 'view/admin_dashboard_page.dart';
 export 'view/admin_menu_page.dart';
 export 'view/admin_patient_edit_page.dart';
 export 'view/doctor_detail_page.dart';

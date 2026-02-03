@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/admin/view/activity_log_list_page.dart';
-import 'package:frontend/admin/view/admin_dashboard_page.dart';
 import 'package:frontend/admin/view/admin_menu_page.dart';
 import 'package:frontend/admin/view/admin_patient_edit_page.dart';
+import 'package:frontend/admin/view/admin_shell_page.dart';
 import 'package:frontend/admin/view/doctor_detail_page.dart';
 import 'package:frontend/admin/view/doctor_form_page.dart';
 import 'package:frontend/admin/view/doctor_list_page.dart';
@@ -20,11 +20,13 @@ import 'package:frontend/chat/data/models/user_brief.dart';
 import 'package:frontend/chat/view/chat_page.dart';
 import 'package:frontend/chat/view/conversations_page.dart';
 import 'package:frontend/doctor/view/doctor_dashboard_page.dart';
+import 'package:frontend/doctor/view/doctor_shell_page.dart';
 import 'package:frontend/password_reset/cubit/password_reset_cubit.dart';
 import 'package:frontend/password_reset/view/forgot_password_page.dart';
 import 'package:frontend/password_reset/view/new_password_page.dart';
 import 'package:frontend/password_reset/view/otp_verification_page.dart';
 import 'package:frontend/patient/view/patient_dashboard_page.dart';
+import 'package:frontend/patient/view/patient_shell_page.dart';
 import 'package:frontend/patients/cubit/patient_metric_view_cubit.dart';
 import 'package:frontend/patients/data/models/patient_profile.dart';
 import 'package:frontend/patients/view/patient_metric_view_page.dart';
@@ -76,11 +78,46 @@ class AppRouter extends RootStackRouter {
       path: '/new-password',
       page: NewPasswordRoute.page,
     ),
+
+    // Patient shell with nested tab routes
     AutoRoute(
       path: '/patient',
-      page: PatientDashboardRoute.page,
+      page: PatientShellRoute.page,
       guards: [AuthGuard(authCubit)],
+      children: [
+        AutoRoute(path: 'dashboard', page: PatientDashboardRoute.page),
+        AutoRoute(path: 'messages', page: ConversationsRoute.page),
+        AutoRoute(path: 'reminders', page: RemindersRoute.page),
+        AutoRoute(path: 'surveys', page: MySurveysRoute.page),
+        RedirectRoute(path: '', redirectTo: 'dashboard'),
+      ],
     ),
+
+    // Doctor shell with nested tab routes
+    AutoRoute(
+      path: '/doctor',
+      page: DoctorShellRoute.page,
+      guards: [AuthGuard(authCubit)],
+      children: [
+        AutoRoute(path: 'dashboard', page: DoctorDashboardRoute.page),
+        AutoRoute(path: 'messages', page: ConversationsRoute.page),
+        AutoRoute(path: 'surveys', page: SurveyManagementRoute.page),
+        RedirectRoute(path: '', redirectTo: 'dashboard'),
+      ],
+    ),
+
+    // Admin shell with menu page
+    AutoRoute(
+      path: '/admin',
+      page: AdminShellRoute.page,
+      guards: [AuthGuard(authCubit)],
+      children: [
+        AutoRoute(path: 'menu', page: AdminMenuRoute.page),
+        RedirectRoute(path: '', redirectTo: 'menu'),
+      ],
+    ),
+
+    // Detail routes (outside shells - no bottom nav)
     AutoRoute(
       path: '/blood-pressure',
       page: BloodPressureRoute.page,
@@ -94,21 +131,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       path: '/blood-sugar',
       page: BloodSugarRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/doctor',
-      page: DoctorDashboardRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/admin',
-      page: AdminDashboardRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/admin/menu',
-      page: AdminMenuRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(
@@ -152,33 +174,13 @@ class AppRouter extends RootStackRouter {
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(
-      path: '/reminders',
-      page: RemindersRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
       path: '/send-reminder',
       page: SendReminderRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(
-      path: '/conversations',
-      page: ConversationsRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
       path: '/chat/:conversationId',
       page: ChatRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/surveys',
-      page: MySurveysRoute.page,
-      guards: [AuthGuard(authCubit)],
-    ),
-    AutoRoute(
-      path: '/doctor/surveys',
-      page: SurveyManagementRoute.page,
       guards: [AuthGuard(authCubit)],
     ),
     AutoRoute(
@@ -256,9 +258,9 @@ extension AppRouterExtension on AuthCubit {
   PageRouteInfo getHomeRouteForRole() {
     final role = state.user?.role;
     return switch (role) {
-      'patient' => const PatientDashboardRoute(),
-      'doctor' => const DoctorDashboardRoute(),
-      'admin' => const AdminDashboardRoute(),
+      'patient' => const PatientShellRoute(),
+      'doctor' => const DoctorShellRoute(),
+      'admin' => const AdminShellRoute(),
       _ => const LoginRoute(),
     };
   }

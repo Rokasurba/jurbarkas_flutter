@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,9 @@ import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/password_reset/password_reset.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
+
+/// Global key for showing snackbars from anywhere in the app.
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 /// Root application widget that sets up dependency injection and routing.
 class App extends StatelessWidget {
@@ -87,7 +91,31 @@ class _AppProvidersState extends State<_AppProviders> {
     _pushNotificationsInitialized = true;
 
     PushNotificationService.instance.onTokenRefresh = _onDeviceTokenReceived;
+    PushNotificationService.instance.onForegroundMessage =
+        _onForegroundNotification;
     await PushNotificationService.instance.initialize();
+  }
+
+  void _onForegroundNotification(RemoteMessage message) {
+    final title = message.notification?.title;
+    final body = message.notification?.body;
+
+    if (title != null || body != null) {
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (title != null)
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              if (body != null) Text(body),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   Future<void> _onDeviceTokenReceived(String token) async {
@@ -154,6 +182,7 @@ class _AppViewState extends State<_AppView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

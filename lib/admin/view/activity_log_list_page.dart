@@ -146,7 +146,15 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.veiklosZurnalas),
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        title: Text(
+          l10n.veiklosZurnalas,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           BlocBuilder<ActivityLogCubit, ActivityLogState>(
             builder: (context, state) {
@@ -209,8 +217,20 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
           return state.when(
             initial: () => const SizedBox.shrink(),
             loading: () => const Center(child: CircularProgressIndicator()),
-            loaded: (logs, filters) => _buildLogList(logs.data, false),
-            loadingMore: (logs, filters) => _buildLogList(logs.data, true),
+            loaded: (logs, filters) => _buildLogList(
+              logs.data,
+              false,
+              currentPage: logs.currentPage,
+              lastPage: logs.lastPage,
+              total: logs.total,
+            ),
+            loadingMore: (logs, filters) => _buildLogList(
+              logs.data,
+              true,
+              currentPage: logs.currentPage,
+              lastPage: logs.lastPage,
+              total: logs.total,
+            ),
             error: _buildErrorState,
           );
         },
@@ -218,8 +238,15 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
     );
   }
 
-  Widget _buildLogList(List<ActivityLog> logs, bool isLoadingMore) {
+  Widget _buildLogList(
+    List<ActivityLog> logs,
+    bool isLoadingMore, {
+    required int currentPage,
+    required int lastPage,
+    required int total,
+  }) {
     final l10n = context.l10n;
+    final theme = Theme.of(context);
 
     if (logs.isEmpty) {
       return Center(
@@ -229,33 +256,68 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
             Icon(
               Icons.history,
               size: 64,
-              color: Theme.of(context).colorScheme.outline,
+              color: theme.colorScheme.outline,
             ),
             const SizedBox(height: 16),
             Text(
               l10n.neraVeiklosIrasu,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.titleMedium,
             ),
           ],
         ),
       );
     }
 
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16),
-      itemCount: logs.length + (isLoadingMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index >= logs.length) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        return _ActivityLogCard(log: logs[index]);
-      },
+    return Column(
+      children: [
+        // Pagination info header
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          child: Row(
+            children: [
+              Icon(
+                Icons.list_alt,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.paginationInfo(logs.length, total),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                l10n.pageInfo(currentPage, lastPage),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Log list
+        Expanded(
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(16),
+            itemCount: logs.length + (isLoadingMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index >= logs.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              return _ActivityLogCard(log: logs[index]);
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -423,18 +485,115 @@ class _ActivityLogCard extends StatelessWidget {
 
   String _getEventLabel(String? event, AppLocalizations l10n) {
     return switch (event) {
+      // Model events
       'created' => l10n.sukurta,
       'updated' => l10n.atnaujinta,
       'deleted' => l10n.istrinta,
+      // Auth events
+      'login_success' => l10n.eventLoginSuccess,
+      'login_failed' => l10n.eventLoginFailed,
+      'login_blocked' => l10n.eventLoginBlocked,
+      'logout' => l10n.eventLogout,
+      // Password events
+      'password_reset_requested' => l10n.eventPasswordResetRequested,
+      'password_reset_otp_sent' => l10n.eventPasswordResetOtpSent,
+      'password_reset_otp_verified' => l10n.eventPasswordResetOtpVerified,
+      'password_reset_otp_failed' => l10n.eventPasswordResetFailed,
+      'password_reset_completed' => l10n.eventPasswordResetCompleted,
+      'password_reset_failed' => l10n.eventPasswordResetFailed,
+      // Blood pressure events
+      'blood_pressure_created' => l10n.eventBloodPressureCreated,
+      'blood_pressure_updated' => l10n.eventBloodPressureUpdated,
+      'blood_pressure_deleted' => l10n.eventBloodPressureDeleted,
+      'blood_pressure_viewed' => l10n.eventBloodPressureViewed,
+      // Blood sugar events
+      'blood_sugar_reading_created' => l10n.eventBloodSugarCreated,
+      'blood_sugar_reading_updated' => l10n.eventBloodSugarUpdated,
+      'blood_sugar_reading_deleted' => l10n.eventBloodSugarDeleted,
+      'blood_sugar_history_viewed' => l10n.eventBloodSugarViewed,
+      // BMI events
+      'bmi_measurement_created' => l10n.eventBmiCreated,
+      'bmi_measurement_updated' => l10n.eventBmiUpdated,
+      'bmi_measurement_deleted' => l10n.eventBmiDeleted,
+      'bmi_history_viewed' => l10n.eventBmiViewed,
+      // Survey events
+      'survey_created' => l10n.eventSurveyCreated,
+      'survey_updated' => l10n.eventSurveyUpdated,
+      'survey_deleted' => l10n.eventSurveyDeleted,
+      'survey_assigned' => l10n.eventSurveyAssigned,
+      'survey_completed' => l10n.eventSurveyCompleted,
+      'survey_viewed' => l10n.eventSurveyViewed,
+      'survey_assignments_viewed' => l10n.eventSurveyViewed,
+      'survey_response_viewed' => l10n.eventSurveyViewed,
+      'survey_aggregated_results_viewed' => l10n.eventSurveyViewed,
+      'assigned_surveys_viewed' => l10n.eventSurveyViewed,
+      'completed_survey_viewed' => l10n.eventSurveyViewed,
+      'patient_surveys_viewed' => l10n.eventSurveyViewed,
+      // Notification events
+      'notification_sent' => l10n.eventNotificationSent,
+      'notification_failed' => l10n.eventNotificationFailed,
+      // Reminder events
+      'reminder_sent' => l10n.eventReminderSent,
+      'reminder_read' => l10n.eventReminderRead,
       _ => event ?? '-',
     };
   }
 
   Color _getEventColor(String? event, ThemeData theme) {
     return switch (event) {
-      'created' => Colors.green,
-      'updated' => Colors.blue,
-      'deleted' => Colors.red,
+      // Created / success events - green
+      'created' ||
+      'login_success' ||
+      'survey_created' ||
+      'survey_completed' ||
+      'blood_pressure_created' ||
+      'blood_sugar_reading_created' ||
+      'bmi_measurement_created' ||
+      'notification_sent' ||
+      'reminder_sent' ||
+      'password_reset_completed' ||
+      'password_reset_otp_verified' =>
+        Colors.green,
+      // Updated events - blue
+      'updated' ||
+      'survey_updated' ||
+      'survey_assigned' ||
+      'blood_pressure_updated' ||
+      'blood_sugar_reading_updated' ||
+      'bmi_measurement_updated' =>
+        Colors.blue,
+      // Deleted events - red
+      'deleted' ||
+      'survey_deleted' ||
+      'blood_pressure_deleted' ||
+      'blood_sugar_reading_deleted' ||
+      'bmi_measurement_deleted' =>
+        Colors.red,
+      // Auth warning events - orange
+      'login_failed' ||
+      'login_blocked' ||
+      'password_reset_otp_failed' ||
+      'password_reset_failed' ||
+      'notification_failed' =>
+        Colors.orange,
+      // Logout / neutral events - grey
+      'logout' ||
+      'password_reset_requested' ||
+      'password_reset_otp_sent' =>
+        Colors.grey,
+      // View events - purple
+      'survey_viewed' ||
+      'survey_assignments_viewed' ||
+      'survey_response_viewed' ||
+      'survey_aggregated_results_viewed' ||
+      'assigned_surveys_viewed' ||
+      'completed_survey_viewed' ||
+      'patient_surveys_viewed' ||
+      'blood_pressure_viewed' ||
+      'blood_sugar_history_viewed' ||
+      'bmi_history_viewed' ||
+      'reminder_read' =>
+        Colors.purple,
       _ => theme.colorScheme.outline,
     };
   }

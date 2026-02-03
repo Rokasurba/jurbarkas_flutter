@@ -5,43 +5,43 @@
       "name": "Development",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_development.dart",
-      "args": ["--flavor", "development"]
+      "program": "lib/main.dart",
+      "args": ["--dart-define=ENV=development"]
     },
     {
       "name": "Staging",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_staging.dart",
-      "args": ["--flavor", "staging"]
+      "program": "lib/main.dart",
+      "args": ["--dart-define=ENV=staging"]
     },
     {
       "name": "Production",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_production.dart",
-      "args": ["--flavor", "production"]
+      "program": "lib/main.dart",
+      "args": ["--dart-define=ENV=production"]
     },
     {
       "name": "Development (Chrome)",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_development.dart",
-      "args": ["-d", "chrome"]
+      "program": "lib/main.dart",
+      "args": ["-d", "chrome", "--dart-define=ENV=development"]
     },
     {
       "name": "Staging (Chrome)",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_staging.dart",
-      "args": ["-d", "chrome"]
+      "program": "lib/main.dart",
+      "args": ["-d", "chrome", "--dart-define=ENV=staging"]
     },
     {
       "name": "Production (Chrome)",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_production.dart",
-      "args": ["-d", "chrome"]
+      "program": "lib/main.dart",
+      "args": ["-d", "chrome", "--dart-define=ENV=production"]
     }
   ]
 }

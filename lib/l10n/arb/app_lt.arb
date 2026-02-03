@@ -1211,6 +1211,14 @@
     "@deaktyvuotiPacienta": {
         "description": "Deactivate patient button"
     },
+    "deactivateButton": "Deaktyvuoti",
+    "@deactivateButton": {
+        "description": "Generic deactivate button"
+    },
+    "activateButton": "Aktyvuoti",
+    "@activateButton": {
+        "description": "Generic activate button"
+    },
     "patientCodeLabel": "Paciento kodas",
     "@patientCodeLabel": {
         "description": "Patient code form field label"
@@ -1302,5 +1310,153 @@
     "pacientas": "Pacientas",
     "@pacientas": {
         "description": "Patient role label"
+    },
+    "paginationInfo": "Rodoma {shown} iš {total}",
+    "@paginationInfo": {
+        "description": "Pagination info showing current items out of total",
+        "placeholders": {
+            "shown": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "pageInfo": "Puslapis {current} / {last}",
+    "@pageInfo": {
+        "description": "Page info showing current page out of total pages",
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "last": {
+                "type": "int"
+            }
+        }
+    },
+    "eventLoginSuccess": "Prisijungimas",
+    "@eventLoginSuccess": {
+        "description": "Login success event type"
+    },
+    "eventLoginFailed": "Nepavykęs prisijungimas",
+    "@eventLoginFailed": {
+        "description": "Login failed event type"
+    },
+    "eventLoginBlocked": "Užblokuotas prisijungimas",
+    "@eventLoginBlocked": {
+        "description": "Login blocked event type"
+    },
+    "eventLogout": "Atsijungimas",
+    "@eventLogout": {
+        "description": "Logout event type"
+    },
+    "eventPasswordResetRequested": "Slaptažodžio atstatymas",
+    "@eventPasswordResetRequested": {
+        "description": "Password reset requested event type"
+    },
+    "eventPasswordResetOtpSent": "OTP išsiųstas",
+    "@eventPasswordResetOtpSent": {
+        "description": "Password reset OTP sent event type"
+    },
+    "eventPasswordResetOtpVerified": "OTP patvirtintas",
+    "@eventPasswordResetOtpVerified": {
+        "description": "Password reset OTP verified event type"
+    },
+    "eventPasswordResetCompleted": "Slaptažodis pakeistas",
+    "@eventPasswordResetCompleted": {
+        "description": "Password reset completed event type"
+    },
+    "eventPasswordResetFailed": "Slaptažodžio keitimas nepavyko",
+    "@eventPasswordResetFailed": {
+        "description": "Password reset failed event type"
+    },
+    "eventBloodPressureCreated": "Kraujo spaudimas sukurtas",
+    "@eventBloodPressureCreated": {
+        "description": "Blood pressure created event type"
+    },
+    "eventBloodPressureUpdated": "Kraujo spaudimas atnaujintas",
+    "@eventBloodPressureUpdated": {
+        "description": "Blood pressure updated event type"
+    },
+    "eventBloodPressureDeleted": "Kraujo spaudimas ištrintas",
+    "@eventBloodPressureDeleted": {
+        "description": "Blood pressure deleted event type"
+    },
+    "eventBloodPressureViewed": "Kraujo spaudimo peržiūra",
+    "@eventBloodPressureViewed": {
+        "description": "Blood pressure viewed event type"
+    },
+    "eventBloodSugarCreated": "Gliukozė sukurta",
+    "@eventBloodSugarCreated": {
+        "description": "Blood sugar created event type"
+    },
+    "eventBloodSugarUpdated": "Gliukozė atnaujinta",
+    "@eventBloodSugarUpdated": {
+        "description": "Blood sugar updated event type"
+    },
+    "eventBloodSugarDeleted": "Gliukozė ištrinta",
+    "@eventBloodSugarDeleted": {
+        "description": "Blood sugar deleted event type"
+    },
+    "eventBloodSugarViewed": "Gliukozės peržiūra",
+    "@eventBloodSugarViewed": {
+        "description": "Blood sugar viewed event type"
+    },
+    "eventBmiCreated": "KMI sukurtas",
+    "@eventBmiCreated": {
+        "description": "BMI created event type"
+    },
+    "eventBmiUpdated": "KMI atnaujintas",
+    "@eventBmiUpdated": {
+        "description": "BMI updated event type"
+    },
+    "eventBmiDeleted": "KMI ištrintas",
+    "@eventBmiDeleted": {
+        "description": "BMI deleted event type"
+    },
+    "eventBmiViewed": "KMI peržiūra",
+    "@eventBmiViewed": {
+        "description": "BMI viewed event type"
+    },
+    "eventSurveyCreated": "Apklausa sukurta",
+    "@eventSurveyCreated": {
+        "description": "Survey created event type"
+    },
+    "eventSurveyUpdated": "Apklausa atnaujinta",
+    "@eventSurveyUpdated": {
+        "description": "Survey updated event type"
+    },
+    "eventSurveyDeleted": "Apklausa ištrinta",
+    "@eventSurveyDeleted": {
+        "description": "Survey deleted event type"
+    },
+    "eventSurveyAssigned": "Apklausa priskirta",
+    "@eventSurveyAssigned": {
+        "description": "Survey assigned event type"
+    },
+    "eventSurveyCompleted": "Apklausa užpildyta",
+    "@eventSurveyCompleted": {
+        "description": "Survey completed event type"
+    },
+    "eventSurveyViewed": "Apklausos peržiūra",
+    "@eventSurveyViewed": {
+        "description": "Survey viewed event type"
+    },
+    "eventNotificationSent": "Pranešimas išsiųstas",
+    "@eventNotificationSent": {
+        "description": "Notification sent event type"
+    },
+    "eventNotificationFailed": "Pranešimas nepavyko",
+    "@eventNotificationFailed": {
+        "description": "Notification failed event type"
+    },
+    "eventReminderSent": "Priminimas išsiųstas",
+    "@eventReminderSent": {
+        "description": "Reminder sent event type"
+    },
+    "eventReminderRead": "Priminimas perskaitytas",
+    "@eventReminderRead": {
+        "description": "Reminder read event type"
     }
 }

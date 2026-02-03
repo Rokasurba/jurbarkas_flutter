@@ -70,7 +70,15 @@ class _DoctorFormViewState extends State<DoctorFormView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.naujasGydytojas),
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        title: Text(
+          l10n.naujasGydytojas,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: BlocConsumer<AdminDoctorFormCubit, AdminDoctorFormState>(
         listener: (context, state) {

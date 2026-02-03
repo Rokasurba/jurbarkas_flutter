@@ -45,45 +45,28 @@ class _ConversationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final cubit = context.read<ConversationsCubit>();
-    final userRole = context.read<AuthCubit>().state.user?.role ?? '';
 
-    return ResponsiveBuilder(
-      builder: (context, info) {
-        final isMobile = info.isMobile;
-        final drawer = userRole == 'doctor'
-            ? buildDoctorDrawer(context, isMobile: isMobile)
-            : buildPatientDrawer(context, isMobile: isMobile);
-
-        return ResponsiveScaffold(
-          drawer: drawer,
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: AppColors.secondary,
-            foregroundColor: Colors.white,
-            elevation: 3,
-            leading: isMobile
-                ? Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(Icons.menu),
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            title: Text(
-              l10n.conversationsTitle,
-              style: context.appBarTitle,
-            ),
-          ),
-          floatingActionButton: cubit.isDoctor
-              ? FloatingActionButton.extended(
-                  onPressed: () => _showPatientSelector(context),
-                  icon: const Icon(Icons.edit),
-                  label: Text(l10n.conversationsNewMessage),
-                  backgroundColor: AppColors.secondary,
-                  foregroundColor: Colors.white,
-                )
-              : null,
-          body: Column(
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        elevation: 3,
+        title: Text(
+          l10n.conversationsTitle,
+          style: context.appBarTitle,
+        ),
+      ),
+      floatingActionButton: cubit.isDoctor
+          ? FloatingActionButton.extended(
+              onPressed: () => _showPatientSelector(context),
+              icon: const Icon(Icons.edit),
+              label: Text(l10n.conversationsNewMessage),
+              backgroundColor: AppColors.secondary,
+              foregroundColor: Colors.white,
+            )
+          : null,
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -169,8 +152,6 @@ class _ConversationsView extends StatelessWidget {
           ),
         ],
       ),
-    );
-      },
     );
   }
 

@@ -20,6 +20,10 @@ class PushNotificationService {
   /// Callback to be called when token is obtained or refreshed.
   void Function(String token)? onTokenRefresh;
 
+  /// Callback to be called when a foreground message is received.
+  /// The app can use this to show a snackbar, refresh data, or navigate.
+  void Function(RemoteMessage message)? onForegroundMessage;
+
   /// Initializes the push notification service.
   /// Call this after Firebase.initializeApp() and after user login.
   Future<void> initialize() async {
@@ -61,7 +65,7 @@ class PushNotificationService {
     log('PushNotificationService: Foreground message received');
     log('Title: ${message.notification?.title}');
     log('Body: ${message.notification?.body}');
-    // TODO(dev): Show local notification or update UI.
+    onForegroundMessage?.call(message);
   }
 
   /// Disposes the service and cancels subscriptions.
@@ -69,5 +73,6 @@ class PushNotificationService {
     _tokenRefreshSubscription?.cancel();
     _tokenRefreshSubscription = null;
     onTokenRefresh = null;
+    onForegroundMessage = null;
   }
 }

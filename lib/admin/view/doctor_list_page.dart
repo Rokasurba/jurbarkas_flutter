@@ -36,7 +36,15 @@ class DoctorListView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.gydytojuSarasas),
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        title: Text(
+          l10n.gydytojuSarasas,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: BlocBuilder<AdminDoctorListCubit, AdminDoctorListState>(
         builder: (context, state) {
@@ -98,6 +106,8 @@ class DoctorListView extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
         onPressed: () async {
           final result = await context.router.push(const DoctorFormRoute());
           if (result == true && context.mounted) {

@@ -122,7 +122,15 @@ class _AdminPatientEditViewState extends State<AdminPatientEditView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.redaguotiPacienta),
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        title: Text(
+          l10n.redaguotiPacienta,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: BlocConsumer<AdminPatientDetailCubit, AdminPatientDetailState>(
         listener: (context, state) {

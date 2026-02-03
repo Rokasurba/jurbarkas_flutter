@@ -204,10 +204,10 @@ Widget buildAdminDrawer(BuildContext context, {required bool isMobile}) {
     isMobile: isMobile,
     items: [
       DrawerNavItem(
-        icon: Icons.dashboard,
-        label: l10n.appTitle,
+        icon: Icons.admin_panel_settings,
+        label: l10n.administravimas,
         onTap: () => unawaited(
-          router.replaceAll([const AdminDashboardRoute()]),
+          router.replaceAll([const AdminShellRoute()]),
         ),
       ),
     ],

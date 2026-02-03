@@ -1211,6 +1211,14 @@
     "@deaktyvuotiPacienta": {
         "description": "Deactivate patient button"
     },
+    "deactivateButton": "Deactivate",
+    "@deactivateButton": {
+        "description": "Generic deactivate button"
+    },
+    "activateButton": "Activate",
+    "@activateButton": {
+        "description": "Generic activate button"
+    },
     "patientCodeLabel": "Patient code",
     "@patientCodeLabel": {
         "description": "Patient code form field label"
@@ -1294,5 +1302,153 @@
     "pacientas": "Patient",
     "@pacientas": {
         "description": "Patient role label"
+    },
+    "paginationInfo": "Showing {shown} of {total}",
+    "@paginationInfo": {
+        "description": "Pagination info showing current items out of total",
+        "placeholders": {
+            "shown": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "pageInfo": "Page {current} / {last}",
+    "@pageInfo": {
+        "description": "Page info showing current page out of total pages",
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "last": {
+                "type": "int"
+            }
+        }
+    },
+    "eventLoginSuccess": "Login",
+    "@eventLoginSuccess": {
+        "description": "Login success event type"
+    },
+    "eventLoginFailed": "Failed login",
+    "@eventLoginFailed": {
+        "description": "Login failed event type"
+    },
+    "eventLoginBlocked": "Blocked login",
+    "@eventLoginBlocked": {
+        "description": "Login blocked event type"
+    },
+    "eventLogout": "Logout",
+    "@eventLogout": {
+        "description": "Logout event type"
+    },
+    "eventPasswordResetRequested": "Password reset request",
+    "@eventPasswordResetRequested": {
+        "description": "Password reset requested event type"
+    },
+    "eventPasswordResetOtpSent": "OTP sent",
+    "@eventPasswordResetOtpSent": {
+        "description": "Password reset OTP sent event type"
+    },
+    "eventPasswordResetOtpVerified": "OTP verified",
+    "@eventPasswordResetOtpVerified": {
+        "description": "Password reset OTP verified event type"
+    },
+    "eventPasswordResetCompleted": "Password changed",
+    "@eventPasswordResetCompleted": {
+        "description": "Password reset completed event type"
+    },
+    "eventPasswordResetFailed": "Password reset failed",
+    "@eventPasswordResetFailed": {
+        "description": "Password reset failed event type"
+    },
+    "eventBloodPressureCreated": "Blood pressure created",
+    "@eventBloodPressureCreated": {
+        "description": "Blood pressure created event type"
+    },
+    "eventBloodPressureUpdated": "Blood pressure updated",
+    "@eventBloodPressureUpdated": {
+        "description": "Blood pressure updated event type"
+    },
+    "eventBloodPressureDeleted": "Blood pressure deleted",
+    "@eventBloodPressureDeleted": {
+        "description": "Blood pressure deleted event type"
+    },
+    "eventBloodPressureViewed": "Blood pressure viewed",
+    "@eventBloodPressureViewed": {
+        "description": "Blood pressure viewed event type"
+    },
+    "eventBloodSugarCreated": "Blood sugar created",
+    "@eventBloodSugarCreated": {
+        "description": "Blood sugar created event type"
+    },
+    "eventBloodSugarUpdated": "Blood sugar updated",
+    "@eventBloodSugarUpdated": {
+        "description": "Blood sugar updated event type"
+    },
+    "eventBloodSugarDeleted": "Blood sugar deleted",
+    "@eventBloodSugarDeleted": {
+        "description": "Blood sugar deleted event type"
+    },
+    "eventBloodSugarViewed": "Blood sugar viewed",
+    "@eventBloodSugarViewed": {
+        "description": "Blood sugar viewed event type"
+    },
+    "eventBmiCreated": "BMI created",
+    "@eventBmiCreated": {
+        "description": "BMI created event type"
+    },
+    "eventBmiUpdated": "BMI updated",
+    "@eventBmiUpdated": {
+        "description": "BMI updated event type"
+    },
+    "eventBmiDeleted": "BMI deleted",
+    "@eventBmiDeleted": {
+        "description": "BMI deleted event type"
+    },
+    "eventBmiViewed": "BMI viewed",
+    "@eventBmiViewed": {
+        "description": "BMI viewed event type"
+    },
+    "eventSurveyCreated": "Survey created",
+    "@eventSurveyCreated": {
+        "description": "Survey created event type"
+    },
+    "eventSurveyUpdated": "Survey updated",
+    "@eventSurveyUpdated": {
+        "description": "Survey updated event type"
+    },
+    "eventSurveyDeleted": "Survey deleted",
+    "@eventSurveyDeleted": {
+        "description": "Survey deleted event type"
+    },
+    "eventSurveyAssigned": "Survey assigned",
+    "@eventSurveyAssigned": {
+        "description": "Survey assigned event type"
+    },
+    "eventSurveyCompleted": "Survey completed",
+    "@eventSurveyCompleted": {
+        "description": "Survey completed event type"
+    },
+    "eventSurveyViewed": "Survey viewed",
+    "@eventSurveyViewed": {
+        "description": "Survey viewed event type"
+    },
+    "eventNotificationSent": "Notification sent",
+    "@eventNotificationSent": {
+        "description": "Notification sent event type"
+    },
+    "eventNotificationFailed": "Notification failed",
+    "@eventNotificationFailed": {
+        "description": "Notification failed event type"
+    },
+    "eventReminderSent": "Reminder sent",
+    "@eventReminderSent": {
+        "description": "Reminder sent event type"
+    },
+    "eventReminderRead": "Reminder read",
+    "@eventReminderRead": {
+        "description": "Reminder read event type"
     }
 }

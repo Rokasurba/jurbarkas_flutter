@@ -19,7 +19,7 @@ void main() {
     patientId: 5,
     patientName: 'Jonas Jonaitis',
     completedAt: '2026-01-28T14:30:00Z',
-    answers: const [
+    answers: [
       DoctorAnswer(
         questionId: 1,
         questionText: 'How are you feeling?',
@@ -56,13 +56,13 @@ void main() {
             surveyId: any(named: 'surveyId'),
             patientId: any(named: 'patientId'),
           ),
-        ).thenAnswer((_) async => ApiResponse.success(data: mockResults));
+        ).thenAnswer((_) async => const ApiResponse.success(data: mockResults));
         return DoctorSurveyResultsCubit(surveyRepository: mockRepository);
       },
       act: (cubit) => cubit.loadResults(surveyId: 1, patientId: 5),
       expect: () => [
         const DoctorSurveyResultsState.loading(),
-        DoctorSurveyResultsState.loaded(mockResults),
+        const DoctorSurveyResultsState.loaded(mockResults),
       ],
     );
 
@@ -94,7 +94,7 @@ void main() {
             surveyId: any(named: 'surveyId'),
             patientId: any(named: 'patientId'),
           ),
-        ).thenAnswer((_) async => ApiResponse.success(data: mockResults));
+        ).thenAnswer((_) async => const ApiResponse.success(data: mockResults));
         return DoctorSurveyResultsCubit(surveyRepository: mockRepository);
       },
       act: (cubit) => cubit.loadResults(surveyId: 42, patientId: 123),

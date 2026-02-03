@@ -58,22 +58,6 @@ android {
         }
     }
 
-    flavorDimensions += "default"
-    productFlavors {
-        create("production") {
-            dimension = "default"
-            manifestPlaceholders["appName"] = "Jurbarkas"
-        }
-        create("staging") {
-            dimension = "default"
-            manifestPlaceholders["appName"] = "Jurbarkas"
-        }
-        create("development") {
-            dimension = "default"
-            manifestPlaceholders["appName"] = "Jurbarkas"
-        }
-    }
-
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")

@@ -21,7 +21,7 @@ void main() {
     totalAssigned: 10,
     totalCompleted: 5,
     completionRate: 50,
-    questions: const [
+    questions: [
       AggregatedQuestion(
         questionId: 1,
         questionText: 'How are you feeling?',
@@ -38,7 +38,7 @@ void main() {
     totalAssigned: 10,
     totalCompleted: 0,
     completionRate: 0,
-    questions: const [],
+    questions: [],
   );
 
   setUp(() {
@@ -59,13 +59,13 @@ void main() {
           () => mockRepository.getAggregatedSurveyResults(
             surveyId: any(named: 'surveyId'),
           ),
-        ).thenAnswer((_) async => ApiResponse.success(data: mockResults));
+        ).thenAnswer((_) async => const ApiResponse.success(data: mockResults));
         return AggregatedResultsCubit(surveyRepository: mockRepository);
       },
       act: (cubit) => cubit.loadAggregatedResults(surveyId: 1),
       expect: () => [
         const AggregatedResultsState.loading(),
-        AggregatedResultsState.loaded(mockResults),
+        const AggregatedResultsState.loaded(mockResults),
       ],
     );
 
@@ -76,7 +76,7 @@ void main() {
           () => mockRepository.getAggregatedSurveyResults(
             surveyId: any(named: 'surveyId'),
           ),
-        ).thenAnswer((_) async => ApiResponse.success(data: emptyResults));
+        ).thenAnswer((_) async => const ApiResponse.success(data: emptyResults));
         return AggregatedResultsCubit(surveyRepository: mockRepository);
       },
       act: (cubit) => cubit.loadAggregatedResults(surveyId: 1),
@@ -119,12 +119,12 @@ void main() {
         );
         return AggregatedResultsCubit(surveyRepository: mockRepository);
       },
-      seed: () => AggregatedResultsState.loaded(mockResults),
+      seed: () => const AggregatedResultsState.loaded(mockResults),
       act: (cubit) => cubit.exportToCsv(surveyId: 1),
       expect: () => [
-        AggregatedResultsState.exporting(mockResults),
+        const AggregatedResultsState.exporting(mockResults),
         isA<AggregatedResultsExported>(),
-        AggregatedResultsState.loaded(mockResults),
+        const AggregatedResultsState.loaded(mockResults),
       ],
     );
 
@@ -140,10 +140,10 @@ void main() {
         );
         return AggregatedResultsCubit(surveyRepository: mockRepository);
       },
-      seed: () => AggregatedResultsState.loaded(mockResults),
+      seed: () => const AggregatedResultsState.loaded(mockResults),
       act: (cubit) => cubit.exportToCsv(surveyId: 1),
       expect: () => [
-        AggregatedResultsState.exporting(mockResults),
+        const AggregatedResultsState.exporting(mockResults),
         const AggregatedResultsState.error('Export failed'),
       ],
     );
