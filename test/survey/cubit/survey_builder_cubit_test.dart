@@ -57,8 +57,8 @@ void main() {
       'initForEdit loads existing survey data',
       build: () {
         when(() => mockRepository.getSurveyDetails(any())).thenAnswer(
-          (_) async => ApiResponse.success(
-            data: const SurveyDetails(
+          (_) async => const ApiResponse.success(
+            data: SurveyDetails(
               id: 1,
               title: 'Existing Survey',
               description: 'Test description',
@@ -120,11 +120,8 @@ void main() {
       act: (cubit) => cubit.addQuestion(
         QuestionFormData(
           questionText: 'New Question',
-          questionType: 'single',
-          isRequired: true,
-          orderIndex: 0,
           options: [
-            OptionFormData(optionText: 'A', orderIndex: 0),
+            OptionFormData(optionText: 'A'),
             OptionFormData(optionText: 'B', orderIndex: 1),
           ],
         ),
@@ -149,9 +146,6 @@ void main() {
         questions: [
           QuestionFormData(
             questionText: 'Q1',
-            questionType: 'single',
-            isRequired: true,
-            orderIndex: 0,
             options: [],
           ),
           QuestionFormData(
@@ -182,8 +176,8 @@ void main() {
       'saveSurvey emits saving then saved states',
       build: () {
         when(() => mockRepository.createSurvey(any())).thenAnswer(
-          (_) async => ApiResponse.success(
-            data: const Survey(
+          (_) async => const ApiResponse.success(
+            data: Survey(
               id: 1,
               title: 'New Survey',
               createdBy: 1,
@@ -204,8 +198,6 @@ void main() {
           QuestionFormData(
             questionText: 'Q1',
             questionType: 'text',
-            isRequired: true,
-            orderIndex: 0,
             options: [],
           ),
         ],
@@ -232,8 +224,6 @@ void main() {
           QuestionFormData(
             questionText: 'Q1',
             questionType: 'text',
-            isRequired: true,
-            orderIndex: 0,
             options: [],
           ),
         ],
@@ -274,8 +264,8 @@ void main() {
       'saveSurvey in edit mode calls updateSurvey',
       build: () {
         when(() => mockRepository.updateSurvey(any(), any())).thenAnswer(
-          (_) async => ApiResponse.success(
-            data: const Survey(
+          (_) async => const ApiResponse.success(
+            data: Survey(
               id: 1,
               title: 'Updated Survey',
               createdBy: 1,
@@ -296,8 +286,6 @@ void main() {
           QuestionFormData(
             questionText: 'Q1',
             questionType: 'text',
-            isRequired: true,
-            orderIndex: 0,
             options: [],
           ),
         ],
@@ -327,21 +315,17 @@ void main() {
           QuestionFormData(
             questionText: 'Q1',
             questionType: 'text',
-            isRequired: true,
-            orderIndex: 0,
             options: [],
           ),
           QuestionFormData(
             questionText: 'Q2',
             questionType: 'text',
-            isRequired: true,
             orderIndex: 1,
             options: [],
           ),
           QuestionFormData(
             questionText: 'Q3',
             questionType: 'text',
-            isRequired: true,
             orderIndex: 2,
             options: [],
           ),

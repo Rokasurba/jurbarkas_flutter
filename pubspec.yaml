@@ -35,6 +35,7 @@ dev_dependencies:
   bloc_test: ^10.0.0
   build_runner: ^2.4.13
   envied_generator: ^1.1.1
+  flutter_launcher_icons: ^0.14.3
   flutter_test:
     sdk: flutter
   freezed: ^2.5.7
@@ -48,3 +49,19 @@ flutter:
 
   assets:
     - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+  windows:
+    generate: false
+  macos:
+    generate: false

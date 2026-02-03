@@ -27,15 +27,15 @@ void main() {
       surname: 'Jonaitis',
       email: 'jonas@test.com',
       role: 'patient',
-      isActive: true,
     );
 
     group('updatePatient', () {
       blocTest<AdminPatientDetailCubit, AdminPatientDetailState>(
         'emits [updating, updateSuccess] when update succeeds',
         build: () {
-          when(() => mockRepository.updatePatient(any(), any()))
-              .thenAnswer((_) async => const ApiResponse.success(data: testUser));
+          when(
+            () => mockRepository.updatePatient(any(), any()),
+          ).thenAnswer((_) async => const ApiResponse.success(data: testUser));
           return AdminPatientDetailCubit(adminRepository: mockRepository);
         },
         act: (cubit) => cubit.updatePatient(
@@ -71,8 +71,9 @@ void main() {
       blocTest<AdminPatientDetailCubit, AdminPatientDetailState>(
         'emits [updating, deactivated] when deactivation succeeds',
         build: () {
-          when(() => mockRepository.deactivatePatient(any()))
-              .thenAnswer((_) async => const ApiResponse.success(data: null));
+          when(
+            () => mockRepository.deactivatePatient(any()),
+          ).thenAnswer((_) async => const ApiResponse.success(data: null));
           return AdminPatientDetailCubit(adminRepository: mockRepository);
         },
         act: (cubit) => cubit.deactivatePatient(1),
@@ -86,7 +87,8 @@ void main() {
         'emits [updating, error] when deactivation fails',
         build: () {
           when(() => mockRepository.deactivatePatient(any())).thenAnswer(
-            (_) async => const ApiResponse.error(message: 'Deactivation failed'),
+            (_) async =>
+                const ApiResponse.error(message: 'Deactivation failed'),
           );
           return AdminPatientDetailCubit(adminRepository: mockRepository);
         },
@@ -102,8 +104,9 @@ void main() {
       blocTest<AdminPatientDetailCubit, AdminPatientDetailState>(
         'emits [updating, reactivated] when reactivation succeeds',
         build: () {
-          when(() => mockRepository.reactivatePatient(any()))
-              .thenAnswer((_) async => const ApiResponse.success(data: testUser));
+          when(
+            () => mockRepository.reactivatePatient(any()),
+          ).thenAnswer((_) async => const ApiResponse.success(data: testUser));
           return AdminPatientDetailCubit(adminRepository: mockRepository);
         },
         act: (cubit) => cubit.reactivatePatient(1),
@@ -117,7 +120,8 @@ void main() {
         'emits [updating, error] when reactivation fails',
         build: () {
           when(() => mockRepository.reactivatePatient(any())).thenAnswer(
-            (_) async => const ApiResponse.error(message: 'Reactivation failed'),
+            (_) async =>
+                const ApiResponse.error(message: 'Reactivation failed'),
           );
           return AdminPatientDetailCubit(adminRepository: mockRepository);
         },

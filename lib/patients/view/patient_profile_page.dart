@@ -407,7 +407,7 @@ class _AdminPatientStatusButton extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true && context.mounted) {
+    if ((confirmed ?? false) && context.mounted) {
       unawaited(
         context.read<AdminPatientDetailCubit>().deactivatePatient(patientId),
       );

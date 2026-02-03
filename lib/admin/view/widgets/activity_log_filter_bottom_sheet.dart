@@ -143,7 +143,7 @@ class _ActivityLogFilterBottomSheetState
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String?>(
-                  value: _selectedEvent,
+                  initialValue: _selectedEvent,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     contentPadding: const EdgeInsets.symmetric(

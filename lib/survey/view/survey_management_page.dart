@@ -77,7 +77,7 @@ class _SurveyManagementView extends StatelessWidget {
           final created = await context.router.push<bool>(
             SurveyBuilderRoute(),
           );
-          if (created == true && context.mounted) {
+          if ((created ?? false) && context.mounted) {
             await context.read<DoctorSurveyListCubit>().loadSurveys();
           }
         },
@@ -183,14 +183,14 @@ class _SurveyCard extends StatelessWidget {
         final updated = await context.router.push<bool>(
           SurveyBuilderRoute(surveyId: survey.id),
         );
-        if (updated == true && context.mounted) {
+        if ((updated ?? false) && context.mounted) {
           await context.read<DoctorSurveyListCubit>().loadSurveys();
         }
       case _SurveyAction.assign:
         final assigned = await context.router.push<bool>(
           SurveyAssignmentRoute(surveyId: survey.id),
         );
-        if (assigned == true && context.mounted) {
+        if ((assigned ?? false) && context.mounted) {
           await context.read<DoctorSurveyListCubit>().loadSurveys();
         }
       case _SurveyAction.delete:
@@ -223,7 +223,7 @@ class _SurveyCard extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true && context.mounted) {
+    if ((confirmed ?? false) && context.mounted) {
       final repository = context.read<SurveyRepository>();
       final response = await repository.deleteSurvey(survey.id);
 

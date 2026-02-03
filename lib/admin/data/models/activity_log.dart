@@ -22,12 +22,11 @@ class ActivityLog with _$ActivityLog {
   const factory ActivityLog({
     required int id,
     required String description,
-    String? event,
+    @JsonKey(name: 'created_at') required DateTime createdAt, String? event,
     @JsonKey(name: 'subject_type') String? subjectType,
     @JsonKey(name: 'subject_id') int? subjectId,
     ActivityLogCauser? causer,
     @Default({}) Map<String, dynamic> properties,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _ActivityLog;
 
   factory ActivityLog.fromJson(Map<String, dynamic> json) =>

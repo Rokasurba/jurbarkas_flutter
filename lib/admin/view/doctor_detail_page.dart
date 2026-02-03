@@ -13,8 +13,7 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class DoctorDetailPage extends StatefulWidget {
   const DoctorDetailPage({
-    super.key,
-    @PathParam('doctorId') required this.doctorId,
+    @PathParam('doctorId') required this.doctorId, super.key,
   });
 
   final int doctorId;

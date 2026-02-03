@@ -6,12 +6,12 @@ import 'package:frontend/core/data/api_response.dart';
 import 'package:frontend/core/utils/dio_utils.dart';
 import 'package:frontend/survey/data/models/aggregated_survey_results.dart';
 import 'package:frontend/survey/data/models/assigned_survey.dart';
+import 'package:frontend/survey/data/models/assignment_result.dart';
 import 'package:frontend/survey/data/models/completed_survey.dart';
 import 'package:frontend/survey/data/models/create_survey_request.dart';
 import 'package:frontend/survey/data/models/doctor_survey_results.dart';
 import 'package:frontend/survey/data/models/survey.dart';
 import 'package:frontend/survey/data/models/survey_answer.dart';
-import 'package:frontend/survey/data/models/assignment_result.dart';
 import 'package:frontend/survey/data/models/survey_details.dart';
 import 'package:frontend/survey/data/models/survey_for_completion.dart';
 

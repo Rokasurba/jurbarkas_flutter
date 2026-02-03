@@ -137,9 +137,9 @@ class _SurveyBuilderView extends StatelessWidget {
                 )
               : null,
           bottomNavigationBar: state is SurveyBuilderEditing && !state.hasResponses
-              ? _SaveButton(isLoading: false)
+              ? const _SaveButton(isLoading: false)
               : state is SurveyBuilderSaving
-                  ? _SaveButton(isLoading: true)
+                  ? const _SaveButton(isLoading: true)
                   : null,
         );
       },
@@ -439,7 +439,7 @@ class _SurveyBuilderFormState extends State<_SurveyBuilderForm> {
         ],
       ),
     ).then((confirmed) {
-      if (confirmed == true) {
+      if (confirmed ?? false) {
         context.read<SurveyBuilderCubit>().removeQuestion(index);
       }
     });

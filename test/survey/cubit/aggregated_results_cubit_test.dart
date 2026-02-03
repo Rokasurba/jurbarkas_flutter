@@ -15,12 +15,12 @@ class MockSurveyRepository extends Mock implements SurveyRepository {}
 void main() {
   late MockSurveyRepository mockRepository;
 
-  final mockResults = AggregatedSurveyResults(
+  const mockResults = AggregatedSurveyResults(
     surveyId: 1,
     surveyTitle: 'Health Survey',
     totalAssigned: 10,
     totalCompleted: 5,
-    completionRate: 50.0,
+    completionRate: 50,
     questions: const [
       AggregatedQuestion(
         questionId: 1,
@@ -32,12 +32,12 @@ void main() {
     ],
   );
 
-  final emptyResults = AggregatedSurveyResults(
+  const emptyResults = AggregatedSurveyResults(
     surveyId: 1,
     surveyTitle: 'Empty Survey',
     totalAssigned: 10,
     totalCompleted: 0,
-    completionRate: 0.0,
+    completionRate: 0,
     questions: const [],
   );
 

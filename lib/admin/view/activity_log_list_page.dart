@@ -211,7 +211,7 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
             loading: () => const Center(child: CircularProgressIndicator()),
             loaded: (logs, filters) => _buildLogList(logs.data, false),
             loadingMore: (logs, filters) => _buildLogList(logs.data, true),
-            error: (message) => _buildErrorState(message),
+            error: _buildErrorState,
           );
         },
       ),

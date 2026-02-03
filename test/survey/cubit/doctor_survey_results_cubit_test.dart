@@ -13,7 +13,7 @@ class MockSurveyRepository extends Mock implements SurveyRepository {}
 void main() {
   late MockSurveyRepository mockRepository;
 
-  final mockResults = DoctorSurveyResults(
+  const mockResults = DoctorSurveyResults(
     surveyId: 1,
     surveyTitle: 'Health Survey',
     patientId: 5,
