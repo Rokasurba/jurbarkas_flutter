@@ -140,9 +140,12 @@ class _ConversationsView extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
-                        ElevatedButton(
+                        AppButton.primary(
+                          label: l10n.retryButton,
+                          icon: Icons.refresh,
                           onPressed: cubit.loadConversations,
-                          child: Text(l10n.retryButton),
+                          expand: false,
+                          size: AppButtonSize.medium,
                         ),
                       ],
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/admin/data/models/update_doctor_request.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class DoctorEditDialog extends StatefulWidget {
@@ -113,13 +114,16 @@ class _DoctorEditDialogState extends State<DoctorEditDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        AppButton.text(
+          label: l10n.cancelButton,
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancelButton),
+          size: AppButtonSize.small,
         ),
-        FilledButton(
+        AppButton.primary(
+          label: l10n.saveButton,
           onPressed: _submit,
-          child: Text(l10n.saveButton),
+          expand: false,
+          size: AppButtonSize.small,
         ),
       ],
     );

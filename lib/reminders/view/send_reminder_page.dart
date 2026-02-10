@@ -151,36 +151,10 @@ class _SendReminderViewState extends State<SendReminderView> {
                   ),
                   const SizedBox(height: 32),
                   // Submit button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: isSending ? null : _onSubmit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: isSending
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              l10n.sendButton,
-                              style: context.titleMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                    ),
+                  AppButton.secondary(
+                    label: l10n.sendButton,
+                    onPressed: _onSubmit,
+                    isLoading: isSending,
                   ),
                 ],
               ),

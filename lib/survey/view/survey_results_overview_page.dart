@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/router/app_router.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/aggregated_results_cubit.dart';
 import 'package:frontend/survey/cubit/aggregated_results_state.dart';
@@ -188,12 +189,14 @@ class _IndividualResultsTab extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(message, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
+                  AppButton.primary(
+                    label: l10n.retryButton,
+                    icon: Icons.refresh,
                     onPressed: () => context
                         .read<AggregatedResultsCubit>()
                         .loadAggregatedResults(surveyId: surveyId),
-                    icon: const Icon(Icons.refresh),
-                    label: Text(l10n.retryButton),
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),
@@ -263,14 +266,15 @@ class _IndividualResultsTab extends StatelessWidget {
               ),
             ),
             title: Text('Pacientas #$patientId'),
-            trailing: TextButton(
+            trailing: AppButton.text(
+              label: l10n.viewSurveyResponse,
               onPressed: () => context.router.push(
                 DoctorSurveyResultsRoute(
                   surveyId: surveyId,
                   patientId: patientId,
                 ),
               ),
-              child: Text(l10n.viewSurveyResponse),
+              size: AppButtonSize.small,
             ),
           ),
         );
@@ -334,12 +338,14 @@ class _AggregatedResultsTab extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(message, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
+                  AppButton.primary(
+                    label: l10n.retryButton,
+                    icon: Icons.refresh,
                     onPressed: () => context
                         .read<AggregatedResultsCubit>()
                         .loadAggregatedResults(surveyId: surveyId),
-                    icon: const Icon(Icons.refresh),
-                    label: Text(l10n.retryButton),
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),

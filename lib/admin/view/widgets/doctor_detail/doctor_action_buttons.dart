@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class DoctorActionButtons extends StatelessWidget {
@@ -19,45 +20,21 @@ class DoctorActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     if (doctor.isActive) {
-      return SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: isUpdating ? null : onDeactivate,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: theme.colorScheme.error,
-            side: BorderSide(color: theme.colorScheme.error),
-          ),
-          icon: isUpdating
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.person_off_outlined),
-          label: Text(l10n.deactivateButton),
-        ),
+      return AppButton.dangerOutlined(
+        label: l10n.deactivateButton,
+        icon: Icons.person_off_outlined,
+        onPressed: isUpdating ? null : onDeactivate,
+        isLoading: isUpdating,
       );
     }
 
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: isUpdating ? null : onReactivate,
-        icon: isUpdating
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const Icon(Icons.person_add_outlined),
-        label: Text(l10n.activateButton),
-      ),
+    return AppButton.primary(
+      label: l10n.activateButton,
+      icon: Icons.person_add_outlined,
+      onPressed: isUpdating ? null : onReactivate,
+      isLoading: isUpdating,
     );
   }
 }

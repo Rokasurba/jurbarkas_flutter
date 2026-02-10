@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/admin/cubit/admin_doctor_detail_state.dart';
 import 'package:frontend/admin/data/admin_repository.dart';
@@ -10,40 +9,25 @@ class AdminDoctorDetailCubit extends Cubit<AdminDoctorDetailState> {
     required int doctorId,
   })  : _adminRepository = adminRepository,
         _doctorId = doctorId,
-        super(const AdminDoctorDetailState.initial()) {
-    debugPrint('[AdminDoctorDetailCubit] Created for doctorId: $doctorId');
-  }
+        super(const AdminDoctorDetailState.initial());
 
   final AdminRepository _adminRepository;
   final int _doctorId;
 
   Future<void> loadDoctor() async {
-    debugPrint('[AdminDoctorDetailCubit] loadDoctor() called');
-    if (state is AdminDoctorDetailLoading) {
-      debugPrint('[AdminDoctorDetailCubit] Already loading, returning');
-      return;
-    }
-    debugPrint('[AdminDoctorDetailCubit] Emitting loading state');
+    if (state is AdminDoctorDetailLoading) return;
     emit(const AdminDoctorDetailState.loading());
 
-    debugPrint('[AdminDoctorDetailCubit] Calling repository.getDoctor()');
     final response = await _adminRepository.getDoctor(_doctorId);
-    debugPrint('[AdminDoctorDetailCubit] Got response from repository');
 
     response.when(
       success: (doctor, _) {
-        debugPrint('[AdminDoctorDetailCubit] Success! Doctor: ${doctor.id} - '
-            '${doctor.fullName}');
-        debugPrint('[AdminDoctorDetailCubit] Emitting loaded state...');
         emit(AdminDoctorDetailState.loaded(doctor: doctor));
-        debugPrint('[AdminDoctorDetailCubit] Loaded state emitted');
       },
       error: (message, _) {
-        debugPrint('[AdminDoctorDetailCubit] Error: $message');
         emit(AdminDoctorDetailState.error(message));
       },
     );
-    debugPrint('[AdminDoctorDetailCubit] loadDoctor() completed');
   }
 
   Future<void> updateDoctor(UpdateDoctorRequest request) async {

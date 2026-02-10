@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:frontend/survey/cubit/survey_assignment_cubit.dart';
@@ -62,26 +63,18 @@ class _SurveyAssignmentView extends StatelessWidget {
             actions: state is SurveyAssignmentLoaded
                 ? [
                     if (state.selectedIds.isEmpty)
-                      TextButton(
+                      AppButton.text(
+                        label: l10n.selectAll,
                         onPressed: () =>
                             context.read<SurveyAssignmentCubit>().selectAll(),
-                        child: Text(
-                          l10n.selectAll,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
+                        size: AppButtonSize.small,
                       )
                     else
-                      TextButton(
+                      AppButton.text(
+                        label: l10n.selectNone,
                         onPressed: () =>
                             context.read<SurveyAssignmentCubit>().deselectAll(),
-                        child: Text(
-                          l10n.selectNone,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
+                        size: AppButtonSize.small,
                       ),
                   ]
                 : null,
@@ -117,12 +110,14 @@ class _SurveyAssignmentView extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(message, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
+                  AppButton.primary(
+                    label: l10n.retryButton,
+                    icon: Icons.refresh,
                     onPressed: () {
                       unawaited(context.read<SurveyAssignmentCubit>().reload());
                     },
-                    icon: const Icon(Icons.refresh),
-                    label: Text(l10n.retryButton),
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),
@@ -166,21 +161,11 @@ class _AssignButton extends StatelessWidget {
         ],
       ),
       child: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: FilledButton(
-            onPressed: isLoading
-                ? null
-                : () => context.read<SurveyAssignmentCubit>().assignToSelected(),
-            child: isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text('${l10n.assignSurvey} ($selectedCount)'),
-          ),
+        child: AppButton.primary(
+          label: '${l10n.assignSurvey} ($selectedCount)',
+          onPressed: () =>
+              context.read<SurveyAssignmentCubit>().assignToSelected(),
+          isLoading: isLoading,
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/admin/cubit/activity_log_state.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:intl/intl.dart';
 
@@ -309,16 +310,17 @@ class _ActivityLogFilterBottomSheetState
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
+                      child: AppButton.outlined(
+                        label: l10n.isvalyti,
                         onPressed: _clearFilters,
-                        child: Text(l10n.isvalyti),
+                        expand: true,
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: FilledButton(
+                      child: AppButton.primary(
+                        label: l10n.taikyti,
                         onPressed: _applyFilters,
-                        child: Text(l10n.taikyti),
                       ),
                     ),
                   ],

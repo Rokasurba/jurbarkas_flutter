@@ -165,25 +165,16 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
-                      SizedBox(
-                        height: 56,
-                        child: AppPrimaryButton(
-                          onPressed: state.isLoading || !_isOtpComplete
-                              ? null
-                              : _handleVerify,
-                          child: state.isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(l10n.verifyButton),
-                        ),
+                      AppButton.primary(
+                        label: l10n.verifyButton,
+                        onPressed: state.isLoading || !_isOtpComplete
+                            ? null
+                            : _handleVerify,
+                        isLoading: state.isLoading,
                       ),
                       const SizedBox(height: 16),
-                      TextButton(
+                      AppButton.text(
+                        label: l10n.cancelButton,
                         onPressed: () async {
                           await cubit.reset();
                           if (context.mounted) {
@@ -191,7 +182,6 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                 .popUntilRouteWithName(LoginRoute.name);
                           }
                         },
-                        child: Text(l10n.cancelButton),
                       ),
                     ],
                   ),

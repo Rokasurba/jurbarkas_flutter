@@ -128,21 +128,11 @@ class _NewPasswordViewState extends State<NewPasswordView> {
                         enabled: !state.isLoading,
                       ),
                       const SizedBox(height: 24),
-                      SizedBox(
-                        height: 56,
-                        child: AppPrimaryButton(
-                          onPressed:
-                              state.isLoading ? null : _handleResetPassword,
-                          child: state.isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(l10n.savePasswordButton),
-                        ),
+                      AppButton.primary(
+                        label: l10n.savePasswordButton,
+                        onPressed:
+                            state.isLoading ? null : _handleResetPassword,
+                        isLoading: state.isLoading,
                       ),
                     ],
                   ),

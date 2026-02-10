@@ -42,6 +42,22 @@
       "type": "dart",
       "program": "lib/main.dart",
       "args": ["-d", "chrome", "--dart-define=ENV=production"]
+    },
+    {
+      "name": "Profile (Chrome)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["-d", "chrome", "--dart-define=ENV=development"]
+    },
+    {
+      "name": "Profile (Android)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["--dart-define=ENV=development"]
     }
   ]
 }

@@ -176,10 +176,12 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            AppButton.primary(
+              label: l10n.retry,
+              icon: Icons.refresh,
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.retry),
+              expand: false,
+              size: AppButtonSize.medium,
             ),
           ],
         ),

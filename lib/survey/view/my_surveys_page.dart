@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/core/theme/app_theme.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/survey_list_cubit.dart';
 import 'package:frontend/survey/cubit/survey_list_state.dart';
@@ -57,10 +58,12 @@ class _MySurveysView extends StatelessWidget {
                 children: [
                   Text(message),
                   const SizedBox(height: 16),
-                  ElevatedButton(
+                  AppButton.primary(
+                    label: l10n.retry,
                     onPressed: () =>
                         context.read<SurveyListCubit>().loadAssignedSurveys(),
-                    child: Text(l10n.retry),
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),

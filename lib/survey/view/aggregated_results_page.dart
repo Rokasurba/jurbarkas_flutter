@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/theme/app_theme.dart';
 import 'package:frontend/core/utils/download_file.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/aggregated_results_cubit.dart';
@@ -430,9 +431,10 @@ class _OptionBarChart extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
+          AppButton.text(
+            label: l10n.ok,
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(l10n.ok),
+            size: AppButtonSize.small,
           ),
         ],
       ),
@@ -511,10 +513,12 @@ class _EmptyView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            AppButton.primary(
+              label: l10n.retryButton,
+              icon: Icons.refresh,
               onPressed: onRefresh,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.retryButton),
+              expand: false,
+              size: AppButtonSize.medium,
             ),
           ],
         ),
@@ -554,10 +558,12 @@ class _ErrorView extends StatelessWidget {
               style: context.bodyLarge,
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            AppButton.primary(
+              label: l10n.retryButton,
+              icon: Icons.refresh,
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.retryButton),
+              expand: false,
+              size: AppButtonSize.medium,
             ),
           ],
         ),

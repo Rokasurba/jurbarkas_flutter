@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_theme.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class DeleteConfirmationDialog extends StatelessWidget {
@@ -37,25 +37,16 @@ class DeleteConfirmationDialog extends StatelessWidget {
       title: Text(l10n.deleteConfirmTitle),
       content: Text(l10n.deleteConfirmMessage),
       actions: [
-        TextButton(
+        AppButton.text(
+          label: l10n.cancelButton,
           onPressed: isLoading ? null : () => Navigator.of(context).pop(false),
-          child: Text(l10n.cancelButton),
+          size: AppButtonSize.small,
         ),
-        FilledButton(
+        AppButton.danger(
+          label: l10n.deleteButton,
           onPressed: isLoading ? null : onConfirm,
-          style: FilledButton.styleFrom(
-            backgroundColor: AppColors.error,
-          ),
-          child: isLoading
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(l10n.deleteButton),
+          isLoading: isLoading,
+          size: AppButtonSize.small,
         ),
       ],
     );

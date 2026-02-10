@@ -150,10 +150,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     // Bottom button
                     Padding(
                       padding: const EdgeInsets.all(24),
-                      child: AppPrimaryButton(
+                      child: AppButton.primary(
+                        label: l10n.sendCodeButton,
                         onPressed: _handleSendCode,
                         isLoading: state.isLoading,
-                        child: Text(l10n.sendCodeButton),
                       ),
                     ),
                   ],

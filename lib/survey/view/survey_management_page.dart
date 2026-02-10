@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/router/app_router.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/doctor_survey_list_cubit.dart';
 import 'package:frontend/survey/cubit/doctor_survey_list_state.dart';
@@ -61,11 +62,13 @@ class _SurveyManagementView extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(message, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
+                  AppButton.primary(
+                    label: l10n.retryButton,
+                    icon: Icons.refresh,
                     onPressed: () =>
                         context.read<DoctorSurveyListCubit>().loadSurveys(),
-                    icon: const Icon(Icons.refresh),
-                    label: Text(l10n.retryButton),
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),
@@ -202,7 +205,6 @@ class _SurveyCard extends StatelessWidget {
 
   Future<void> _confirmDelete(BuildContext context) async {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -210,16 +212,15 @@ class _SurveyCard extends StatelessWidget {
         title: Text(l10n.deleteSurveyTitle),
         content: Text(l10n.deleteSurveyConfirmation(survey.title)),
         actions: [
-          TextButton(
+          AppButton.text(
+            label: l10n.cancelButton,
             onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancelButton),
+            size: AppButtonSize.small,
           ),
-          FilledButton(
+          AppButton.danger(
+            label: l10n.deleteButton,
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: theme.colorScheme.error,
-            ),
-            child: Text(l10n.deleteButton),
+            size: AppButtonSize.small,
           ),
         ],
       ),
@@ -311,12 +312,13 @@ class _SurveyCard extends StatelessWidget {
                     label: '${survey.assignmentCount}',
                   ),
                   const Spacer(),
-                  FilledButton.icon(
+                  AppButton.primary(
+                    label: l10n.surveyResults,
+                    icon: Icons.bar_chart,
                     onPressed: () => context.router.push(
                       SurveyResultsOverviewRoute(surveyId: survey.id),
                     ),
-                    icon: const Icon(Icons.bar_chart, size: 18),
-                    label: Text(l10n.surveyResults),
+                    expand: false,
                   ),
                 ],
               ),

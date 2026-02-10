@@ -207,71 +207,35 @@ class _PatientProfileView extends StatelessWidget {
                         child: Column(
                           children: [
                             // Surveys button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 56,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  unawaited(
-                                    context.router.push(
-                                      PatientSurveysRoute(
-                                        patientId: profile.id,
-                                        patientName: profile.fullName,
-                                      ),
+                            AppButton.primary(
+                              label: l10n.surveyListTitle,
+                              icon: Icons.assignment,
+                              onPressed: () {
+                                unawaited(
+                                  context.router.push(
+                                    PatientSurveysRoute(
+                                      patientId: profile.id,
+                                      patientName: profile.fullName,
                                     ),
-                                  );
-                                },
-                                icon: const Icon(Icons.assignment),
-                                label: Text(
-                                  l10n.surveyListTitle,
-                                  style: context.titleMedium?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
                                   ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                  elevation: 0,
-                                ),
-                              ),
+                                );
+                              },
                             ),
                             const SizedBox(height: 12),
                             // Send reminder button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 56,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  unawaited(
-                                    context.router.push(
-                                      SendReminderRoute(
-                                        patientId: profile.id,
-                                        patientName: profile.fullName,
-                                      ),
+                            AppButton.secondary(
+                              label: l10n.sendReminderButton,
+                              icon: Icons.notifications_active,
+                              onPressed: () {
+                                unawaited(
+                                  context.router.push(
+                                    SendReminderRoute(
+                                      patientId: profile.id,
+                                      patientName: profile.fullName,
                                     ),
-                                  );
-                                },
-                                icon: const Icon(Icons.notifications_active),
-                                label: Text(
-                                  l10n.sendReminderButton,
-                                  style: context.titleMedium?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
                                   ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.secondary,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                  elevation: 0,
-                                ),
-                              ),
+                                );
+                              },
                             ),
                             // Admin-only buttons
                             if (user.isAdmin) ...[
@@ -287,38 +251,25 @@ class _PatientProfileView extends StatelessWidget {
                               ),
                               const SizedBox(height: 12),
                               // Edit patient button
-                              SizedBox(
-                                width: double.infinity,
-                                height: 56,
-                                child: OutlinedButton.icon(
-                                  onPressed: () async {
-                                    final result = await context.router.push(
-                                      AdminPatientEditRoute(
-                                        patientId: patientId,
-                                        patient: profile,
-                                      ),
+                              AppButton.outlined(
+                                label: l10n.redaguotiPacienta,
+                                icon: Icons.edit,
+                                expand: true,
+                                onPressed: () async {
+                                  final result = await context.router.push(
+                                    AdminPatientEditRoute(
+                                      patientId: patientId,
+                                      patient: profile,
+                                    ),
+                                  );
+                                  if (result == true && context.mounted) {
+                                    unawaited(
+                                      context
+                                          .read<PatientProfileCubit>()
+                                          .loadProfile(),
                                     );
-                                    if (result == true && context.mounted) {
-                                      unawaited(
-                                        context
-                                            .read<PatientProfileCubit>()
-                                            .loadProfile(),
-                                      );
-                                    }
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                  label: Text(
-                                    l10n.redaguotiPacienta,
-                                    style: context.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(22),
-                                    ),
-                                  ),
-                                ),
+                                  }
+                                },
                               ),
                               const SizedBox(height: 12),
                               // Deactivate/Activate button
@@ -392,16 +343,15 @@ class _AdminPatientStatusButton extends StatelessWidget {
         title: Text(l10n.deaktyvuotiPacienta),
         content: Text(l10n.arTikraiDeaktyvuotiPacienta),
         actions: [
-          TextButton(
+          AppButton.text(
+            label: l10n.cancelButton,
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.cancelButton),
+            size: AppButtonSize.small,
           ),
-          FilledButton(
+          AppButton.danger(
+            label: l10n.deaktyvuotiPacienta,
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.error,
-            ),
-            child: Text(l10n.deaktyvuotiPacienta),
+            size: AppButtonSize.small,
           ),
         ],
       ),
@@ -440,69 +390,24 @@ class _AdminPatientStatusButton extends StatelessWidget {
 
           if (isActive) {
             // Show deactivate button
-            return SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: OutlinedButton.icon(
-                onPressed:
-                    isLoading ? null : () => _showDeactivateConfirmation(context),
-                icon: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.block, color: AppColors.error),
-                label: Text(
-                  l10n.deaktyvuotiPacienta,
-                  style: context.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isLoading ? null : AppColors.error,
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.error),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                ),
-              ),
+            return AppButton.dangerOutlined(
+              label: l10n.deaktyvuotiPacienta,
+              icon: Icons.block,
+              onPressed:
+                  isLoading ? null : () => _showDeactivateConfirmation(context),
+              isLoading: isLoading,
             );
           } else {
             // Show activate button
-            return SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: FilledButton.icon(
-                onPressed: isLoading
-                    ? null
-                    : () => context
-                        .read<AdminPatientDetailCubit>()
-                        .reactivatePatient(patientId),
-                icon: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.check_circle),
-                label: Text(
-                  l10n.aktivuotiPacienta,
-                  style: context.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                ),
-              ),
+            return AppButton.primary(
+              label: l10n.aktivuotiPacienta,
+              icon: Icons.check_circle,
+              onPressed: isLoading
+                  ? null
+                  : () => context
+                      .read<AdminPatientDetailCubit>()
+                      .reactivatePatient(patientId),
+              isLoading: isLoading,
             );
           }
         },
@@ -542,10 +447,12 @@ class _ErrorView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            AppButton.primary(
+              label: context.l10n.retryButton,
+              icon: Icons.refresh,
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: Text(context.l10n.retryButton),
+              expand: false,
+              size: AppButtonSize.medium,
             ),
           ],
         ),

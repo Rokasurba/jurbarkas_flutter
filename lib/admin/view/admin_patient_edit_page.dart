@@ -222,18 +222,10 @@ class _AdminPatientEditViewState extends State<AdminPatientEditView> {
                     onFieldSubmitted: (_) => _submit(),
                   ),
                   const SizedBox(height: 32),
-                  FilledButton(
+                  AppButton.primary(
+                    label: l10n.saveButton,
                     onPressed: isLoading ? null : _submit,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(l10n.saveButton),
+                    isLoading: isLoading,
                   ),
                 ],
               ),

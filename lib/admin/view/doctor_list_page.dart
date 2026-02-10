@@ -102,10 +102,13 @@ class DoctorListView extends StatelessWidget {
                 children: [
                   Text(message),
                   const SizedBox(height: 16),
-                  ElevatedButton(
+                  AppButton.primary(
+                    label: l10n.retryButton,
                     onPressed: () =>
                         context.read<AdminDoctorListCubit>().loadDoctors(),
-                    child: Text(l10n.retryButton),
+                    icon: Icons.refresh,
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),

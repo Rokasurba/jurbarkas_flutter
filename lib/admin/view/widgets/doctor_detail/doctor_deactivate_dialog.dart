@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/auth/data/models/user_model.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 
 class DoctorDeactivateDialog extends StatelessWidget {
@@ -23,16 +24,15 @@ class DoctorDeactivateDialog extends StatelessWidget {
       title: Text(l10n.arTikraiDeaktyvuoti),
       content: Text('${doctor.fullName} (${doctor.email})'),
       actions: [
-        TextButton(
+        AppButton.text(
+          label: l10n.cancelButton,
           onPressed: () => Navigator.of(context).pop(false),
-          child: Text(l10n.cancelButton),
+          size: AppButtonSize.small,
         ),
-        FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+        AppButton.danger(
+          label: l10n.confirmButton,
           onPressed: () => Navigator.of(context).pop(true),
-          child: Text(l10n.confirmButton),
+          size: AppButtonSize.small,
         ),
       ],
     );

@@ -143,10 +143,13 @@ class PatientDashboardView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
+                  AppButton.primary(
+                    label: l10n.retryButton,
+                    icon: Icons.refresh,
                     onPressed: () =>
                         context.read<DashboardCubit>().loadDashboard(),
-                    child: Text(l10n.retryButton),
+                    expand: false,
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),

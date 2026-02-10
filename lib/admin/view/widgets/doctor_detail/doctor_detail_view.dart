@@ -23,84 +23,40 @@ class DoctorDetailView extends StatefulWidget {
 class _DoctorDetailViewState extends State<DoctorDetailView> {
   bool _hasChanges = false;
 
+  void _handleBack() {
+    unawaited(context.router.maybePop(_hasChanges));
+  }
+
   @override
   Widget build(BuildContext context) {
-    debugPrint('[DoctorDetailView] build() called');
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          unawaited(context.router.maybePop(_hasChanges));
-        }
+    return BlocBuilder<AdminDoctorDetailCubit, AdminDoctorDetailState>(
+      builder: (context, state) {
+        return state.when(
+          initial: () => _DoctorDetailScaffold(
+            onBack: _handleBack,
+            body: const SizedBox.shrink(),
+          ),
+          loading: () => _DoctorDetailScaffold(
+            onBack: _handleBack,
+            body: const Center(child: CircularProgressIndicator()),
+          ),
+          loaded: (doctor, isUpdating) {
+            return _DoctorLoadedView(
+              doctor: doctor,
+              isUpdating: isUpdating,
+              onEdit: () => _handleEdit(doctor),
+              onDeactivate: () => _handleDeactivate(doctor),
+              onReactivate: _handleReactivate,
+              onBack: _handleBack,
+            );
+          },
+          error: (message) => _DoctorErrorView(
+            message: message,
+            onBack: _handleBack,
+            onRetry: context.read<AdminDoctorDetailCubit>().loadDoctor,
+          ),
+        );
       },
-      child: BlocBuilder<AdminDoctorDetailCubit, AdminDoctorDetailState>(
-        builder: (context, state) {
-          debugPrint(
-            '[DoctorDetailView] BlocBuilder rebuilding, state: '
-            '${state.runtimeType}',
-          );
-          return state.when(
-            initial: () {
-              debugPrint('[DoctorDetailView] Rendering initial state');
-              return _buildScaffold(body: const SizedBox.shrink());
-            },
-            loading: () {
-              debugPrint('[DoctorDetailView] Rendering loading state');
-              return _buildScaffold(
-                body: const Center(child: CircularProgressIndicator()),
-              );
-            },
-            loaded: (doctor, isUpdating) {
-              debugPrint(
-                '[DoctorDetailView] Rendering loaded state for: '
-                '${doctor.fullName}',
-              );
-              return _DoctorLoadedView(
-                doctor: doctor,
-                isUpdating: isUpdating,
-                onEdit: () => _handleEdit(doctor),
-                onDeactivate: () => _handleDeactivate(doctor),
-                onReactivate: _handleReactivate,
-              );
-            },
-            error: (message) {
-              debugPrint('[DoctorDetailView] Rendering error state: $message');
-              return _buildErrorView(message);
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildScaffold({required Widget body}) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
-      ),
-      body: body,
-    );
-  }
-
-  Widget _buildErrorView(String message) {
-    final l10n = context.l10n;
-
-    return _buildScaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(message),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () =>
-                  context.read<AdminDoctorDetailCubit>().loadDoctor(),
-              child: Text(l10n.retryButton),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -139,6 +95,65 @@ class _DoctorDetailViewState extends State<DoctorDetailView> {
   }
 }
 
+class _DoctorDetailScaffold extends StatelessWidget {
+  const _DoctorDetailScaffold({
+    required this.onBack,
+    required this.body,
+  });
+
+  final VoidCallback onBack;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        leading: BackButton(onPressed: onBack),
+      ),
+      body: body,
+    );
+  }
+}
+
+class _DoctorErrorView extends StatelessWidget {
+  const _DoctorErrorView({
+    required this.message,
+    required this.onBack,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onBack;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return _DoctorDetailScaffold(
+      onBack: onBack,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(message),
+            const SizedBox(height: 16),
+            AppButton.primary(
+              label: l10n.retryButton,
+              onPressed: onRetry,
+              icon: Icons.refresh,
+              expand: false,
+              size: AppButtonSize.medium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _DoctorLoadedView extends StatelessWidget {
   const _DoctorLoadedView({
     required this.doctor,
@@ -146,6 +161,7 @@ class _DoctorLoadedView extends StatelessWidget {
     required this.onEdit,
     required this.onDeactivate,
     required this.onReactivate,
+    required this.onBack,
   });
 
   final User doctor;
@@ -153,18 +169,17 @@ class _DoctorLoadedView extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDeactivate;
   final VoidCallback onReactivate;
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[_DoctorLoadedView] build() START');
     final l10n = context.l10n;
-    debugPrint('[_DoctorLoadedView] Got l10n');
 
-    debugPrint('[_DoctorLoadedView] Building Scaffold...');
-    final scaffold = Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
+        leading: BackButton(onPressed: onBack),
         title: Text(
           doctor.fullName,
           style: const TextStyle(
@@ -197,7 +212,5 @@ class _DoctorLoadedView extends StatelessWidget {
         ),
       ),
     );
-    debugPrint('[_DoctorLoadedView] build() END - returning Scaffold');
-    return scaffold;
   }
 }

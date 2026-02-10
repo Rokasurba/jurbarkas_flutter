@@ -19,10 +19,8 @@ class DoctorDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[DoctorDetailPage] build() called for doctorId: $doctorId');
     return BlocProvider(
       create: (context) {
-        debugPrint('[DoctorDetailPage] Creating AdminDoctorDetailCubit');
         final cubit = AdminDoctorDetailCubit(
           adminRepository:
               AdminRepository(apiClient: context.read<ApiClient>()),

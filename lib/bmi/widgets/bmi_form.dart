@@ -207,21 +207,10 @@ class BmiFormState extends State<BmiForm> with DateTimePickerMixin {
               ),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              height: 56,
-              child: AppPrimaryButton(
-                onPressed: widget.isLoading ? null : _submit,
-                child: widget.isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(l10n.saveButton),
-              ),
+            AppButton.primary(
+              label: l10n.saveButton,
+              onPressed: _submit,
+              isLoading: widget.isLoading,
             ),
           ],
         ),

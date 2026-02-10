@@ -242,11 +242,14 @@ class _ChatViewState extends State<_ChatView> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
+                    AppButton.primary(
+                      label: l10n.retryButton,
+                      icon: Icons.refresh,
                       onPressed: () => unawaited(
                         context.read<chat.ChatCubit>().loadMessages(),
                       ),
-                      child: Text(l10n.retryButton),
+                      expand: false,
+                      size: AppButtonSize.medium,
                     ),
                   ],
                 ),

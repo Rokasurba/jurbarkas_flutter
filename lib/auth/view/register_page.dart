@@ -222,29 +222,19 @@ class _RegisterViewState extends State<RegisterView> {
                       const SizedBox(height: 24),
 
                       // Register button
-                      SizedBox(
-                        height: 56,
-                        child: AppPrimaryButton(
-                          onPressed: state.isLoading ? null : _handleRegister,
-                          child: state.isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(l10n.registerButton),
-                        ),
+                      AppButton.primary(
+                        label: l10n.registerButton,
+                        onPressed: state.isLoading ? null : _handleRegister,
+                        isLoading: state.isLoading,
                       ),
                       const SizedBox(height: 16),
 
                       // Login link
-                      TextButton(
+                      AppButton.text(
+                        label: l10n.alreadyHaveAccount,
                         onPressed: state.isLoading
                             ? null
                             : () async => context.router.maybePop(),
-                        child: Text(l10n.alreadyHaveAccount),
                       ),
                     ],
                   ),

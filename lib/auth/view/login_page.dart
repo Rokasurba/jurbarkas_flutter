@@ -141,18 +141,14 @@ class _LoginViewState extends State<LoginView> {
                                 const SizedBox(height: 8),
                                 Align(
                                   alignment: Alignment.centerRight,
-                                  child: TextButton(
+                                  child: AppButton.text(
+                                    label: l10n.forgotPassword,
                                     onPressed: () async {
                                       await context.router.push(
                                         const ForgotPasswordRoute(),
                                       );
                                     },
-                                    child: Text(
-                                      l10n.forgotPassword,
-                                      style: context.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    size: AppButtonSize.medium,
                                   ),
                                 ),
                               ],
@@ -169,10 +165,10 @@ class _LoginViewState extends State<LoginView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            AppPrimaryButton(
+                            AppButton.primary(
+                              label: l10n.loginButton,
                               onPressed: _handleLogin,
                               isLoading: state.isLoading,
-                              child: Text(l10n.loginButton),
                             ),
                             const SizedBox(height: 16),
                             Row(
@@ -324,23 +320,19 @@ extension _LoginViewHelpers on _LoginViewState {
                 const SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
+                  child: AppButton.text(
+                    label: l10n.forgotPassword,
                     onPressed: () async {
                       await context.router.push(const ForgotPasswordRoute());
                     },
-                    child: Text(
-                      l10n.forgotPassword,
-                      style: context.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    size: AppButtonSize.medium,
                   ),
                 ),
                 const SizedBox(height: 16),
-                AppPrimaryButton(
+                AppButton.primary(
+                  label: l10n.loginButton,
                   onPressed: _handleLogin,
                   isLoading: state.isLoading,
-                  child: Text(l10n.loginButton),
                 ),
                 const SizedBox(height: 16),
                 Row(

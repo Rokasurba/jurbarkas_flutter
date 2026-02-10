@@ -162,20 +162,10 @@ class _ChangePasswordViewState extends State<_ChangePasswordView> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      SizedBox(
-                        height: 56,
-                        child: AppPrimaryButton(
-                          onPressed: isLoading ? null : _submit,
-                          child: isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(l10n.confirmButton),
-                        ),
+                      AppButton.primary(
+                        label: l10n.confirmButton,
+                        onPressed: isLoading ? null : _submit,
+                        isLoading: isLoading,
                       ),
                     ],
                   ),

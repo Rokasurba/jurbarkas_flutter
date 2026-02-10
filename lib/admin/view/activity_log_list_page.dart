@@ -334,10 +334,12 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          FilledButton.icon(
+          AppButton.primary(
+            label: l10n.bandytiDarKarta,
             onPressed: () => context.read<ActivityLogCubit>().loadLogs(),
-            icon: const Icon(Icons.refresh),
-            label: Text(l10n.bandytiDarKarta),
+            icon: Icons.refresh,
+            expand: false,
+            size: AppButtonSize.medium,
           ),
         ],
       ),

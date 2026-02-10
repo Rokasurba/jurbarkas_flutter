@@ -12,14 +12,10 @@ class DoctorInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[DoctorInfoCard] build() START');
     final l10n = context.l10n;
-    debugPrint('[DoctorInfoCard] Got l10n');
     final dateFormat = DateFormat('yyyy-MM-dd');
-    debugPrint('[DoctorInfoCard] Created DateFormat');
 
-    debugPrint('[DoctorInfoCard] Building Card widget...');
-    final card = Card(
+    return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -50,8 +46,6 @@ class DoctorInfoCard extends StatelessWidget {
         ),
       ),
     );
-    debugPrint('[DoctorInfoCard] build() END');
-    return card;
   }
 }
 

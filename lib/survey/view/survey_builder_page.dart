@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/survey_builder_cubit.dart';
 import 'package:frontend/survey/cubit/survey_builder_state.dart';
@@ -114,10 +115,11 @@ class _SurveyBuilderView extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(message, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
+                  AppButton.outlined(
+                    label: l10n.cancelButton,
+                    icon: Icons.arrow_back,
                     onPressed: () => context.router.maybePop(),
-                    icon: const Icon(Icons.arrow_back),
-                    label: Text(l10n.cancelButton),
+                    size: AppButtonSize.medium,
                   ),
                 ],
               ),
@@ -177,21 +179,12 @@ class _SaveButton extends StatelessWidget {
         ],
       ),
       child: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: FilledButton(
-            onPressed: isLoading
-                ? null
-                : () => context.read<SurveyBuilderCubit>().saveSurvey(),
-            child: isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(l10n.saveSurvey),
-          ),
+        child: AppButton.primary(
+          label: l10n.saveSurvey,
+          onPressed: isLoading
+              ? null
+              : () => context.read<SurveyBuilderCubit>().saveSurvey(),
+          isLoading: isLoading,
         ),
       ),
     );
@@ -274,10 +267,11 @@ class _SurveyBuilderFormState extends State<_SurveyBuilderForm> {
                 style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: 24),
-              OutlinedButton.icon(
+              AppButton.outlined(
+                label: l10n.cancelButton,
+                icon: Icons.arrow_back,
                 onPressed: () => context.router.maybePop(),
-                icon: const Icon(Icons.arrow_back),
-                label: Text(l10n.cancelButton),
+                size: AppButtonSize.medium,
               ),
             ],
           ),
@@ -426,13 +420,15 @@ class _SurveyBuilderFormState extends State<_SurveyBuilderForm> {
         title: Text(l10n.deleteConfirmTitle),
         content: Text(l10n.deleteConfirmMessage),
         actions: [
-          TextButton(
+          AppButton.text(
+            label: l10n.cancelButton,
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.cancelButton),
+            size: AppButtonSize.small,
           ),
-          FilledButton(
+          AppButton.danger(
+            label: l10n.deleteButton,
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.deleteButton),
+            size: AppButtonSize.small,
           ),
         ],
       ),
@@ -807,10 +803,11 @@ class _QuestionEditorSheetState extends State<_QuestionEditorSheet> {
                             style: theme.textTheme.titleSmall,
                           ),
                           const Spacer(),
-                          TextButton.icon(
+                          AppButton.text(
+                            label: l10n.addOption,
+                            icon: Icons.add,
                             onPressed: _addOption,
-                            icon: const Icon(Icons.add),
-                            label: Text(l10n.addOption),
+                            size: AppButtonSize.small,
                           ),
                         ],
                       ),
@@ -866,13 +863,9 @@ class _QuestionEditorSheetState extends State<_QuestionEditorSheet> {
                   ],
                 ),
                 child: SafeArea(
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: FilledButton(
-                      onPressed: _saveQuestion,
-                      child: Text(l10n.saveButton),
-                    ),
+                  child: AppButton.primary(
+                    label: l10n.saveButton,
+                    onPressed: _saveQuestion,
                   ),
                 ),
               ),

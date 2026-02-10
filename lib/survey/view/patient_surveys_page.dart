@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/router/app_router.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/patient_surveys_cubit.dart';
 import 'package:frontend/survey/cubit/patient_surveys_state.dart';
@@ -313,10 +314,12 @@ class _ErrorView extends StatelessWidget {
               style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            AppButton.primary(
+              label: l10n.retryButton,
+              icon: Icons.refresh,
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.retryButton),
+              expand: false,
+              size: AppButtonSize.medium,
             ),
           ],
         ),

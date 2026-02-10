@@ -170,18 +170,10 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 // Logout button - now scrolls with content
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => unawaited(_handleLogout(context)),
-                    icon: const Icon(Icons.logout),
-                    label: Text(l10n.logoutButton),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
+                AppButton.dangerOutlined(
+                  label: l10n.logoutButton,
+                  icon: Icons.logout,
+                  onPressed: () => unawaited(_handleLogout(context)),
                 ),
                 const SafeArea(
                   top: false,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/survey_completion_cubit.dart';
 import 'package:frontend/survey/cubit/survey_completion_state.dart';
@@ -94,12 +95,13 @@ class _SurveyCompletionView extends StatelessWidget {
         title: Text(l10n.surveyCompletedSuccess),
         content: Text(message),
         actions: [
-          TextButton(
+          AppButton.text(
+            label: l10n.ok,
             onPressed: () {
               Navigator.of(dialogContext).pop();
               unawaited(context.router.maybePop());
             },
-            child: Text(l10n.ok),
+            size: AppButtonSize.small,
           ),
         ],
       ),
@@ -223,43 +225,26 @@ class _SurveyQuestionViewState extends State<_SurveyQuestionView> {
                 children: [
                   if (widget.currentIndex > 0)
                     Expanded(
-                      child: OutlinedButton(
+                      child: AppButton.outlined(
+                        label: l10n.previousQuestion,
                         onPressed: widget.isSubmitting
                             ? null
                             : () => context
                                 .read<SurveyCompletionCubit>()
                                 .previousQuestion(),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(0, 56),
-                        ),
-                        child: Text(l10n.previousQuestion),
+                        expand: true,
                       ),
                     ),
                   if (widget.currentIndex > 0) const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton(
+                    child: AppButton.primary(
+                      label: isLastQuestion
+                          ? l10n.finishSurvey
+                          : l10n.nextQuestion,
                       onPressed: widget.isSubmitting
                           ? null
                           : () => _handleNextOrSubmit(isLastQuestion),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 56),
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: widget.isSubmitting
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              isLastQuestion
-                                  ? l10n.finishSurvey
-                                  : l10n.nextQuestion,
-                            ),
+                      isLoading: widget.isSubmitting,
                     ),
                   ),
                 ],
