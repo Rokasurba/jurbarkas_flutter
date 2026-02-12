@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:frontend/patients/data/models/patient_advanced_filters.dart';
 import 'package:frontend/patients/data/models/patient_list_item.dart';
 import 'package:frontend/patients/data/models/patient_list_params.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
@@ -71,6 +72,7 @@ class PatientsCubit extends Cubit<PatientsState> {
       currentState.patients.length,
       search: currentState.params.search,
       filter: currentState.params.filter,
+      advancedFilters: currentState.params.advancedFilters,
     );
 
     final response = await _patientsRepository.getPatients(
@@ -136,6 +138,80 @@ class PatientsCubit extends Cubit<PatientsState> {
   /// Clears the search term and reloads (keeps filter).
   Future<void> clearSearch() async {
     final newParams = state.params.copyWith(clearSearch: true, clearOffset: true);
+    await _loadWithParams(newParams);
+  }
+
+  /// Sets both status filter and advanced filters, then reloads.
+  Future<void> applyFilters({
+    required PatientFilter filter,
+    PatientAdvancedFilters? advancedFilters,
+  }) async {
+    final newParams = state.params.copyWith(
+      filter: filter,
+      advancedFilters: advancedFilters,
+      clearAdvancedFilters: advancedFilters == null,
+      clearOffset: true,
+    );
+    await _loadWithParams(newParams);
+  }
+
+  /// Clears gender from advanced filters.
+  Future<void> clearGenderFilter() async {
+    final adv = state.params.advancedFilters;
+    if (adv == null) return;
+    final updated = adv.copyWith(gender: null);
+    await _applyUpdatedAdvancedFilters(updated);
+  }
+
+  /// Clears BMI range from advanced filters.
+  Future<void> clearBmiFilter() async {
+    final adv = state.params.advancedFilters;
+    if (adv == null) return;
+    final updated = adv.copyWith(bmiMin: null, bmiMax: null);
+    await _applyUpdatedAdvancedFilters(updated);
+  }
+
+  /// Clears systolic range from advanced filters.
+  Future<void> clearSystolicFilter() async {
+    final adv = state.params.advancedFilters;
+    if (adv == null) return;
+    final updated = adv.copyWith(systolicMin: null, systolicMax: null);
+    await _applyUpdatedAdvancedFilters(updated);
+  }
+
+  /// Clears diastolic range from advanced filters.
+  Future<void> clearDiastolicFilter() async {
+    final adv = state.params.advancedFilters;
+    if (adv == null) return;
+    final updated = adv.copyWith(diastolicMin: null, diastolicMax: null);
+    await _applyUpdatedAdvancedFilters(updated);
+  }
+
+  /// Clears blood sugar range from advanced filters.
+  Future<void> clearSugarFilter() async {
+    final adv = state.params.advancedFilters;
+    if (adv == null) return;
+    final updated = adv.copyWith(sugarMin: null, sugarMax: null);
+    await _applyUpdatedAdvancedFilters(updated);
+  }
+
+  /// Clears the status filter back to 'all'.
+  Future<void> clearStatusFilter() async {
+    final newParams = state.params.copyWith(
+      filter: PatientFilter.all,
+      clearOffset: true,
+    );
+    await _loadWithParams(newParams);
+  }
+
+  Future<void> _applyUpdatedAdvancedFilters(
+    PatientAdvancedFilters updated,
+  ) async {
+    final newParams = state.params.copyWith(
+      advancedFilters: updated.hasActiveFilters ? updated : null,
+      clearAdvancedFilters: !updated.hasActiveFilters,
+      clearOffset: true,
+    );
     await _loadWithParams(newParams);
   }
 

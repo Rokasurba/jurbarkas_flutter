@@ -201,14 +201,18 @@ class _DoctorLoadedView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DoctorInfoCard(doctor: doctor),
-            const SizedBox(height: 24),
-            DoctorActionButtons(
-              doctor: doctor,
-              isUpdating: isUpdating,
-              onDeactivate: onDeactivate,
-              onReactivate: onReactivate,
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: DoctorActionButtons(
+            doctor: doctor,
+            isUpdating: isUpdating,
+            onDeactivate: onDeactivate,
+            onReactivate: onReactivate,
+          ),
         ),
       ),
     );

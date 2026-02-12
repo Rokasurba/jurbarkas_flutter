@@ -20,7 +20,18 @@ class AuthInterceptor extends QueuedInterceptor {
   final SecureStorage secureStorage;
   final Dio dio;
 
+  /// Separate Dio instance for refresh calls to avoid QueuedInterceptor
+  /// deadlock when the refresh request also returns 401.
+  Dio? _refreshDio;
+
   bool _isRefreshing = false;
+
+  Dio get _getRefreshDio {
+    return _refreshDio ??= Dio(BaseOptions(
+      baseUrl: dio.options.baseUrl,
+      headers: dio.options.headers,
+    ));
+  }
 
   @override
   Future<void> onRequest(
@@ -80,7 +91,7 @@ class AuthInterceptor extends QueuedInterceptor {
       if (refreshToken == null) return false;
 
       final request = RefreshTokenRequest(refreshToken: refreshToken);
-      final response = await dio.post<Map<String, dynamic>>(
+      final response = await _getRefreshDio.post<Map<String, dynamic>>(
         ApiConstants.refresh,
         data: request.toJson(),
       );

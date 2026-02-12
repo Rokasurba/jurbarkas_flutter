@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:frontend/core/data/query_params.dart';
+import 'package:frontend/patients/data/models/patient_advanced_filters.dart';
 
 /// Filter options for patient list.
 enum PatientFilter {
@@ -22,6 +23,7 @@ class PatientListParams extends QueryParams {
     this.offset,
     this.search,
     this.filter = PatientFilter.all,
+    this.advancedFilters,
   });
 
   /// Creates params for the first page with default limit and no filters.
@@ -29,13 +31,15 @@ class PatientListParams extends QueryParams {
       : limit = defaultPageSize,
         offset = null,
         search = null,
-        filter = PatientFilter.all;
+        filter = PatientFilter.all,
+        advancedFilters = null;
 
   /// Creates params for the next page based on current item count.
   const PatientListParams.nextPage(
     int currentCount, {
     this.search,
     this.filter = PatientFilter.all,
+    this.advancedFilters,
   })  : limit = defaultPageSize,
         offset = currentCount;
 
@@ -43,6 +47,7 @@ class PatientListParams extends QueryParams {
   const PatientListParams.withFilters({
     this.search,
     this.filter = PatientFilter.all,
+    this.advancedFilters,
   })  : limit = defaultPageSize,
         offset = null;
 
@@ -61,12 +66,16 @@ class PatientListParams extends QueryParams {
   /// Filter by patient status (all, active, inactive).
   final PatientFilter filter;
 
+  /// Advanced health data and gender filters.
+  final PatientAdvancedFilters? advancedFilters;
+
   @override
   Map<String, dynamic> toQueryMap() => {
         if (limit != null) 'limit': limit,
         if (offset != null && offset! > 0) 'offset': offset,
         if (search != null && search!.isNotEmpty) 'search': search,
         if (filter != PatientFilter.all) 'filter': filter.toApiValue(),
+        if (advancedFilters != null) ...advancedFilters!.toQueryMap(),
       };
 
   /// Whether this represents a request for more items (not first page).
@@ -74,7 +83,9 @@ class PatientListParams extends QueryParams {
 
   /// Returns true if any search/filter is active.
   bool get hasActiveFilters =>
-      (search != null && search!.isNotEmpty) || filter != PatientFilter.all;
+      (search != null && search!.isNotEmpty) ||
+      filter != PatientFilter.all ||
+      (advancedFilters != null && advancedFilters!.hasActiveFilters);
 
   /// Creates a copy with updated values.
   PatientListParams copyWith({
@@ -82,14 +93,19 @@ class PatientListParams extends QueryParams {
     int? offset,
     String? search,
     PatientFilter? filter,
+    PatientAdvancedFilters? advancedFilters,
     bool clearSearch = false,
     bool clearOffset = false,
+    bool clearAdvancedFilters = false,
   }) {
     return PatientListParams(
       limit: limit ?? this.limit,
       offset: clearOffset ? null : (offset ?? this.offset),
       search: clearSearch ? null : (search ?? this.search),
       filter: filter ?? this.filter,
+      advancedFilters: clearAdvancedFilters
+          ? null
+          : (advancedFilters ?? this.advancedFilters),
     );
   }
 
@@ -101,8 +117,10 @@ class PatientListParams extends QueryParams {
           limit == other.limit &&
           offset == other.offset &&
           search == other.search &&
-          filter == other.filter;
+          filter == other.filter &&
+          advancedFilters == other.advancedFilters;
 
   @override
-  int get hashCode => Object.hash(limit, offset, search, filter);
+  int get hashCode =>
+      Object.hash(limit, offset, search, filter, advancedFilters);
 }

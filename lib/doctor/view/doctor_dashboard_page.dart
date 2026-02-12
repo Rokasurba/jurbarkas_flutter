@@ -7,8 +7,8 @@ import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/patients/cubit/patients_cubit.dart';
-import 'package:frontend/patients/data/models/patient_list_params.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
+import 'package:frontend/patients/widgets/patient_filter_bar.dart';
 import 'package:frontend/patients/widgets/patient_filter_modal.dart';
 import 'package:frontend/patients/widgets/patient_list_view.dart';
 import 'package:frontend/patients/widgets/patient_search_header.dart';
@@ -41,15 +41,21 @@ class _DoctorDashboardView extends StatelessWidget {
 
   Future<void> _showFilterModal(BuildContext context) async {
     final cubit = context.read<PatientsCubit>();
-    final currentFilter = cubit.state.params.filter;
+    final params = cubit.state.params;
 
-    final selectedFilter = await showPatientFilterModal(
+    final result = await showPatientFilterModal(
       context: context,
-      currentFilter: currentFilter,
+      currentFilter: params.filter,
+      currentAdvancedFilters: params.advancedFilters,
     );
 
-    if (selectedFilter != null && selectedFilter != currentFilter) {
-      unawaited(cubit.setFilter(selectedFilter));
+    if (result != null) {
+      unawaited(
+        cubit.applyFilters(
+          filter: result.filter,
+          advancedFilters: result.advancedFilters,
+        ),
+      );
     }
   }
 
@@ -77,14 +83,22 @@ class _DoctorDashboardView extends StatelessWidget {
             buildWhen: (previous, current) =>
                 previous.params != current.params,
             builder: (context, state) {
-              final params = state.params;
               return PatientSearchHeader(
-                initialSearch: params.search,
-                hasActiveFilter: params.filter != PatientFilter.all,
+                initialSearch: state.params.search,
                 onSearchChanged: (query) {
                   context.read<PatientsCubit>().search(query);
                 },
-                onFilterTap: () => _showFilterModal(context),
+              );
+            },
+          ),
+          BlocBuilder<PatientsCubit, PatientsState>(
+            buildWhen: (previous, current) =>
+                previous.params != current.params,
+            builder: (context, state) {
+              return PatientFilterBar(
+                params: state.params,
+                onFilterTap: () =>
+                    _showFilterModal(context),
               );
             },
           ),

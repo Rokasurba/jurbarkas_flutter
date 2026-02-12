@@ -15,36 +15,31 @@ class DoctorInfoCard extends StatelessWidget {
     final l10n = context.l10n;
     final dateFormat = DateFormat('yyyy-MM-dd');
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DoctorHeader(doctor: doctor),
-            const Divider(height: 32),
-            InfoRow(
-              icon: Icons.email_outlined,
-              label: l10n.emailLabel,
-              value: doctor.email,
-            ),
-            const SizedBox(height: 12),
-            InfoRow(
-              icon: Icons.phone_outlined,
-              label: l10n.phone,
-              value: doctor.phone ?? l10n.notSpecified,
-            ),
-            const SizedBox(height: 12),
-            InfoRow(
-              icon: Icons.calendar_today_outlined,
-              label: l10n.registrationDate,
-              value: doctor.createdAt != null
-                  ? dateFormat.format(doctor.createdAt!)
-                  : l10n.notSpecified,
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _DoctorHeader(doctor: doctor),
+        const Divider(height: 32),
+        InfoRow(
+          icon: Icons.email_outlined,
+          label: l10n.emailLabel,
+          value: doctor.email,
         ),
-      ),
+        const SizedBox(height: 12),
+        InfoRow(
+          icon: Icons.phone_outlined,
+          label: l10n.phone,
+          value: doctor.phone ?? l10n.notSpecified,
+        ),
+        const SizedBox(height: 12),
+        InfoRow(
+          icon: Icons.calendar_today_outlined,
+          label: l10n.registrationDate,
+          value: doctor.createdAt != null
+              ? dateFormat.format(doctor.createdAt!)
+              : l10n.notSpecified,
+        ),
+      ],
     );
   }
 }

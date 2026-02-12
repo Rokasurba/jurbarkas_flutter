@@ -1,5 +1,4 @@
 import 'package:envied/envied.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 part 'env.g.dart';
 
@@ -52,25 +51,15 @@ class AppConfig {
     _environment = env;
     switch (env) {
       case Environment.development:
-        _apiBaseUrl = _adjustUrlForPlatform(EnvDev.apiBaseUrl);
+        _apiBaseUrl = EnvDev.apiBaseUrl;
         _appName = EnvDev.appName;
       case Environment.staging:
-        _apiBaseUrl = _adjustUrlForPlatform(EnvStaging.apiBaseUrl);
+        _apiBaseUrl = EnvStaging.apiBaseUrl;
         _appName = EnvStaging.appName;
       case Environment.production:
-        _apiBaseUrl = _adjustUrlForPlatform(EnvProd.apiBaseUrl);
+        _apiBaseUrl = EnvProd.apiBaseUrl;
         _appName = EnvProd.appName;
     }
-  }
-
-  /// Adjusts URL for platform-specific differences.
-  /// Android emulator uses 10.0.2.2 to reach host localhost,
-  /// but web runs directly on localhost.
-  static String _adjustUrlForPlatform(String url) {
-    if (kIsWeb) {
-      return url.replaceAll('10.0.2.2', 'localhost');
-    }
-    return url;
   }
 
   static bool get isDevelopment => _environment == Environment.development;

@@ -145,6 +145,7 @@ class _DoctorCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      clipBehavior: Clip.antiAlias,
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(

@@ -1502,5 +1502,102 @@
     "repeatNewPassword": "Repeat new password",
     "@repeatNewPassword": {
         "description": "Repeat new password field label"
+    },
+    "filterGender": "Gender",
+    "@filterGender": {
+        "description": "Gender filter section header"
+    },
+    "genderMale": "Male",
+    "@genderMale": {
+        "description": "Male gender label"
+    },
+    "genderFemale": "Female",
+    "@genderFemale": {
+        "description": "Female gender label"
+    },
+    "filterBmiRange": "BMI range",
+    "@filterBmiRange": {
+        "description": "BMI range filter section header"
+    },
+    "filterBloodPressure": "Blood pressure",
+    "@filterBloodPressure": {
+        "description": "Blood pressure filter section header"
+    },
+    "filterBloodSugar": "Blood sugar",
+    "@filterBloodSugar": {
+        "description": "Blood sugar filter section header"
+    },
+    "filterStatus": "Status",
+    "@filterStatus": {
+        "description": "Status filter section header"
+    },
+    "filterFrom": "From",
+    "@filterFrom": {
+        "description": "Range from label"
+    },
+    "filterTo": "To",
+    "@filterTo": {
+        "description": "Range to label"
+    },
+    "clearAllFilters": "Clear all",
+    "@clearAllFilters": {
+        "description": "Clear all filters button"
+    },
+    "applyFilters": "Apply",
+    "@applyFilters": {
+        "description": "Apply filters button"
+    },
+    "chipGender": "Gender: {value}",
+    "@chipGender": {
+        "description": "Gender filter chip label",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "chipBmi": "BMI: {range}",
+    "@chipBmi": {
+        "description": "BMI filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "chipSystolic": "Systolic: {range}",
+    "@chipSystolic": {
+        "description": "Systolic filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "chipDiastolic": "Diastolic: {range}",
+    "@chipDiastolic": {
+        "description": "Diastolic filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "chipSugar": "Sugar: {range}",
+    "@chipSugar": {
+        "description": "Blood sugar filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "filterSystolic": "Systolic",
+    "@filterSystolic": {
+        "description": "Systolic sub-header in blood pressure filter"
+    },
+    "filterDiastolic": "Diastolic",
+    "@filterDiastolic": {
+        "description": "Diastolic sub-header in blood pressure filter"
     }
 }

@@ -1510,5 +1510,102 @@
     "repeatNewPassword": "Pakartoti naują slaptažodį",
     "@repeatNewPassword": {
         "description": "Repeat new password field label"
+    },
+    "filterGender": "Lytis",
+    "@filterGender": {
+        "description": "Gender filter section header"
+    },
+    "genderMale": "Vyras",
+    "@genderMale": {
+        "description": "Male gender label"
+    },
+    "genderFemale": "Moteris",
+    "@genderFemale": {
+        "description": "Female gender label"
+    },
+    "filterBmiRange": "KMI diapazonas",
+    "@filterBmiRange": {
+        "description": "BMI range filter section header"
+    },
+    "filterBloodPressure": "Kraujo spaudimas",
+    "@filterBloodPressure": {
+        "description": "Blood pressure filter section header"
+    },
+    "filterBloodSugar": "Cukraus kiekis",
+    "@filterBloodSugar": {
+        "description": "Blood sugar filter section header"
+    },
+    "filterStatus": "Statusas",
+    "@filterStatus": {
+        "description": "Status filter section header"
+    },
+    "filterFrom": "Nuo",
+    "@filterFrom": {
+        "description": "Range from label"
+    },
+    "filterTo": "Iki",
+    "@filterTo": {
+        "description": "Range to label"
+    },
+    "clearAllFilters": "Išvalyti viską",
+    "@clearAllFilters": {
+        "description": "Clear all filters button"
+    },
+    "applyFilters": "Taikyti",
+    "@applyFilters": {
+        "description": "Apply filters button"
+    },
+    "chipGender": "Lytis: {value}",
+    "@chipGender": {
+        "description": "Gender filter chip label",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "chipBmi": "KMI: {range}",
+    "@chipBmi": {
+        "description": "BMI filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "chipSystolic": "Sistolinis: {range}",
+    "@chipSystolic": {
+        "description": "Systolic filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "chipDiastolic": "Diastolinis: {range}",
+    "@chipDiastolic": {
+        "description": "Diastolic filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "chipSugar": "Cukrus: {range}",
+    "@chipSugar": {
+        "description": "Blood sugar filter chip label",
+        "placeholders": {
+            "range": {
+                "type": "String"
+            }
+        }
+    },
+    "filterSystolic": "Sistolinis",
+    "@filterSystolic": {
+        "description": "Systolic sub-header in blood pressure filter"
+    },
+    "filterDiastolic": "Diastolinis",
+    "@filterDiastolic": {
+        "description": "Diastolic sub-header in blood pressure filter"
     }
 }
