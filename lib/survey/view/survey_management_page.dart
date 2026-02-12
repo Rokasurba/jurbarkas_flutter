@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
-import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/doctor_survey_list_cubit.dart';
 import 'package:frontend/survey/cubit/doctor_survey_list_state.dart';
 import 'package:frontend/survey/data/models/survey.dart';
-import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
 
 @RoutePage()
@@ -41,8 +40,12 @@ class _SurveyManagementView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.surveyListTitle),
+        backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
+        title: Text(
+          l10n.surveyListTitle,
+          style: context.appBarTitle,
+        ),
       ),
       body: BlocBuilder<DoctorSurveyListCubit, DoctorSurveyListState>(
         builder: (context, state) {
@@ -88,6 +91,8 @@ class _SurveyManagementView extends StatelessWidget {
         },
         icon: const Icon(Icons.add),
         label: Text(l10n.newSurvey),
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
       ),
     );
   }
@@ -211,16 +216,28 @@ class _SurveyCard extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: Text(l10n.deleteSurveyTitle),
         content: Text(l10n.deleteSurveyConfirmation(survey.title)),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         actions: [
-          AppButton.text(
-            label: l10n.cancelButton,
-            onPressed: () => Navigator.pop(context, false),
-            size: AppButtonSize.small,
-          ),
-          AppButton.danger(
-            label: l10n.deleteButton,
-            onPressed: () => Navigator.pop(context, true),
-            size: AppButtonSize.small,
+          Row(
+            children: [
+              Expanded(
+                child: AppButton.outlined(
+                  label: l10n.cancelButton,
+                  onPressed: () => Navigator.pop(context, false),
+                  expand: true,
+                  size: AppButtonSize.medium,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: AppButton.danger(
+                  label: l10n.deleteButton,
+                  onPressed: () => Navigator.pop(context, true),
+                  expand: true,
+                  size: AppButtonSize.medium,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -312,13 +329,13 @@ class _SurveyCard extends StatelessWidget {
                     label: '${survey.assignmentCount}',
                   ),
                   const Spacer(),
-                  AppButton.primary(
+                  AppButton.text(
                     label: l10n.surveyResults,
                     icon: Icons.bar_chart,
                     onPressed: () => context.router.push(
                       SurveyResultsOverviewRoute(surveyId: survey.id),
                     ),
-                    expand: false,
+                    size: AppButtonSize.small,
                   ),
                 ],
               ),

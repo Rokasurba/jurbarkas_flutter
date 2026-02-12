@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/core/widgets/app_button.dart';
+import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:frontend/patients/data/patients_repository.dart';
+import 'package:frontend/survey/cubit/survey_assignment_state.dart';
 import 'package:frontend/survey/cubit/survey_builder_cubit.dart';
 import 'package:frontend/survey/cubit/survey_builder_state.dart';
 import 'package:frontend/survey/data/models/question_form_data.dart';
-import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
 
 /// Translates error codes to localized messages.
@@ -37,6 +38,7 @@ class SurveyBuilderPage extends StatelessWidget {
       create: (context) {
         final cubit = SurveyBuilderCubit(
           surveyRepository: context.read<SurveyRepository>(),
+          patientsRepository: context.read<PatientsRepository>(),
         );
         if (surveyId != null) {
           unawaited(cubit.initForEdit(surveyId!));
@@ -50,10 +52,46 @@ class SurveyBuilderPage extends StatelessWidget {
   }
 }
 
-class _SurveyBuilderView extends StatelessWidget {
+class _SurveyBuilderView extends StatefulWidget {
   const _SurveyBuilderView({required this.isEditMode});
 
   final bool isEditMode;
+
+  @override
+  State<_SurveyBuilderView> createState() => _SurveyBuilderViewState();
+}
+
+class _SurveyBuilderViewState extends State<_SurveyBuilderView>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  int _currentTabIndex = 0;
+  bool _patientsTabVisited = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this)
+      ..addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return;
+    setState(() {
+      _currentTabIndex = _tabController.index;
+    });
+    // Lazy-load patients when Pacientai tab is first visited
+    if (_tabController.index == 1 && !_patientsTabVisited) {
+      _patientsTabVisited = true;
+      unawaited(context.read<SurveyBuilderCubit>().loadPatients());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +102,7 @@ class _SurveyBuilderView extends StatelessWidget {
         if (state is SurveyBuilderSaved) {
           AppSnackbar.showSuccess(
             context,
-            isEditMode ? l10n.surveyUpdated : l10n.surveyCreated,
+            widget.isEditMode ? l10n.surveyUpdated : l10n.surveyCreated,
           );
           unawaited(context.router.maybePop(true));
         } else if (state is SurveyBuilderError) {
@@ -72,74 +110,122 @@ class _SurveyBuilderView extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        final showTabs = state is SurveyBuilderEditing ||
+            state is SurveyBuilderSaving;
+
         return Scaffold(
           appBar: AppBar(
-            title: Text(isEditMode ? l10n.editSurvey : l10n.createSurvey),
+            backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
+            title: Text(
+              widget.isEditMode ? l10n.editSurvey : l10n.createSurvey,
+              style: context.appBarTitle,
+            ),
+            bottom: showTabs
+                ? TabBar(
+                    controller: _tabController,
+                    indicatorColor: Colors.white,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.white70,
+                    tabs: [
+                      Tab(text: l10n.questionsSection),
+                      Tab(text: l10n.assignPatientsTab),
+                    ],
+                  )
+                : null,
           ),
-          body: state.when(
-            initial: () => const SizedBox.shrink(),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            editing: (
-              title,
-              description,
-              questions,
-              isEditMode,
-              hasResponses,
-              surveyId,
-              titleError,
-              questionsError,
-            ) =>
-                _SurveyBuilderForm(
-              title: title,
-              description: description,
-              questions: questions,
-              hasResponses: hasResponses,
-              titleError: titleError,
-              questionsError: questionsError,
-            ),
-            saving: (title, description, questions, isEditMode, surveyId) =>
-                const Center(
-              child: CircularProgressIndicator(),
-            ),
-            saved: (_) => const SizedBox.shrink(),
-            error: (message) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(message, textAlign: TextAlign.center),
-                  const SizedBox(height: 24),
-                  AppButton.outlined(
-                    label: l10n.cancelButton,
-                    icon: Icons.arrow_back,
-                    onPressed: () => context.router.maybePop(),
-                    size: AppButtonSize.medium,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          floatingActionButton: state is SurveyBuilderEditing && !state.hasResponses
-              ? FloatingActionButton.extended(
-                  heroTag: 'addQuestionFab',
-                  onPressed: () => _showAddQuestionSheet(context),
-                  icon: const Icon(Icons.add),
-                  label: Text(l10n.addQuestion),
-                )
-              : null,
-          bottomNavigationBar: state is SurveyBuilderEditing && !state.hasResponses
-              ? const _SaveButton(isLoading: false)
-              : state is SurveyBuilderSaving
-                  ? const _SaveButton(isLoading: true)
+          body: _buildBody(context, state),
+          floatingActionButton:
+              state is SurveyBuilderEditing &&
+                      !state.hasResponses &&
+                      _currentTabIndex == 0
+                  ? FloatingActionButton.extended(
+                      heroTag: 'addQuestionFab',
+                      onPressed: () => _showAddQuestionSheet(context),
+                      icon: const Icon(Icons.add),
+                      label: Text(l10n.addQuestion),
+                      backgroundColor: AppColors.secondary,
+                      foregroundColor: Colors.white,
+                    )
                   : null,
+          bottomNavigationBar:
+              state is SurveyBuilderEditing && !state.hasResponses
+                  ? const _SaveButton(isLoading: false)
+                  : state is SurveyBuilderSaving
+                      ? const _SaveButton(isLoading: true)
+                      : null,
         );
       },
+    );
+  }
+
+  Widget _buildBody(BuildContext context, SurveyBuilderState state) {
+    return state.when(
+      initial: () => const SizedBox.shrink(),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      editing: (
+        title,
+        description,
+        questions,
+        isEditMode,
+        hasResponses,
+        surveyId,
+        titleError,
+        questionsError,
+        allPatients,
+        filteredPatients,
+        selectedPatientIds,
+        patientSearchQuery,
+        patientsLoading,
+        patientsError,
+      ) =>
+          TabBarView(
+        controller: _tabController,
+        children: [
+          _SurveyBuilderForm(
+            title: title,
+            description: description,
+            questions: questions,
+            hasResponses: hasResponses,
+            titleError: titleError,
+            questionsError: questionsError,
+          ),
+          _PatientAssignmentTab(
+            filteredPatients: filteredPatients,
+            selectedPatientIds: selectedPatientIds,
+            searchQuery: patientSearchQuery,
+            isLoading: patientsLoading,
+            error: patientsError,
+            totalPatientCount: allPatients.length,
+          ),
+        ],
+      ),
+      saving: (title, description, questions, isEditMode, surveyId,
+              selectedPatientIds) =>
+          const Center(child: CircularProgressIndicator()),
+      saved: (_) => const SizedBox.shrink(),
+      error: (message) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 24),
+            AppButton.secondary(
+              label: context.l10n.cancelButton,
+              icon: Icons.arrow_back,
+              onPressed: () => context.router.maybePop(),
+              expand: false,
+              size: AppButtonSize.medium,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -190,6 +276,180 @@ class _SaveButton extends StatelessWidget {
     );
   }
 }
+
+// --- Patient Assignment Tab ---
+
+class _PatientAssignmentTab extends StatelessWidget {
+  const _PatientAssignmentTab({
+    required this.filteredPatients,
+    required this.selectedPatientIds,
+    required this.searchQuery,
+    required this.isLoading,
+    required this.totalPatientCount,
+    this.error,
+  });
+
+  final List<PatientSelectionItem> filteredPatients;
+  final Set<int> selectedPatientIds;
+  final String searchQuery;
+  final bool isLoading;
+  final String? error;
+  final int totalPatientCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(error!, textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            AppButton.secondary(
+              label: l10n.retryButton,
+              icon: Icons.refresh,
+              onPressed: () =>
+                  context.read<SurveyBuilderCubit>().loadPatients(),
+              expand: false,
+              size: AppButtonSize.medium,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: l10n.searchPlaceholder,
+              prefixIcon: const Icon(Icons.search),
+              border: const OutlineInputBorder(),
+              isDense: true,
+            ),
+            onChanged: (query) =>
+                context.read<SurveyBuilderCubit>().searchPatients(query),
+          ),
+        ),
+        // Select all / none row + count
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            children: [
+              Text(
+                l10n.selectedCount(selectedPatientIds.length),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: () =>
+                    context.read<SurveyBuilderCubit>().selectAllPatients(),
+                child: Text(l10n.selectAll),
+              ),
+              TextButton(
+                onPressed: () =>
+                    context.read<SurveyBuilderCubit>().deselectAllPatients(),
+                child: Text(l10n.selectNone),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        // Patient list
+        Expanded(
+          child: filteredPatients.isEmpty
+              ? Center(
+                  child: Text(
+                    l10n.noPatientsFound,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.outline,
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: filteredPatients.length,
+                  itemBuilder: (context, index) {
+                    final item = filteredPatients[index];
+                    final isSelected =
+                        selectedPatientIds.contains(item.patient.id);
+                    return _PatientCheckboxTile(
+                      item: item,
+                      isSelected: isSelected,
+                      onToggle: () => context
+                          .read<SurveyBuilderCubit>()
+                          .togglePatient(item.patient.id),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PatientCheckboxTile extends StatelessWidget {
+  const _PatientCheckboxTile({
+    required this.item,
+    required this.isSelected,
+    required this.onToggle,
+  });
+
+  final PatientSelectionItem item;
+  final bool isSelected;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final patient = item.patient;
+
+    return CheckboxListTile(
+      value: isSelected,
+      onChanged: (_) => onToggle(),
+      title: Text(
+        patient.fullName,
+        style: theme.textTheme.bodyLarge,
+      ),
+      subtitle: Text(
+        patient.patientCode ?? patient.email,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.outline,
+        ),
+      ),
+      secondary: CircleAvatar(
+        backgroundColor: theme.colorScheme.primaryContainer,
+        child: Text(
+          patient.initials,
+          style: TextStyle(
+            color: theme.colorScheme.onPrimaryContainer,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      controlAffinity: ListTileControlAffinity.trailing,
+    );
+  }
+}
+
+// --- Survey Builder Form (Questions tab) ---
 
 class _SurveyBuilderForm extends StatefulWidget {
   const _SurveyBuilderForm({
@@ -419,16 +679,30 @@ class _SurveyBuilderFormState extends State<_SurveyBuilderForm> {
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.deleteConfirmTitle),
         content: Text(l10n.deleteConfirmMessage),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         actions: [
-          AppButton.text(
-            label: l10n.cancelButton,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            size: AppButtonSize.small,
-          ),
-          AppButton.danger(
-            label: l10n.deleteButton,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            size: AppButtonSize.small,
+          Row(
+            children: [
+              Expanded(
+                child: AppButton.outlined(
+                  label: l10n.cancelButton,
+                  onPressed: () =>
+                      Navigator.of(dialogContext).pop(false),
+                  expand: true,
+                  size: AppButtonSize.medium,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: AppButton.danger(
+                  label: l10n.deleteButton,
+                  onPressed: () =>
+                      Navigator.of(dialogContext).pop(true),
+                  expand: true,
+                  size: AppButtonSize.medium,
+                ),
+              ),
+            ],
           ),
         ],
       ),

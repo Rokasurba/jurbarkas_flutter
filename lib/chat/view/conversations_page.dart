@@ -51,7 +51,7 @@ class _ConversationsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
-        elevation: 3,
+        elevation: 2,
         title: Text(
           l10n.conversationsTitle,
           style: context.appBarTitle,
@@ -70,7 +70,7 @@ class _ConversationsView extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: BlocSelector<ConversationsCubit, ConversationsState, bool>(
               selector: (state) => state is ConversationsLoaded,
               builder: (context, isLoaded) {
@@ -78,16 +78,34 @@ class _ConversationsView extends StatelessWidget {
                   enabled: isLoaded,
                   decoration: InputDecoration(
                     hintText: l10n.conversationsSearch,
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    hintStyle: context.bodyMedium?.copyWith(
+                      color: AppColors.secondaryText.withValues(alpha: 0.6),
                     ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: AppColors.secondary.withValues(alpha: 0.7),
+                    ),
+                    filled: true,
+                    fillColor: AppColors.inputFill,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
-                      vertical: 12,
+                      vertical: 16,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(11),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(11),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(11),
+                      borderSide: BorderSide.none,
                     ),
                   ),
                   onChanged: cubit.search,
+                  style: context.bodyMedium,
                 );
               },
             ),

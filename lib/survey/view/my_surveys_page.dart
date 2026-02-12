@@ -40,11 +40,12 @@ class _MySurveysView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
         title: Text(
           l10n.surveyListTitle,
           style: context.appBarTitle,
         ),
-        foregroundColor: Colors.white,
       ),
       body: BlocBuilder<SurveyListCubit, SurveyListState>(
         builder: (context, state) {

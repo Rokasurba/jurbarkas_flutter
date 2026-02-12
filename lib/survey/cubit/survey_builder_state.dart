@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:frontend/survey/cubit/survey_assignment_state.dart';
 import 'package:frontend/survey/data/models/question_form_data.dart';
 import 'package:frontend/survey/data/models/survey.dart';
 
@@ -22,6 +23,13 @@ sealed class SurveyBuilderState with _$SurveyBuilderState {
     required int? surveyId,
     String? titleError,
     String? questionsError,
+    // Patient assignment fields
+    @Default([]) List<PatientSelectionItem> allPatients,
+    @Default([]) List<PatientSelectionItem> filteredPatients,
+    @Default({}) Set<int> selectedPatientIds,
+    @Default('') String patientSearchQuery,
+    @Default(false) bool patientsLoading,
+    String? patientsError,
   }) = SurveyBuilderEditing;
 
   /// Saving state while submitting to API.
@@ -31,6 +39,7 @@ sealed class SurveyBuilderState with _$SurveyBuilderState {
     required List<QuestionFormData> questions,
     required bool isEditMode,
     required int? surveyId,
+    @Default({}) Set<int> selectedPatientIds,
   }) = SurveyBuilderSaving;
 
   /// Success state after survey is saved.

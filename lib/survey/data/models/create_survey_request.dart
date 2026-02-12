@@ -5,6 +5,7 @@ part 'create_survey_request.g.dart';
 
 @freezed
 class CreateSurveyRequest with _$CreateSurveyRequest {
+  @JsonSerializable(explicitToJson: true)
   const factory CreateSurveyRequest({
     required String title,
     required List<CreateQuestionRequest> questions,
@@ -17,6 +18,7 @@ class CreateSurveyRequest with _$CreateSurveyRequest {
 
 @freezed
 class CreateQuestionRequest with _$CreateQuestionRequest {
+  @JsonSerializable(explicitToJson: true)
   const factory CreateQuestionRequest({
     @JsonKey(name: 'question_text') required String questionText,
     @JsonKey(name: 'question_type') required String questionType,

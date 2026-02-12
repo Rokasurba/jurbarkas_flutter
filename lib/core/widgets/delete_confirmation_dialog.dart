@@ -12,7 +12,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
   final VoidCallback onConfirm;
   final bool isLoading;
 
-  static Future<bool?> show(
+  static Future<bool?> show( 
     BuildContext context, {
     required VoidCallback onConfirm,
     bool isLoading = false,

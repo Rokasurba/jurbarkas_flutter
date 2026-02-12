@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/core/data/api_response.dart';
+import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:frontend/survey/cubit/survey_builder_cubit.dart';
 import 'package:frontend/survey/cubit/survey_builder_state.dart';
 import 'package:frontend/survey/data/models/create_survey_request.dart';
@@ -14,8 +15,11 @@ import 'package:mocktail/mocktail.dart';
 
 class MockSurveyRepository extends Mock implements SurveyRepository {}
 
+class MockPatientsRepository extends Mock implements PatientsRepository {}
+
 void main() {
   late MockSurveyRepository mockRepository;
+  late MockPatientsRepository mockPatientsRepository;
 
   setUpAll(() {
     registerFallbackValue(
@@ -28,18 +32,25 @@ void main() {
 
   setUp(() {
     mockRepository = MockSurveyRepository();
+    mockPatientsRepository = MockPatientsRepository();
   });
 
   group('SurveyBuilderCubit', () {
     test('initial state is SurveyBuilderInitial', () {
-      final cubit = SurveyBuilderCubit(surveyRepository: mockRepository);
+      final cubit = SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        );
       expect(cubit.state, equals(const SurveyBuilderState.initial()));
       cubit.close();
     });
 
     blocTest<SurveyBuilderCubit, SurveyBuilderState>(
       'initForCreate sets initial editing state',
-      build: () => SurveyBuilderCubit(surveyRepository: mockRepository),
+      build: () => SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        ),
       act: (cubit) => cubit.initForCreate(),
       expect: () => [
         const SurveyBuilderState.editing(
@@ -92,7 +103,10 @@ void main() {
             ),
           ),
         );
-        return SurveyBuilderCubit(surveyRepository: mockRepository);
+        return SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        );
       },
       act: (cubit) => cubit.initForEdit(1),
       expect: () => [
@@ -108,7 +122,10 @@ void main() {
 
     blocTest<SurveyBuilderCubit, SurveyBuilderState>(
       'addQuestion adds to questions list',
-      build: () => SurveyBuilderCubit(surveyRepository: mockRepository),
+      build: () => SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        ),
       seed: () => const SurveyBuilderState.editing(
         title: 'Test',
         description: null,
@@ -139,7 +156,10 @@ void main() {
 
     blocTest<SurveyBuilderCubit, SurveyBuilderState>(
       'removeQuestion removes from list',
-      build: () => SurveyBuilderCubit(surveyRepository: mockRepository),
+      build: () => SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        ),
       seed: () => SurveyBuilderState.editing(
         title: 'Test',
         description: null,
@@ -189,7 +209,10 @@ void main() {
             ),
           ),
         );
-        return SurveyBuilderCubit(surveyRepository: mockRepository);
+        return SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        );
       },
       seed: () => SurveyBuilderState.editing(
         title: 'New Survey',
@@ -216,7 +239,10 @@ void main() {
 
     blocTest<SurveyBuilderCubit, SurveyBuilderState>(
       'saveSurvey emits validation error for empty title',
-      build: () => SurveyBuilderCubit(surveyRepository: mockRepository),
+      build: () => SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        ),
       seed: () => SurveyBuilderState.editing(
         title: '',
         description: null,
@@ -240,7 +266,10 @@ void main() {
 
     blocTest<SurveyBuilderCubit, SurveyBuilderState>(
       'saveSurvey emits validation error for zero questions',
-      build: () => SurveyBuilderCubit(surveyRepository: mockRepository),
+      build: () => SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        ),
       seed: () => const SurveyBuilderState.editing(
         title: 'Valid Title',
         description: null,
@@ -277,7 +306,10 @@ void main() {
             ),
           ),
         );
-        return SurveyBuilderCubit(surveyRepository: mockRepository);
+        return SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        );
       },
       seed: () => SurveyBuilderState.editing(
         title: 'Updated Survey',
@@ -307,7 +339,10 @@ void main() {
 
     blocTest<SurveyBuilderCubit, SurveyBuilderState>(
       'reorderQuestions updates order correctly',
-      build: () => SurveyBuilderCubit(surveyRepository: mockRepository),
+      build: () => SurveyBuilderCubit(
+          surveyRepository: mockRepository,
+          patientsRepository: mockPatientsRepository,
+        ),
       seed: () => SurveyBuilderState.editing(
         title: 'Test',
         description: null,

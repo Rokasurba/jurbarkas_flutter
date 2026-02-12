@@ -39,11 +39,17 @@ class SurveyAssignmentCubit extends Cubit<SurveyAssignmentState> {
             )
             .toList();
 
+        // Pre-select all non-assigned patients by default
+        final preSelectedIds = patients
+            .where((item) => !item.hasExistingAssignment)
+            .map((item) => item.patient.id)
+            .toSet();
+
         emit(
           SurveyAssignmentState.loaded(
             allPatients: patients,
             filteredPatients: patients,
-            selectedIds: {},
+            selectedIds: preSelectedIds,
             surveyId: surveyId,
             searchQuery: '',
           ),

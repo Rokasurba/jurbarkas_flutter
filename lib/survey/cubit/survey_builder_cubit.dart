@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:frontend/patients/data/patients_repository.dart';
+import 'package:frontend/survey/cubit/survey_assignment_state.dart';
 import 'package:frontend/survey/cubit/survey_builder_state.dart';
 import 'package:frontend/survey/data/models/create_survey_request.dart';
 import 'package:frontend/survey/data/models/question_form_data.dart';
@@ -7,10 +11,15 @@ import 'package:frontend/survey/data/survey_repository.dart';
 class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
   SurveyBuilderCubit({
     required SurveyRepository surveyRepository,
+    required PatientsRepository patientsRepository,
   })  : _surveyRepository = surveyRepository,
+        _patientsRepository = patientsRepository,
         super(const SurveyBuilderState.initial());
 
   final SurveyRepository _surveyRepository;
+  final PatientsRepository _patientsRepository;
+  bool _patientsLoadedOnce = false;
+  Timer? _searchDebounce;
 
   /// Initialize for creating a new survey.
   void initForCreate() {
@@ -34,10 +43,6 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
 
     response.when(
       success: (details, _) {
-        // Check if survey has responses (completed assignments)
-        // For now we'll assume hasResponses = false since the API doesn't
-        // include this directly. The UI will handle the "cannot edit" case
-        // if the update API returns an error.
         final questions = details.questions
             .map(
               (q) => QuestionFormData(
@@ -65,7 +70,7 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
             description: details.description,
             questions: questions,
             isEditMode: true,
-            hasResponses: false, // Will be determined on save attempt
+            hasResponses: false,
             surveyId: surveyId,
           ),
         );
@@ -168,6 +173,132 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
     }
   }
 
+  // --- Patient assignment methods ---
+
+  /// Load patients for assignment (lazy-loaded on first tab switch).
+  Future<void> loadPatients() async {
+    final currentState = state;
+    if (currentState is! SurveyBuilderEditing) return;
+    if (_patientsLoadedOnce) return;
+
+    emit(currentState.copyWith(patientsLoading: true, patientsError: null));
+
+    final response = await _patientsRepository.getPatients();
+
+    final latestState = state;
+    if (latestState is! SurveyBuilderEditing) return;
+
+    response.when(
+      success: (patientsResponse, _) {
+        _patientsLoadedOnce = true;
+        final patients = patientsResponse.patients
+            .map(
+              (p) => PatientSelectionItem(patient: p),
+            )
+            .toList();
+
+        // Pre-select all patients by default
+        final preSelectedIds = patients
+            .map((item) => item.patient.id)
+            .toSet();
+
+        emit(
+          latestState.copyWith(
+            allPatients: patients,
+            filteredPatients: patients,
+            selectedPatientIds: preSelectedIds,
+            patientsLoading: false,
+          ),
+        );
+      },
+      error: (message, _) {
+        emit(
+          latestState.copyWith(
+            patientsLoading: false,
+            patientsError: message,
+          ),
+        );
+      },
+    );
+  }
+
+  /// Toggle patient selection.
+  void togglePatient(int patientId) {
+    final currentState = state;
+    if (currentState is SurveyBuilderEditing) {
+      final updatedSelection = Set<int>.from(currentState.selectedPatientIds);
+      if (updatedSelection.contains(patientId)) {
+        updatedSelection.remove(patientId);
+      } else {
+        updatedSelection.add(patientId);
+      }
+      emit(currentState.copyWith(selectedPatientIds: updatedSelection));
+    }
+  }
+
+  /// Filter patients by search query (debounced 300ms).
+  void searchPatients(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 300),
+      () => _applyPatientSearch(query),
+    );
+  }
+
+  void _applyPatientSearch(String query) {
+    final currentState = state;
+    if (currentState is SurveyBuilderEditing) {
+      final normalizedQuery = query.toLowerCase().trim();
+      final filtered = normalizedQuery.isEmpty
+          ? currentState.allPatients
+          : currentState.allPatients.where((item) {
+              final patient = item.patient;
+              return patient.fullName
+                      .toLowerCase()
+                      .contains(normalizedQuery) ||
+                  (patient.patientCode
+                          ?.toLowerCase()
+                          .contains(normalizedQuery) ??
+                      false) ||
+                  patient.email.toLowerCase().contains(normalizedQuery);
+            }).toList();
+
+      emit(
+        currentState.copyWith(
+          filteredPatients: filtered,
+          patientSearchQuery: query,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _searchDebounce?.cancel();
+    return super.close();
+  }
+
+  /// Select all visible patients.
+  void selectAllPatients() {
+    final currentState = state;
+    if (currentState is SurveyBuilderEditing) {
+      final allVisibleIds = currentState.filteredPatients
+          .map((item) => item.patient.id)
+          .toSet();
+      // Merge with existing selections (keep non-visible ones selected too)
+      final merged = {...currentState.selectedPatientIds, ...allVisibleIds};
+      emit(currentState.copyWith(selectedPatientIds: merged));
+    }
+  }
+
+  /// Deselect all patients.
+  void deselectAllPatients() {
+    final currentState = state;
+    if (currentState is SurveyBuilderEditing) {
+      emit(currentState.copyWith(selectedPatientIds: {}));
+    }
+  }
+
   /// Validate the survey before saving.
   /// Returns null if valid, or an error message if invalid.
   String? _validate(SurveyBuilderEditing currentState) {
@@ -186,7 +317,7 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
     return null;
   }
 
-  /// Save the survey (create or update).
+  /// Save the survey (create or update), then assign patients if selected.
   Future<void> saveSurvey() async {
     final currentState = state;
     if (currentState is! SurveyBuilderEditing) return;
@@ -228,6 +359,8 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
           .toList(),
     );
 
+    final selectedIds = currentState.selectedPatientIds;
+
     emit(
       SurveyBuilderState.saving(
         title: currentState.title,
@@ -235,6 +368,7 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
         questions: currentState.questions,
         isEditMode: currentState.isEditMode,
         surveyId: currentState.surveyId,
+        selectedPatientIds: selectedIds,
       ),
     );
 
@@ -242,8 +376,23 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
         ? await _surveyRepository.updateSurvey(currentState.surveyId!, request)
         : await _surveyRepository.createSurvey(request);
 
-    response.when(
-      success: (survey, _) => emit(SurveyBuilderState.saved(survey)),
+    await response.when(
+      success: (survey, _) async {
+        // If patients are selected, assign them
+        if (selectedIds.isNotEmpty) {
+          final assignResponse = await _surveyRepository.assignSurvey(
+            surveyId: survey.id,
+            patientIds: selectedIds.toList(),
+          );
+          // We still emit saved regardless of assignment result
+          // (survey was created successfully)
+          assignResponse.when(
+            success: (result, message) {},
+            error: (message, errors) {},
+          );
+        }
+        emit(SurveyBuilderState.saved(survey));
+      },
       error: (message, _) {
         // Check if it's a "has responses" error
         if (message.contains('atsakym') || message.contains('response')) {
@@ -256,6 +405,10 @@ class SurveyBuilderCubit extends Cubit<SurveyBuilderState> {
               hasResponses: true,
               surveyId: currentState.surveyId,
               questionsError: message,
+              allPatients: currentState.allPatients,
+              filteredPatients: currentState.filteredPatients,
+              selectedPatientIds: selectedIds,
+              patientSearchQuery: currentState.patientSearchQuery,
             ),
           );
         } else {

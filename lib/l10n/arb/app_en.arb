@@ -1599,5 +1599,9 @@
     "filterDiastolic": "Diastolic",
     "@filterDiastolic": {
         "description": "Diastolic sub-header in blood pressure filter"
+    },
+    "assignPatientsTab": "Patients",
+    "@assignPatientsTab": {
+        "description": "Patient assignment tab label in survey builder"
     }
 }

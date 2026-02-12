@@ -197,6 +197,7 @@ class AppButton extends StatelessWidget {
         _ButtonVariant.primary => FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
+            padding: _padding,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -205,6 +206,7 @@ class AppButton extends StatelessWidget {
         _ButtonVariant.secondary => FilledButton.styleFrom(
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
+            padding: _padding,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -213,6 +215,7 @@ class AppButton extends StatelessWidget {
         _ButtonVariant.outlined => OutlinedButton.styleFrom(
             foregroundColor: AppColors.primary,
             side: const BorderSide(color: AppColors.primary),
+            padding: _padding,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -220,6 +223,7 @@ class AppButton extends StatelessWidget {
           ),
         _ButtonVariant.text => TextButton.styleFrom(
             foregroundColor: AppColors.primary,
+            padding: _padding,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -228,6 +232,7 @@ class AppButton extends StatelessWidget {
         _ButtonVariant.danger => FilledButton.styleFrom(
             backgroundColor: AppColors.error,
             foregroundColor: Colors.white,
+            padding: _padding,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
@@ -236,11 +241,21 @@ class AppButton extends StatelessWidget {
         _ButtonVariant.dangerOutlined => OutlinedButton.styleFrom(
             foregroundColor: AppColors.error,
             side: const BorderSide(color: AppColors.error),
+            padding: _padding,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(22),
             ),
             textStyle: _textStyle,
           ),
+      };
+
+  EdgeInsetsGeometry get _padding => switch (size) {
+        AppButtonSize.small =>
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        AppButtonSize.medium =>
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        AppButtonSize.large =>
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       };
 
   TextStyle get _textStyle => TextStyle(

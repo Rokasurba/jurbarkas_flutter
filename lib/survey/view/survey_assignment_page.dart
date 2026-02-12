@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/core/widgets/app_button.dart';
+import 'package:frontend/core/core.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/patients/data/patients_repository.dart';
 import 'package:frontend/survey/cubit/survey_assignment_cubit.dart';
 import 'package:frontend/survey/cubit/survey_assignment_state.dart';
-import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
 
 @RoutePage()
@@ -58,26 +57,12 @@ class _SurveyAssignmentView extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(l10n.assignSurvey),
+            backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
-            actions: state is SurveyAssignmentLoaded
-                ? [
-                    if (state.selectedIds.isEmpty)
-                      AppButton.text(
-                        label: l10n.selectAll,
-                        onPressed: () =>
-                            context.read<SurveyAssignmentCubit>().selectAll(),
-                        size: AppButtonSize.small,
-                      )
-                    else
-                      AppButton.text(
-                        label: l10n.selectNone,
-                        onPressed: () =>
-                            context.read<SurveyAssignmentCubit>().deselectAll(),
-                        size: AppButtonSize.small,
-                      ),
-                  ]
-                : null,
+            title: Text(
+              l10n.assignSurvey,
+              style: context.appBarTitle,
+            ),
           ),
           body: state.when(
             initial: () => const SizedBox.shrink(),
@@ -187,47 +172,83 @@ class _PatientSelectionContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
+    final cubit = context.read<SurveyAssignmentCubit>();
 
     return Column(
       children: [
         // Search field
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: TextField(
             decoration: InputDecoration(
               hintText: l10n.searchPlaceholder,
-              prefixIcon: const Icon(Icons.search),
-              border: const OutlineInputBorder(),
-              isDense: true,
+              hintStyle: context.bodyMedium?.copyWith(
+                color: AppColors.secondaryText.withValues(alpha: 0.6),
+              ),
+              prefixIcon: Icon(
+                Icons.search,
+                color: AppColors.secondary.withValues(alpha: 0.7),
+              ),
+              filled: true,
+              fillColor: AppColors.inputFill,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(11),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(11),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(11),
+                borderSide: BorderSide.none,
+              ),
             ),
-            onChanged: (value) {
-              context.read<SurveyAssignmentCubit>().searchPatients(value);
-            },
+            onChanged: cubit.searchPatients,
+            style: context.bodyMedium,
           ),
         ),
 
-        // Selected count indicator
-        if (selectedIds.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: theme.colorScheme.primaryContainer,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  size: 20,
-                  color: theme.colorScheme.onPrimaryContainer,
+        // Select all / none row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Icon(
+                Icons.check_circle,
+                size: 20,
+                color: selectedIds.isNotEmpty
+                    ? AppColors.secondary
+                    : theme.colorScheme.outline,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.selectedCount(selectedIds.length),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.selectedCount(selectedIds.length),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const Spacer(),
+              AppButton.text(
+                label: l10n.selectAll,
+                onPressed: cubit.selectAll,
+                size: AppButtonSize.small,
+              ),
+              const SizedBox(width: 8),
+              AppButton.text(
+                label: l10n.selectNone,
+                onPressed: cubit.deselectAll,
+                size: AppButtonSize.small,
+              ),
+            ],
           ),
+        ),
+
+        const Divider(height: 1),
 
         // Patients list
         Expanded(
@@ -252,9 +273,7 @@ class _PatientSelectionContent extends StatelessWidget {
                       item: item,
                       isSelected: isSelected,
                       onChanged: (selected) {
-                        context
-                            .read<SurveyAssignmentCubit>()
-                            .togglePatient(item.patient.id);
+                        cubit.togglePatient(item.patient.id);
                       },
                     );
                   },

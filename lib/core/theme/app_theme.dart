@@ -122,8 +122,25 @@ class AppTheme {
       popupMenuTheme: const PopupMenuThemeData(
         color: AppColors.background,
       ),
-      navigationBarTheme: const NavigationBarThemeData(
+      navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.background,
+        indicatorColor: AppColors.secondary,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: Colors.white);
+          }
+          return null;
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              color: AppColors.secondary,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            );
+          }
+          return const TextStyle(fontSize: 12);
+        }),
       ),
       navigationRailTheme: const NavigationRailThemeData(
         backgroundColor: AppColors.background,

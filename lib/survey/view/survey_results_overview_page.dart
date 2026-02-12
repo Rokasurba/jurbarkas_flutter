@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/core.dart';
 import 'package:frontend/core/router/app_router.dart';
-import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/aggregated_results_cubit.dart';
 import 'package:frontend/survey/cubit/aggregated_results_state.dart';
@@ -62,13 +62,15 @@ class _SurveyResultsOverviewView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.surveyResults),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
+        title: Text(
+          l10n.surveyResults,
+          style: context.appBarTitle,
+        ),
         actions: [
           if (selectedIndex == 1)
             BlocBuilder<AggregatedResultsCubit, AggregatedResultsState>(
