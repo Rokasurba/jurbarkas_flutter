@@ -93,38 +93,45 @@ class _ActivityLogListViewState extends State<ActivityLogListView> {
     setState(() => _isExporting = true);
 
     final l10n = context.l10n;
-    final cubit = context.read<ActivityLogCubit>();
-    final filters = cubit.currentFilters;
 
-    final csvContent = await AdminRepository(
-      apiClient: context.read<ApiClient>(),
-    ).exportActivityLogs(
-      dateFrom: filters.dateFrom,
-      dateTo: filters.dateTo,
-      userId: filters.userId,
-      event: filters.event,
-    );
+    try {
+      final cubit = context.read<ActivityLogCubit>();
+      final filters = cubit.currentFilters;
 
-    setState(() => _isExporting = false);
+      final csvContent = await AdminRepository(
+        apiClient: context.read<ApiClient>(),
+      ).exportActivityLogs(
+        dateFrom: filters.dateFrom,
+        dateTo: filters.dateTo,
+        userId: filters.userId,
+        event: filters.event,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (csvContent == null) {
-      AppSnackbar.showError(context, l10n.eksportoKlaida);
-      return;
-    }
+      if (csvContent == null) {
+        AppSnackbar.showError(context, l10n.eksportoKlaida);
+        return;
+      }
 
-    final filename = 'activity_logs_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.csv';
+      final filename =
+          'activity_logs_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.csv';
 
-    if (kIsWeb) {
-      _downloadCsvWeb(csvContent, filename);
-    } else {
-      // For mobile, we would use share_plus, but for now show success
-      // since the packages aren't added yet
-    }
+      if (kIsWeb) {
+        _downloadCsvWeb(csvContent, filename);
+      }
 
-    if (mounted) {
-      AppSnackbar.showSuccess(context, l10n.eksportasSekmingas);
+      if (mounted) {
+        AppSnackbar.showSuccess(context, l10n.eksportasSekmingas);
+      }
+    } catch (_) {
+      if (mounted) {
+        AppSnackbar.showError(context, l10n.eksportoKlaida);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isExporting = false);
+      }
     }
   }
 
