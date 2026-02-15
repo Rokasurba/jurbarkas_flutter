@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/app_theme.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/data/models/completed_survey.dart';
 
@@ -14,9 +15,10 @@ class SurveyResultView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.surveyResults),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: Colors.white,
+        title: Text(
+          l10n.surveyResults,
+          style: context.appBarTitle,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

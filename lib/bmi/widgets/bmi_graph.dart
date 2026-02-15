@@ -124,6 +124,7 @@ class _PeriodSelector extends StatelessWidget {
     final l10n = context.l10n;
 
     return SegmentedButton<GraphPeriod>(
+      showSelectedIcon: false,
       segments: [
         ButtonSegment(
           value: GraphPeriod.week,

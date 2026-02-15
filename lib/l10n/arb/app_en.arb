@@ -226,6 +226,10 @@
     "@privacyPolicyConsent": {
         "description": "Privacy policy consent checkbox label"
     },
+    "privacyPolicyConsentPrefix": "I agree to the ",
+    "@privacyPolicyConsentPrefix": {
+        "description": "Privacy policy consent prefix before the tappable link"
+    },
     "privacyPolicyRequired": "You must agree to the Privacy Policy",
     "@privacyPolicyRequired": {
         "description": "Privacy policy consent required error message"

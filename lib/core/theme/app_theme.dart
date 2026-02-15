@@ -25,6 +25,7 @@ class AppTheme {
         elevation: 2,
         shadowColor: Colors.black,
         backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -38,7 +39,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.secondary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

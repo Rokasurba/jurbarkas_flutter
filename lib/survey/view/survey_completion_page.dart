@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/theme/app_theme.dart';
+import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/survey/cubit/survey_completion_cubit.dart';
@@ -11,7 +13,6 @@ import 'package:frontend/survey/data/models/survey_answer.dart';
 import 'package:frontend/survey/data/models/survey_for_completion.dart';
 import 'package:frontend/survey/data/models/survey_question.dart';
 import 'package:frontend/survey/data/survey_repository.dart';
-import 'package:frontend/core/utils/snackbar_utils.dart';
 import 'package:frontend/survey/view/survey_result_page.dart';
 
 @RoutePage()
@@ -99,7 +100,7 @@ class _SurveyCompletionView extends StatelessWidget {
             label: l10n.ok,
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              unawaited(context.router.maybePop());
+              unawaited(context.router.maybePop(true));
             },
             size: AppButtonSize.small,
           ),
@@ -166,9 +167,10 @@ class _SurveyQuestionViewState extends State<_SurveyQuestionView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.currentIndex + 1}/$totalQuestions'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: Colors.white,
+        title: Text(
+          '${widget.currentIndex + 1}/$totalQuestions',
+          style: context.appBarTitle,
+        ),
       ),
       body: Column(
         children: [

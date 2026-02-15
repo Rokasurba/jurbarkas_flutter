@@ -226,6 +226,10 @@
     "@privacyPolicyConsent": {
         "description": "Privacy policy consent checkbox label"
     },
+    "privacyPolicyConsentPrefix": "Sutinku su ",
+    "@privacyPolicyConsentPrefix": {
+        "description": "Privacy policy consent prefix before the tappable link"
+    },
     "privacyPolicyRequired": "Privalote sutikti su privatumo politika",
     "@privacyPolicyRequired": {
         "description": "Privacy policy consent required error message"

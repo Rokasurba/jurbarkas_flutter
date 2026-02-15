@@ -54,8 +54,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
         title: Text(l10n.forgotPasswordTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -88,79 +86,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
         builder: (context, state) {
           return ResponsiveBuilder(
             builder: (context, info) {
-              final content = SafeArea(
-                child: Column(
-                  children: [
-                    // Main content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const SizedBox(height: 48),
-                                // Email icon
-                                const _EmailIcon(),
-                                const SizedBox(height: 24),
-                                // Subtitle
-                                Text(
-                                  l10n.forgotPasswordSubtitle,
-                                  style: context.bodyLarge?.copyWith(
-                                    color: AppColors.secondaryText,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 32),
-                                // Email label
-                                Text(
-                                  l10n.emailLabel,
-                                  style: context.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                // Email field
-                                TextFormField(
-                                  controller: _emailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  textInputAction: TextInputAction.done,
-                                  autocorrect: false,
-                                  enabled: !state.isLoading,
-                                  onFieldSubmitted: (_) => _handleSendCode(),
-                                  decoration: InputDecoration(
-                                    hintText: l10n.emailPlaceholder,
-                                    filled: true,
-                                    fillColor: AppColors.inputFill,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: AppValidators.email(context),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Bottom button
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: AppButton.primary(
-                        label: l10n.sendCodeButton,
-                        onPressed: _handleSendCode,
-                        isLoading: state.isLoading,
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              final content = _buildContent(context, l10n, state);
 
-              // On web/desktop, center the content in a constrained container
               if (info.isDesktop || info.isTablet) {
                 return Center(
                   child: ConstrainedBox(
@@ -177,18 +104,86 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       ),
     );
   }
-}
 
-/// Email icon from SVG asset.
-class _EmailIcon extends StatelessWidget {
-  const _EmailIcon();
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      Assets.mailIcon,
-      height: 92,
-      width: 86,
+  Widget _buildContent(
+    BuildContext context,
+    AppLocalizations l10n,
+    PasswordResetState state,
+  ) {
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 32),
+                      // Email icon
+                      SvgPicture.asset(
+                        Assets.mailIcon,
+                        height: 92,
+                        width: 86,
+                      ),
+                      const SizedBox(height: 24),
+                      // Title
+                      Text(
+                        l10n.forgotPasswordTitle,
+                        style: context.headlineMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      // Subtitle
+                      Text(
+                        l10n.forgotPasswordSubtitle,
+                        style: context.bodyLarge?.copyWith(
+                          color: AppColors.secondaryText,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      // Email label
+                      Text(
+                        l10n.emailLabel,
+                        style: context.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Email field
+                      AppEmailField(
+                        controller: _emailController,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _handleSendCode(),
+                        enabled: !state.isLoading,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Bottom button
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: AppButton.primary(
+                label: l10n.sendCodeButton,
+                onPressed: _handleSendCode,
+                isLoading: state.isLoading,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

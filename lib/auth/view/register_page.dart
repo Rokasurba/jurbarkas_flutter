@@ -47,16 +47,16 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _handleRegister() async {
     if (_formKey.currentState?.validate() ?? false) {
       await context.read<AuthCubit>().register(
-            name: _nameController.text.trim(),
-            surname: _surnameController.text.trim(),
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            passwordConfirmation: _confirmPasswordController.text,
-            consent: _consentAccepted,
-            phone: _phoneController.text.trim().isEmpty
-                ? null
-                : _phoneController.text.trim(),
-          );
+        name: _nameController.text.trim(),
+        surname: _surnameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        passwordConfirmation: _confirmPasswordController.text,
+        consent: _consentAccepted,
+        phone: _phoneController.text.trim().isEmpty
+            ? null
+            : _phoneController.text.trim(),
+      );
     }
   }
 
@@ -66,9 +66,12 @@ class _RegisterViewState extends State<RegisterView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.registerTitle),
+        title: Text(
+          l10n.registerTitle,
+          style: context.appBarTitle,
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () async => context.router.maybePop(),
         ),
       ),
@@ -79,8 +82,7 @@ class _RegisterViewState extends State<RegisterView> {
             loading: () {},
             authenticated: (user) async {
               context.showSuccessSnackbar(l10n.registrationSuccess);
-              final homeRoute =
-                  context.read<AuthCubit>().getHomeRouteForRole();
+              final homeRoute = context.read<AuthCubit>().getHomeRouteForRole();
               await context.router.replaceAll([homeRoute]);
             },
             unauthenticated: () {},
@@ -91,103 +93,183 @@ class _RegisterViewState extends State<RegisterView> {
           );
         },
         builder: (context, state) {
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: ResponsiveCard(
-                maxWidth: 420,
-                padding: const EdgeInsets.all(32),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Icon(
-                        Icons.person_add_outlined,
-                        size: 64,
-                        color: context.primaryColor,
+          return ResponsiveBuilder(
+            builder: (context, info) {
+              final formContent = _buildForm(context, l10n, state);
+
+              if (info.isDesktop || info.isTablet) {
+                return Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.08),
+                            blurRadius: 40,
+                            offset: const Offset(0, 8),
+                          ),
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.12),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.registerSubtitle,
-                        style: context.bodyLarge?.copyWith(
-                          color: Colors.grey,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: formContent,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 32),
+                    ),
+                  ),
+                );
+              }
 
-                      // Name field
-                      AppTextField(
-                        controller: _nameController,
-                        labelText: l10n.nameLabel,
-                        prefixIcon: Icons.person_outline,
-                        textCapitalization: TextCapitalization.words,
-                        enabled: !state.isLoading,
-                        validator: AppValidators.required(l10n.nameRequired),
-                      ),
-                      const SizedBox(height: 16),
+              return formContent;
+            },
+          );
+        },
+      ),
+    );
+  }
 
-                      // Surname field
-                      AppTextField(
-                        controller: _surnameController,
-                        labelText: l10n.surnameLabel,
-                        prefixIcon: Icons.person_outline,
-                        textCapitalization: TextCapitalization.words,
-                        enabled: !state.isLoading,
-                        validator: AppValidators.required(l10n.surnameRequired),
-                      ),
-                      const SizedBox(height: 16),
+  Widget _buildForm(
+    BuildContext context,
+    AppLocalizations l10n,
+    AuthState state,
+  ) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 16),
 
-                      // Email field
-                      AppEmailField(
-                        controller: _emailController,
-                        enabled: !state.isLoading,
-                      ),
-                      const SizedBox(height: 16),
+                // Name
+                Text(
+                  l10n.nameLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppTextField(
+                  controller: _nameController,
+                  labelText: l10n.nameLabel,
+                  textCapitalization: TextCapitalization.words,
+                  enabled: !state.isLoading,
+                  validator: AppValidators.required(l10n.nameRequired),
+                ),
+                const SizedBox(height: 16),
 
-                      // Phone field (optional)
-                      AppTextField(
-                        controller: _phoneController,
-                        labelText: l10n.phoneLabel,
-                        prefixIcon: Icons.phone_outlined,
-                        keyboardType: TextInputType.phone,
-                        enabled: !state.isLoading,
-                      ),
-                      const SizedBox(height: 16),
+                // Surname
+                Text(
+                  l10n.surnameLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppTextField(
+                  controller: _surnameController,
+                  labelText: l10n.surnameLabel,
+                  textCapitalization: TextCapitalization.words,
+                  enabled: !state.isLoading,
+                  validator: AppValidators.required(l10n.surnameRequired),
+                ),
+                const SizedBox(height: 16),
 
-                      // Password field
-                      AppPasswordField(
-                        controller: _passwordController,
-                        textInputAction: TextInputAction.next,
-                        enabled: !state.isLoading,
-                      ),
-                      const SizedBox(height: 16),
+                // Email
+                Text(
+                  l10n.emailLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppEmailField(
+                  controller: _emailController,
+                  enabled: !state.isLoading,
+                ),
+                const SizedBox(height: 16),
 
-                      // Confirm Password field
-                      AppConfirmPasswordField(
-                        controller: _confirmPasswordController,
-                        passwordController: _passwordController,
-                        onFieldSubmitted: (_) => _handleRegister(),
-                        enabled: !state.isLoading,
-                      ),
-                      const SizedBox(height: 16),
+                // Phone (optional)
+                Text(
+                  l10n.phoneLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppTextField(
+                  controller: _phoneController,
+                  labelText: l10n.phoneLabel,
+                  keyboardType: TextInputType.phone,
+                  enabled: !state.isLoading,
+                ),
+                const SizedBox(height: 16),
 
-                      // Privacy policy consent
-                      FormField<bool>(
-                        initialValue: _consentAccepted,
-                        validator: (value) {
-                          if (value != true) {
-                            return l10n.privacyPolicyRequired;
-                          }
-                          return null;
-                        },
-                        builder: (field) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CheckboxListTile(
+                // Password
+                Text(
+                  l10n.passwordLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppPasswordField(
+                  controller: _passwordController,
+                  textInputAction: TextInputAction.next,
+                  enabled: !state.isLoading,
+                ),
+                const SizedBox(height: 16),
+
+                // Confirm Password
+                Text(
+                  l10n.confirmPasswordLabel,
+                  style: context.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                AppConfirmPasswordField(
+                  controller: _confirmPasswordController,
+                  passwordController: _passwordController,
+                  onFieldSubmitted: (_) => _handleRegister(),
+                  enabled: !state.isLoading,
+                ),
+                const SizedBox(height: 16),
+
+                // Privacy policy consent with tappable link
+                FormField<bool>(
+                  initialValue: _consentAccepted,
+                  validator: (value) {
+                    if (value != true) {
+                      return l10n.privacyPolicyRequired;
+                    }
+                    return null;
+                  },
+                  builder: (field) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Checkbox(
                                 value: _consentAccepted,
                                 onChanged: state.isLoading
                                     ? null
@@ -197,52 +279,72 @@ class _RegisterViewState extends State<RegisterView> {
                                         });
                                         field.didChange(value);
                                       },
-                                title: Text(
-                                  l10n.privacyPolicyConsent,
-                                  style: context.bodyMedium,
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
                               ),
-                              if (field.hasError)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 12),
-                                  child: Text(
-                                    field.errorText!,
-                                    style: context.bodySmall?.copyWith(
-                                      color: context.errorColor,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Wrap(
+                                  children: [
+                                    Text(
+                                      l10n.privacyPolicyConsentPrefix,
+                                      style: context.bodyMedium,
                                     ),
-                                  ),
+                                    GestureDetector(
+                                      // TODO(privacy): Open policy
+                                      onTap: () {},
+                                      child: Text(
+                                        l10n.privacyPolicy.toLowerCase(),
+                                        style: context.bodyMedium?.copyWith(
+                                          color: AppColors.primary,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: AppColors.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Register button
-                      AppButton.primary(
-                        label: l10n.registerButton,
-                        onPressed: state.isLoading ? null : _handleRegister,
-                        isLoading: state.isLoading,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Login link
-                      AppButton.text(
-                        label: l10n.alreadyHaveAccount,
-                        onPressed: state.isLoading
-                            ? null
-                            : () async => context.router.maybePop(),
-                      ),
-                    ],
-                  ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (field.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 36, top: 4),
+                            child: Text(
+                              field.errorText!,
+                              style: context.bodySmall?.copyWith(
+                                color: context.errorColor,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
-              ),
+                const SizedBox(height: 24),
+
+                // Register button
+                AppButton.primary(
+                  label: l10n.registerButton,
+                  onPressed: state.isLoading ? null : _handleRegister,
+                  isLoading: state.isLoading,
+                ),
+                const SizedBox(height: 16),
+
+                // Login link
+                AppButton.text(
+                  label: l10n.alreadyHaveAccount,
+                  onPressed: state.isLoading
+                      ? null
+                      : () async => context.router.maybePop(),
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

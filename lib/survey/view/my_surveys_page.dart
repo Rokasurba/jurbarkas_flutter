@@ -118,13 +118,20 @@ class _SurveyCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () {
-          unawaited(context.router.push(
+        onTap: () async {
+          final result = await context.router.push<bool>(
             SurveyCompletionRoute(
               assignmentId: survey.id,
               isCompleted: survey.isCompleted,
             ),
-          ));
+          );
+          if ((result ?? false) && context.mounted) {
+            unawaited(
+              context
+                  .read<SurveyListCubit>()
+                  .loadAssignedSurveys(),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
